@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<canvas id="myCanvas" width="300" height="300" style="border: 1px solid; background: lightgreen;"></canvas>
+<script>
+var canvas = document.getElementById('myCanvas');
+var ctx = canvas.getContext('2d');
+const fps = 16;
+const s = 10;
+const mx = Math.floor(canvas.width / s);
+const my = Math.floor(canvas.height / s);
+var x,y,dx,dy,snake,fx,fy,kpb = [];
+
+window.onload = function() {
+    reset();
+    setInterval(step, 1000/fps);
+}
+
+window.addEventListener('keydown', function(e) {kpb.push(e.keyCode);}, true);
+
+function reset() {
+    x = Math.floor(mx / 2);
+    y = Math.floor(my / 2);
+    dx = 1;
+    dy = 0;
+    snake = [[x-2,y], [x-1,y], [x,y]];
+    setFood();
+    kpb = [];
+}
+
+function setFood() {
+    fx = Math.floor(Math.random()*mx);
+    fy = Math.floor(Math.random()*my);
+}
+
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+function step() {
+    if (kpb.length > 0) {
+        switch (kpb[0]) {
+            case 37:
+                if (dx != 0) break;
+                dx = -1;
+                dy = 0;
+                break;
+            case 38:
+                if (dy != 0) break;
+                dx = 0;
+                dy = -1;
+                break;
+            case 39:
+                if (dx != 0) break;
+                dx = 1;
+                dy = 0;
+                break;
+            case 40:
+                if (dy != 0) break;
+                dx = 0;
+                dy = 1;
+                break;
+        }
+        kpb.shift();
+    }
+    x = mod(x + dx, mx);
+    y = mod(y + dy, my);
+    snake.push([x,y]);
+    if (x==fx && y==fy) {
+        setFood();
+    } else {
+        snake.shift();
+    }
+    for (var i = 0; i < snake.length - 1; i++) {
+        if (snake[i][0] == x && snake[i][1] == y) {
+            reset();
+        }
+    }
+    draw();
+}
+
+function draw() {
+    ctx.fillStyle = 'lightgreen';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'red';
+    ctx.fillRect(fx*s, fy*s, s, s);
+    for (var i = 0; i < snake.length; i++) {
+        var l = 80 - Math.floor(60 * i / snake.length);
+        ctx.fillStyle = 'hsl(288, 100%, ' + l + '%)';
+        ctx.fillRect(snake[i][0]*s, snake[i][1]*s, s, s);
+    }
+    ctx.fillStyle = 'black';
+    ctx.fillText(snake.length, 10, 20);
+}
+</script>
+</body>
+</html>
