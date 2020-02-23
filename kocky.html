@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+<canvas id="myCanvas" width="600" height="600" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+<script>
+var dx = 20;
+var sx = 0;
+var sy = 300;
+var my = 15;
+var colors = [
+    '#0000FF', //blue
+    '#FF0000', //red
+    '#FFFF00', //yellow
+    '#008000', //green
+    '#FFA500', // orange
+    '#800080', //purple
+    '#808000', //olive
+    '#00FF00', //lime
+    '#800000', //maroon
+    '#00FFFF', //aqua
+    '#008080', //team
+    '#000080', //navy
+    '#FF00FF', //fushua
+    '#808080' //gray
+];
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+$.get(
+    "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:N30?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+    {majorDimension: "COLUMNS"},
+    function(data) {
+        c = 0;
+        for (column of data.values) {
+            ctx.strokeStyle = colors[c++];
+            var x = sx;
+            var y = sy;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            for (i of column.slice(2)) {
+                console.log(i);
+                if (i == "") i = "0";
+                x = x + dx;
+                y = y - my*parseInt(i);
+                ctx.lineTo(x, y);
+            }
+            ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x, y);
+            ctx.stroke();
+        }
+    }
+);
+</script>
+</body>
+</html>
