@@ -27,7 +27,10 @@ var colors = [
     '#FF00FF', //fushua
     '#808080' //gray
 ];
+colors = colors.concat(colors);
 var c = document.getElementById("myCanvas");
+c.width = $(window).width();
+c.height = $(window).height();
 var ctx = c.getContext("2d");
 $.get(
     "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:O100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
