@@ -43,13 +43,15 @@ var colors = [
 ];
 colors = colors.concat(colors);
 var c = document.getElementById("myCanvas");
+var canvasWidth = c.width;
+var canvasHeight = c.height;
+c.width = $(window).width();
+c.height = $(window).height();
 var ctx = c.getContext("2d");
-ctx.fillText('canvas:   ' + c.width + ' x ' + c.height, 10, 20);
+ctx.fillText('canvas:   ' + canvasWidth + ' x ' + canvasHeight, 10, 20);
 ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 30);
 ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
-c.width = $(window).width();
-c.height = $(window).height();
 $.get(
     "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:P100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
