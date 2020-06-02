@@ -46,6 +46,9 @@ var c = document.getElementById("myCanvas");
 c.width = $(window).width();
 c.height = $(window).height();
 var ctx = c.getContext("2d");
+ctx.fillText('window: ' + $(window).width() + ' x ' + $(window).height(), 0, 0);
+ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 0, 10);
+ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 0, 20);
 $.get(
     "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:P100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
