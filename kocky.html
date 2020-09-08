@@ -23,7 +23,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
 var dx = 20;
 var sx = 10;
-var sy = 450;
+var sy = 500;
 var my = 15;
 var colors = [
     '#0000FF', //blue
@@ -68,7 +68,7 @@ $.get(
                 ctx.setLineDash([]);
                 if (i == "") {
                     i = "0";
-                    ctx.setLineDash([1, 2]);
+                    ctx.setLineDash([1, 4]);
                 }
                 x = x + dx;
                 y = y - my*parseInt(i);
