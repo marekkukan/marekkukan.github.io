@@ -59,6 +59,7 @@ $.get(
         c = 0;
         for (column of data.values) {
             ctx.strokeStyle = colors[c++];
+            ctx.lineWidth = c == 3 ? 3 : 1;
             var x = sx;
             var y = sy;
             for (i of column.slice(2)) {
@@ -67,7 +68,7 @@ $.get(
                 ctx.setLineDash([]);
                 if (i == "") {
                     i = "0";
-                    ctx.setLineDash([2, 4]);
+                    ctx.setLineDash([1, 2]);
                 }
                 x = x + dx;
                 y = y - my*parseInt(i);
