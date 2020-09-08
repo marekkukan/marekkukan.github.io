@@ -28,7 +28,7 @@ var my = 15;
 var colors = [
     '#0000FF', //blue
     '#FF0000', //red
-    '#FFFF00', //yellow
+    '#FFCC00', //yellow
     '#008000', //green
     '#FFA500', // orange
     '#800080', //purple
@@ -64,8 +64,11 @@ $.get(
             ctx.beginPath();
             ctx.moveTo(x, y);
             for (i of column.slice(2)) {
-                console.log(i);
-                if (i == "") i = "0";
+                ctx.setLineDash([]);
+                if (i == "") {
+                    i = "0";
+                    ctx.setLineDash([2, 4]);
+                }
                 x = x + dx;
                 y = y - my*parseInt(i);
                 ctx.lineTo(x, y);
