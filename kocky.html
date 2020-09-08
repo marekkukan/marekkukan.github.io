@@ -28,7 +28,7 @@ var my = 15;
 var colors = [
     '#0000FF', //blue
     '#FF0000', //red
-    '#FFCC00', //yellow
+    '#FFEE00', //yellow
     '#008000', //green
     '#FFA500', // orange
     '#800080', //purple
@@ -61,9 +61,9 @@ $.get(
             ctx.strokeStyle = colors[c++];
             var x = sx;
             var y = sy;
-            ctx.beginPath();
-            ctx.moveTo(x, y);
             for (i of column.slice(2)) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
                 ctx.setLineDash([]);
                 if (i == "") {
                     i = "0";
@@ -72,9 +72,9 @@ $.get(
                 x = x + dx;
                 y = y - my*parseInt(i);
                 ctx.lineTo(x, y);
+                ctx.stroke();
             }
             ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x, y);
-            ctx.stroke();
         }
     }
 );
