@@ -39,7 +39,12 @@ var colors = [
     '#008080', //team
     '#000080', //navy
     '#FF00FF', //fushua
-    '#808080' //gray
+    '#808080', //gray
+    '#abcdef',
+    '#cdabef',
+    '#cdefab',
+    '#efabcd',
+    '#efcdab'
 ];
 colors = colors.concat(colors);
 var c = document.getElementById("myCanvas");
@@ -53,7 +58,7 @@ ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 
 ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
 $.get(
-    "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:P100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+    "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
     function(data) {
         c = 0;
