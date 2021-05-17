@@ -18,6 +18,10 @@ body {
 </style>
 </head>
 <body>
+<ul style="list-style-type: none;">
+  <li style="float: left;"><a style="display: block; padding: 8px;" href="kocky_2020">2020</a></li>
+  <li style="float: left;"><a style="display: block; padding: 8px;" href="kocky">2021</a></li>
+</ul>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
@@ -58,7 +62,7 @@ ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 
 ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
 $.get(
-    "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+    "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
     function(data) {
         c = 0;
