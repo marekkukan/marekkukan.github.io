@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+#myCanvas {
+  background-color: lightgrey;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+</style>
+</head>
+<body>
+<canvas id="myCanvas">
+Your browser does not support the HTML5 canvas tag.</canvas>
+<script>
+var dx = 10;
+var sx = 10;
+var sy = 600;
+var my = 15;
+var colors = [
+    '#0000FF', //blue
+    '#FF0000', //red
+    '#FFEE00', //yellow
+    '#008000', //green
+    '#FFA500', // orange
+    '#800080', //purple
+    '#808000', //olive
+    '#00FF00', //lime
+    '#800000', //maroon
+    '#00FFFF', //aqua
+    '#008080', //team
+    '#000080', //navy
+    '#FF00FF', //fushua
+    '#808080', //gray
+    '#abcdef',
+    '#cdabef',
+    '#cdefab',
+    '#efabcd',
+    '#efcdab'
+];
+colors = colors.concat(colors);
+var c = document.getElementById("myCanvas");
+var canvasWidth = c.width;
+var canvasHeight = c.height;
+c.width = $(window).width();
+c.height = $(window).height();
+var ctx = c.getContext("2d");
+ctx.fillText('canvas:   ' + canvasWidth + ' x ' + canvasHeight, 10, 20);
+ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 30);
+ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
+ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
+$.get(
+    "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+    {majorDimension: "COLUMNS"},
+    function(data) {
+        c = 0;
+        for (column of data.values) {
+            ctx.strokeStyle = colors[c++];
+            ctx.lineWidth = c == 3 ? 3 : 1;
+            var x = sx;
+            var y = sy;
+            for (i of column.slice(2)) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.setLineDash([]);
+                if (i == "") {
+                    i = "0";
+                    ctx.setLineDash([1, 3]);
+                }
+                x = x + dx;
+                y = y - my*parseInt(i);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x, y);
+        }
+    }
+);
+</script>
+</body>
+</html>
