@@ -67,6 +67,7 @@ $.get(
     {majorDimension: "COLUMNS"},
     function(data) {
         c = 0;
+        labels = [];
         for (column of data.values) {
             ctx.strokeStyle = colors[c++];
             ctx.fillStyle = ctx.strokeStyle;
@@ -100,7 +101,11 @@ $.get(
                 ctx.arc(x, y, 2, 0, 2 * Math.PI);
                 ctx.fill();
             }
-            ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x+3, y+3);
+            labels.push([column[0] + ' (' + (sy-y)/my + ')', x+5, y+5]);
+        }
+        ctx.fillStyle = 'black';
+        for (x of labels) {
+            ctx.fillText(x[0], x[1], x[2]);
         }
     }
 );
