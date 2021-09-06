@@ -68,7 +68,7 @@ $.get(
         c = 0;
         for (column of data.values) {
             ctx.strokeStyle = colors[c++];
-            ctx.fillStyle = colors[c++];
+            ctx.fillStyle = ctx.strokeStyle;
             ctx.lineWidth = c == 3 ? 3 : 1;
             var x = sx;
             var y = sy;
@@ -78,10 +78,12 @@ $.get(
                   x += dx;
                   continue;
                 }
-                ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2 * Math.PI);
-                ctx.fill();
-                started = true;
+                if (!started) {
+                  ctx.beginPath();
+                  ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                  ctx.fill();
+                  started = true;
+                }
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.setLineDash([]);
