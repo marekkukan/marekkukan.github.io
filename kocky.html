@@ -61,6 +61,7 @@ ctx.fillText('canvas:   ' + canvasWidth + ' x ' + canvasHeight, 10, 20);
 ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 30);
 ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
+ctx.font = 'bold 15px sans-serif';
 $.get(
     "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
@@ -68,10 +69,22 @@ $.get(
         c = 0;
         for (column of data.values) {
             ctx.strokeStyle = colors[c++];
-            ctx.lineWidth = c == 3 ? 3 : 1;
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.lineWidth = 4;
             var x = sx;
             var y = sy;
+            var started = false;
             for (i of column.slice(2)) {
+                if (!started && i == "") {
+                  x += dx;
+                  continue;
+                }
+                if (!started) {
+                  ctx.beginPath();
+                  ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                  ctx.fill();
+                  started = true;
+                }
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.setLineDash([]);
@@ -83,8 +96,11 @@ $.get(
                 y = y - my*parseInt(i);
                 ctx.lineTo(x, y);
                 ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, 2 * Math.PI);
+                ctx.fill();
             }
-            ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x, y);
+            ctx.fillText(column[0] + ' (' + (sy-y)/my + ')', x+3, y+3);
         }
     }
 );
