@@ -63,12 +63,13 @@ ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
 ctx.font = 'bold 15px sans-serif';
 $.get(
-    "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+    "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:Z100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
     {majorDimension: "COLUMNS"},
     function(data) {
         c = 0;
         labels = [];
         for (column of data.values) {
+            c %= colors.length;
             ctx.strokeStyle = colors[c++];
             ctx.fillStyle = ctx.strokeStyle;
             ctx.lineWidth = 4;
