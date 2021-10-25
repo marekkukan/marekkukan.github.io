@@ -22,8 +22,8 @@ body {
 </head>
 <body>
 <ul style="list-style-type: none;">
-  <li style="float: left;"><a style="display: block; padding: 8px;" href="kocky_2020">2020</a></li>
-  <li style="float: left;"><a style="display: block; padding: 8px;" href="kocky">2021</a></li>
+  <li style="float: left;"><button onclick="displayGraph("2020")">2020</button></li>
+  <li style="float: left;"><button onclick="displayGraph("2021")">2021</button></li>
 </ul>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
@@ -54,20 +54,21 @@ var colors = [
     '#efcdab'
 ];
 colors = colors.concat(colors);
-var c = document.getElementById("myCanvas");
-var canvasWidth = c.width;
-var canvasHeight = c.height;
-c.width = $(window).width();
-c.height = $(window).height();
-var ctx = c.getContext("2d");
-ctx.fillText('canvas:   ' + canvasWidth + ' x ' + canvasHeight, 10, 20);
-ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 30);
-ctx.fillText('window js:' + window.innerWidth + ' x ' + window.innerHeight, 10, 60);
-ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
-ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
-ctx.font = 'bold 10px sans-serif';
-$.get(
-    "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:Z100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE",
+var canvas = document.getElementById("myCanvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+var ctx = canvas.getContext("2d");
+
+function displayGraph(season) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillText('window: ' + window.innerWidth + ' x ' + window.innerHeight, 10, 20);
+  ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 10, 30);
+  ctx.font = 'bold 10px sans-serif';
+  var url;
+  if (season == "2020") url = "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE";
+  if (season == "2021") url = "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:Z100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE";
+  $.get(
+    url,
     {majorDimension: "COLUMNS"},
     function(data) {
         c = 0;
@@ -113,7 +114,10 @@ $.get(
             ctx.fillText(x[0], x[1], x[2]);
         }
     }
-);
+  );
+}
+
+displayGraph("2021");
 </script>
 <script>
 if ('serviceWorker' in navigator) {
