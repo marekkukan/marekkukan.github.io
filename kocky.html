@@ -22,8 +22,8 @@ body {
 </head>
 <body>
 <ul style="list-style-type: none;">
-  <li style="float: left;"><button style="padding: 8px;" onclick="displayGraph('2020')">2020</button></li>
-  <li style="float: left;"><button style="padding: 8px;" onclick="displayGraph('2021')">2021</button></li>
+  <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2020')">2020</button></li>
+  <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2021')">2021</button></li>
 </ul>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
@@ -62,6 +62,7 @@ ctx.save();
 
 function displayGraph(season) {
   ctx.restore();
+  ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillText('window: ' + window.innerWidth + ' x ' + window.innerHeight, 10, 20);
   ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 10, 30);
