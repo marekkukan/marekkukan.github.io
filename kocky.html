@@ -62,6 +62,7 @@ c.height = $(window).height();
 var ctx = c.getContext("2d");
 ctx.fillText('canvas:   ' + canvasWidth + ' x ' + canvasHeight, 10, 20);
 ctx.fillText('window:   ' + $(window).width() + ' x ' + $(window).height(), 10, 30);
+ctx.fillText('window js:' + window.innerWidth + ' x ' + window.innerHeight, 10, 60);
 ctx.fillText('document: ' + $(document).width() + ' x ' + $(document).height(), 10, 40);
 ctx.fillText('screen:   ' + window.screen.width + ' x ' + window.screen.height, 10, 50);
 ctx.font = 'bold 10px sans-serif';
