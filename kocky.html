@@ -21,17 +21,13 @@ body {
 </style>
 </head>
 <body>
-<ul style="list-style-type: none;">
+<ul style="list-style-type: none; height: 10%;">
   <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2020')">2020</button></li>
   <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2021')">2021</button></li>
 </ul>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
-var dx = 12;
-var sx = 10;
-var sy = 600;
-var my = 15;
 var colors = [
     '#0000FF', //blue
     '#FF0000', //red
@@ -55,27 +51,35 @@ var colors = [
 ];
 var canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.height = window.innerHeight * 0.9;
 var ctx = canvas.getContext("2d");
 ctx.save();
 
 function displayGraph(season) {
-  ctx.restore();
-  ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillText('window: ' + window.innerWidth + ' x ' + window.innerHeight, 10, 20);
-  ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 10, 30);
-  ctx.font = 'bold 10px sans-serif';
-  var url;
-  if (season == "2020") url = "https://sheets.googleapis.com/v4/spreadsheets/1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU/values/body!B1:R100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE";
-  if (season == "2021") url = "https://sheets.googleapis.com/v4/spreadsheets/1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M/values/body!B1:Z100?key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE";
+  var spreadsheetId;
+  if (season == "2020") spreadsheetId = "1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU";
+  if (season == "2021") spreadsheetId = "1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M";
+  var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=body!B1:Z100&ranges=kumulativne%20body!B2:Z100&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(
     url,
-    {majorDimension: "COLUMNS"},
     function(data) {
+        ctx.restore();
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillText('window: ' + window.innerWidth + ' x ' + window.innerHeight, 10, 20);
+        ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 10, 30);
+        ctx.font = 'bold 2vmin sans-serif';
         c = 0;
         labels = [];
-        for (column of data.values) {
+        lowestScore = Math.min(...data.valueRanges[1].values.map(x => Math.min(...x.map(parseFloat))));
+        highestScore = Math.max(...data.valueRanges[1].values.map(x => Math.max(...x.map(parseFloat))));
+        numberOfGames = data.valueRanges[1].values[0].length - 1;
+        var dx = 0.8 * canvas.width / numberOfGames;
+        var sx = 0.02 * canvas.width;
+        var sy = 0.9 * canvas.height * highestScore / (highestScore - lowestScore) + 0.05 * canvas.height;
+        var my = 0.9 * canvas.height / (highestScore - lowestScore);
+        for ([idx, column] of data.valueRanges[0].values.entries()) {
             c %= colors.length;
             ctx.strokeStyle = colors[c++];
             ctx.fillStyle = ctx.strokeStyle;
@@ -109,7 +113,7 @@ function displayGraph(season) {
                 ctx.arc(x, y, 2, 0, 2 * Math.PI);
                 ctx.fill();
             }
-            labels.push([column[0] + ' (' + (sy-y)/my + ')', x+5, y+5]);
+            labels.push([column[0] + ' (' + data.valueRanges[1].values[idx][numberOfGames] + ')', x+5, y+5]);
         }
         ctx.fillStyle = 'black';
         for (x of labels) {
