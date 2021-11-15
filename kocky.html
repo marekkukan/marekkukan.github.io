@@ -6,6 +6,9 @@
 <link rel="apple-touch-icon" href="icon192.png">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style>
+html {
+  height: 100%;
+}
 body {
   width: 100%;
   height: 100%;
@@ -21,10 +24,11 @@ body {
 </style>
 </head>
 <body>
-<ul style="list-style-type: none; height: 10%;">
-  <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2020')">2020</button></li>
-  <li style="float: left;"><button style="display: block; padding: 8px;" onclick="displayGraph('2021')">2021</button></li>
-</ul>
+
+<div style="height: 10%;">
+  <button style="height: 100%; width: 10%;" onclick="displayGraph('2020')">2020</button>
+  <button style="height: 100%; width: 10%;" onclick="displayGraph('2021')">2021</button>
+</div>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
 <script>
