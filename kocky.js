@@ -19,11 +19,19 @@ var colors = [
     '#efabcd',
     '#efcdab'
 ];
+var app = document.getElementById("myApp");
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 ctx.save();
 
+function displayApp() {
+  app.style.display = "block";
+  canvas.style.display = "none";
+}
+
 function displayGraph(season, prefix = "") {
+  app.style.display = "none";
+  canvas.style.display = "initial";
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight * 0.9;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -94,3 +102,80 @@ function displayGraph(season, prefix = "") {
 }
 
 displayGraph("2021");
+
+var numberOfDice = 0;
+addDice(6);
+
+function addDice(n) {
+  if (n > 0) {
+    for (let i = 0; i < n; i++) {
+      document.getElementById("diceDiv").innerHTML += generateDieDiv(numberOfDice);
+      numberOfDice += 1;
+    }
+  }
+  if (n == -1) {
+    if (numberOfDice > 0) {
+      dd = document.getElementById("diceDiv");
+      dd.removeChild(dd.lastElementChild);
+      numberOfDice -= 1;
+    }
+  }
+}
+
+function rollDice() {
+  const dice = [...document.querySelectorAll(".die-list:not(.revealed)")];
+  dice.forEach(die => {
+    die.style["transition-duration"] = `${Math.random() + 1.5}s`;
+    die.classList.toggle("odd-roll");
+    die.classList.toggle("even-roll");
+    die.dataset.roll = getRandomNumber(1, 6);
+  });
+}
+
+function getRandomNumber(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateDieDiv(name) {
+  roll = Math.random() < 0.5 ? "even-roll" : "odd-roll";
+  return `
+    <div class="die-div">
+      <ol class="die-list ${roll}" data-roll="1" id="die${name}" onclick="this.classList.toggle('revealed')">
+        <li class="die-item" data-side="1">
+          <span class="dot"></span>
+        </li>
+        <li class="die-item" data-side="2">
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </li>
+        <li class="die-item" data-side="3">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </li>
+        <li class="die-item" data-side="4">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </li>
+        <li class="die-item" data-side="5">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </li>
+        <li class="die-item" data-side="6">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </li>
+      </ol>
+    </div>`
+}

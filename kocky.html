@@ -13,11 +13,22 @@
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')" class="active">Season 2021</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021', 'KC_')">Kocker Cup</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp()">Dice Roller</button>
 </div>
+
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-
+<div id="myApp">
+  <div id="diceDiv"></div>
+  <div id="controlsDiv">
+    <div></div>
+    <button onclick="addDice(-1)">-</button>
+    <button onclick="rollDice()" >@</button>
+    <button onclick="addDice(+1)">+</button>
+    <div></div>
+  </div>
+</div>
 
 <script src="kocky.js"></script>
 
