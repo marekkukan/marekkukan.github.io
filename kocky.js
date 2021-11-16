@@ -108,7 +108,11 @@ addDice(6);
 
 var shake = new Shake({threshold: 15, timeout: 1000});
 shake.start();
-window.addEventListener('shake', rollDice, false);
+window.addEventListener('shake', shakeEventHandler, false);
+
+function shakeEventHandler() {
+  rollDice();
+}
 
 function addDice(n) {
   if (n > 0) {
