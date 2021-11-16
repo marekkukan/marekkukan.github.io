@@ -21,6 +21,7 @@ div#menuDiv button {
   border: none;
   font: bold 3vmin sans-serif;
   color: #333;
+  vertical-align: top;
 }
 div#menuDiv button:hover {
   box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.3);
@@ -55,14 +56,15 @@ div#controlsDiv {
   height: 20%;
 }
 div#controlsDiv button {
-  font: bold 4vw monospace;
+  font: bold 7vw monospace;
   color: orange;
-  width: 50%;
-  height: 70%;
   background: none;
   border: none;
   align-self: center;
   justify-self: center;
+}
+div#controlsDiv button:focus {
+  outline: none;
 }
 
 .die-div {
@@ -71,6 +73,7 @@ div#controlsDiv button {
   justify-items: center;
   padding: 2rem;
   perspective: 600px;
+  transform: scale(0.7);
 }
 .die-list {
   display: grid;
