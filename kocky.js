@@ -106,6 +106,10 @@ displayGraph("2021");
 var numberOfDice = 0;
 addDice(6);
 
+var shake = new Shake({threshold: 15, timeout: 1000});
+shake.start();
+window.addEventListener('shake', rollDice, false);
+
 function addDice(n) {
   if (n > 0) {
     for (let i = 0; i < n; i++) {
