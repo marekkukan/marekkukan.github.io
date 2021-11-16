@@ -18,6 +18,9 @@ div#menuDiv {
 div#menuDiv button {
   height: 100%;
   width: 16%;
+  border: none;
+  font: bold 3vmin sans-serif;
+  color: #333;
 }
 div#menuDiv button:hover {
   box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.3);
