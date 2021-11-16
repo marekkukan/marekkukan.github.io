@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  overflow: hidden;
+}
+#myCanvas {
+  background-color: lightgrey;
+}
+div#menuDiv {
+  height: 10%;
+}
+div#menuDiv button {
+  height: 100%;
+  width: 16%;
+}
+div#menuDiv button:hover {
+  box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.3);
+}
+div#menuDiv button:active {
+  background-color: lightgrey;
+}
+div#menuDiv button.active {
+  background-color: #bbbbbb;
+}
+
