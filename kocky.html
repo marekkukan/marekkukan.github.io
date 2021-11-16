@@ -23,8 +23,9 @@ body {
 <body>
 
 <div style="height: 10%;">
-  <button style="height: 100%; width: 10%;" onclick="displayGraph('2020')">2020</button>
-  <button style="height: 100%; width: 10%;" onclick="displayGraph('2021')">2021</button>
+  <button style="height: 100%; width: 10%;" onclick="displayGraph('2020')">Season 2020</button>
+  <button style="height: 100%; width: 10%;" onclick="displayGraph('2021')">Season 2021</button>
+  <button style="height: 100%; width: 10%;" onclick="displayGraph('2021', 'KC_')">Kocker Cup</button>
 </div>
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
@@ -54,14 +55,14 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 ctx.save();
 
-function displayGraph(season) {
+function displayGraph(season, prefix = "") {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight * 0.9;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   var spreadsheetId;
   if (season == "2020") spreadsheetId = "1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU";
   if (season == "2021") spreadsheetId = "1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M";
-  var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=body!B1:Z100&ranges=kumulativne%20body!B2:Z100&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
+  var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:Z100&ranges=${prefix}kumulativne%20body!B2:Z100&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(
     url,
     function(data) {
@@ -114,7 +115,7 @@ function displayGraph(season) {
                 ctx.arc(x, y, 2, 0, 2 * Math.PI);
                 ctx.fill();
             }
-            labels.push([column[0] + ' (' + data.valueRanges[1].values[idx][numberOfGames] + ')', x+5, y+5]);
+            if (column.length > 0) labels.push([column[0] + ' (' + data.valueRanges[1].values[idx][numberOfGames] + ')', x+5, y+5]);
         }
         ctx.fillStyle = 'black';
         for (x of labels) {
