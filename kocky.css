@@ -40,11 +40,11 @@ div#menuDiv button.active {
   height: 70%;
   align-items: center;
   display: grid;
-  grid-gap: 2rem;
+  grid-gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
   grid-template-rows: auto;
   justify-items: center;
-  padding: 2rem;
+  padding: 1rem;
 }
 div#controlsDiv {
   display: grid;
@@ -64,6 +64,9 @@ div#controlsDiv button {
   justify-self: center;
 }
 div#controlsDiv button:focus {
+  outline: none;
+}
+div#controlsDiv button:active {
   outline: none;
 }
 
