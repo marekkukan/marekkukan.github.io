@@ -107,8 +107,34 @@ var numberOfDice = 0;
 addDice(6);
 
 var shake = new Shake({threshold: 15, timeout: 1000});
-shake.start();
 window.addEventListener('shake', shakeEventHandler, false);
+
+function debug(s) {
+  document.getElementById("debugDiv").innerHTML = s;
+}
+
+function toggleShake(b) {
+  if (b) {
+    requestPermission();
+    shake.start();
+  } else {
+    shake.stop();
+  }
+}
+
+function requestPermission() {
+  if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === 'function') {
+    DeviceMotionEvent.requestPermission()
+      .then(response => {
+        debug(response);
+      })
+      .catch(() => {
+        debug("error 1");
+      })
+  } else {
+    debug("error 2");
+  }
+}
 
 function shakeEventHandler() {
   rollDice();

@@ -10,7 +10,8 @@
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.1.0</div>
+<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.2.0</div>
+<div id="debugDiv"   style="position: fixed; top: 30px; right: 10px;"></div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
@@ -29,7 +30,12 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     <button onclick="addDice(-1)">-</button>
     <button onclick="rollDice()" >@</button>
     <button onclick="addDice(+1)">+</button>
-    <div></div>
+    <button id="settingsButton" onclick="document.getElementById('settingsDiv').classList.toggle('invis')">⚙</button>
+  </div>
+  <div id="settingsDiv" class="invis">
+    <label style="font-size: 40px;">
+      <input style="width: 30px; height: 30px; margin: 40px;" type="checkbox" oninput="toggleShake(this.checked)">roll by shaking
+    </label>
   </div>
 </div>
 
