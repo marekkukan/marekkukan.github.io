@@ -131,8 +131,6 @@ function requestPermission() {
       .catch(() => {
         debug("error 1");
       })
-  } else {
-    debug("error 2");
   }
 }
 
