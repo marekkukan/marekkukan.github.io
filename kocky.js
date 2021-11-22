@@ -95,7 +95,17 @@ function displayGraph(season, prefix = "") {
         }
         ctx.fillStyle = 'black';
         for (x of labels) {
-            ctx.fillText(x[0], x[1], x[2]);
+            if ((prefix == "KC_") && (x[0].startsWith("Čmelo"))) {
+                ctx.fillStyle = colors[0];
+                ctx.fillText(x[0], x[1], x[2] - 10);
+                ctx.fillStyle = 'black';
+            } else if ((prefix == "KC_") && (x[0].startsWith("Matúš"))) {
+                ctx.fillStyle = colors[4];
+                ctx.fillText(x[0], x[1], x[2] + 10);
+                ctx.fillStyle = 'black';
+            } else {
+                ctx.fillText(x[0], x[1], x[2]);
+            }
         }
     }
   );
