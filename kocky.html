@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.2.2</div>
+<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.3.0</div>
 <div id="debugDiv"   style="position: fixed; top: 30px; right: 10px;"></div>
 
 <div id="menuDiv">
@@ -23,19 +23,19 @@
 <canvas id="myCanvas">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-<div id="myApp">
+<div id="myApp" onclick="document.getElementById('settingsDiv').classList.add('invis')">
+  <div id="revealedDiceDiv"></div>
   <div id="diceDiv"></div>
-  <div id="controlsDiv">
+  <div id="controlsDiv" onclick="event.stopPropagation()">
     <div></div>
     <button onclick="addDice(-1)">-</button>
     <button onclick="rollDice()" >@</button>
     <button onclick="addDice(+1)">+</button>
     <button id="settingsButton" onclick="document.getElementById('settingsDiv').classList.toggle('invis')">⚙</button>
   </div>
-  <div id="settingsDiv" class="invis">
-    <label style="font-size: 40px;">
-      <input style="width: 30px; height: 30px; margin: 40px;" type="checkbox" oninput="toggleShake(this.checked)">roll by shaking
-    </label>
+  <div id="settingsDiv" class="invis" onclick="event.stopPropagation()">
+    <label><input type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br>
+    <label><input type="checkbox" oninput="toggleMoveSetting(this.checked)">move revealed dice up</label><br>
   </div>
 </div>
 

@@ -1,3 +1,7 @@
+.revealed {
+  position: relative;
+  top: 0;
+}
 * {
   margin: 0;
   padding: 0;
@@ -37,13 +41,16 @@ div#menuDiv button.active {
   height: 90%;
   background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%, #645444 3%);
 }
-#diceDiv {
-  height: 70%;
+div#revealedDiceDiv {
+  height: 40%;
+}
+div#diceDiv {
+  height: 40%;
   align-items: center;
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-  grid-template-rows: auto;
+  grid-auto-rows: min-content;
   justify-items: center;
   padding: 1rem;
 }
@@ -57,7 +64,13 @@ div#settingsDiv {
   width: 50%;
   height: 50%;
   z-index: 10;
-  background: grey;
+  background: rgba(128, 128, 128, 0.9);
+  font-size: 30px;
+}
+div#settingsDiv input {
+  width: 30px;
+  height: 30px;
+  margin: 30px;
 }
 div#controlsDiv {
   display: grid;
@@ -84,7 +97,6 @@ div#controlsDiv button:active {
 }
 div#controlsDiv button#settingsButton {
   color: grey;
-  font-size: 8vh;
 }
 
 .die-div {

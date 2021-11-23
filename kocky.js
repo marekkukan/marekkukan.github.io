@@ -123,13 +123,17 @@ function debug(s) {
   document.getElementById("debugDiv").innerHTML = s;
 }
 
-function toggleShake(b) {
-  if (b) {
+function toggleShakeSetting(checked) {
+  if (checked) {
     requestPermission();
     shake.start();
   } else {
     shake.stop();
   }
+}
+
+function toggleMoveSetting(checked) {
+  document.styleSheets[0].cssRules[0].style.top = checked ? "-32vh" : "0";
 }
 
 function requestPermission() {
@@ -165,7 +169,7 @@ function addDice(n) {
 }
 
 function rollDice() {
-  const dice = [...document.querySelectorAll(".die-list:not(.revealed)")];
+  const dice = [...document.querySelectorAll(".die-div:not(.revealed)")].map(x => x.firstElementChild);
   dice.forEach(die => {
     die.style["transition-duration"] = `${Math.random() + 1.5}s`;
     die.classList.toggle("odd-roll");
@@ -183,8 +187,8 @@ function getRandomNumber(min, max) {
 function generateDieDiv(name) {
   roll = Math.random() < 0.5 ? "even-roll" : "odd-roll";
   return `
-    <div class="die-div">
-      <ol class="die-list ${roll}" data-roll="1" id="die${name}" onclick="this.classList.toggle('revealed')">
+    <div class="die-div" onclick="this.classList.toggle('revealed'); event.stopPropagation()">
+      <ol class="die-list ${roll}" data-roll="1" id="die${name}">
         <li class="die-item" data-side="1">
           <span class="dot"></span>
         </li>
