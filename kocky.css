@@ -19,14 +19,14 @@ body {
 }
 div#menuDiv {
   height: 10%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
 }
 div#menuDiv button {
-  height: 100%;
-  width: 16%;
+  width: 99%;
   border: none;
   font: bold 3vmin sans-serif;
   color: #333;
-  vertical-align: top;
 }
 div#menuDiv button:hover {
   box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.3);
@@ -54,24 +54,6 @@ div#diceDiv {
   justify-items: center;
   padding: 1rem;
 }
-.invis {
-  display: none;
-}
-div#settingsDiv {
-  position: fixed;
-  top: 25%;
-  left: 25%;
-  width: 50%;
-  height: 50%;
-  z-index: 10;
-  background: rgba(128, 128, 128, 0.9);
-  font-size: 30px;
-}
-div#settingsDiv input {
-  width: 30px;
-  height: 30px;
-  margin: 30px;
-}
 div#controlsDiv {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -98,6 +80,42 @@ div#controlsDiv button:active {
 div#controlsDiv button#settingsButton {
   color: grey;
 }
+#popupContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9;
+  background: rgba(0, 0, 0, 0.5);
+}
+#popupContainer > div {
+  position: fixed;
+  top: 14%;
+  left: 14%;
+  width: 72%;
+  height: 72%;
+  z-index: 10;
+  background: rgba(200, 200, 200, 0.9);
+  padding: 5vmin;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+#popupContainer > div > * {
+  font-size: 3vmin;
+}
+#popupContainer > div.log > * {
+  font-size: revert;
+  font-family: monospace, monospace;
+  margin: revert;
+  padding: revert;
+}
+#settingsDiv input {
+  width: 30px;
+  height: 30px;
+  margin: 30px;
+}
+
 
 .die-div {
   align-items: center;

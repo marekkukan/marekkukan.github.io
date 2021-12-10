@@ -45,8 +45,6 @@ function displayGraph(season, prefix = "") {
         ctx.restore();
         ctx.save();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // ctx.fillText('window: ' + window.innerWidth + ' x ' + window.innerHeight, 10, 20);
-        // ctx.fillText('screen: ' + window.screen.width + ' x ' + window.screen.height, 10, 30);
         ctx.font = 'bold 2vmin sans-serif';
         c = 0;
         labels = [];
@@ -120,8 +118,12 @@ var shake = new Shake({threshold: 15, timeout: 1000});
 window.addEventListener('shake', shakeEventHandler, false);
 
 function debug(s) {
-  document.getElementById("debugDiv").innerHTML = s;
+  document.getElementById("debuglogDiv").insertAdjacentHTML('beforeend', `<p>[${(new Date()).toTimeString().slice(0, 8)}] ${s}</p>`);
 }
+
+debug(`system: ${navigator.userAgent}`);
+debug(`screen: ${window.screen.width}x${window.screen.height}`);
+debug(`window: ${window.innerWidth}x${window.innerHeight}`);
 
 function toggleShakeSetting(checked) {
   if (checked) {
@@ -225,3 +227,14 @@ function generateDieDiv(name) {
       </ol>
     </div>`
 }
+
+function popup(divId) {
+  document.getElementById('popupContainer').style.display = "block";
+  document.getElementById(divId).style.display = "block";
+}
+
+document.getElementById('popupContainer').addEventListener('click', (e) => {
+  e.target.style.display = "none";
+  for (x of e.target.children) x.style.display = "none";
+})
+

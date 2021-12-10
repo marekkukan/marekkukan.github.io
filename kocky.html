@@ -10,32 +10,45 @@
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.3.0</div>
-<div id="debugDiv"   style="position: fixed; top: 30px; right: 10px;"></div>
+<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.4.0</div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')" class="active">Season 2021</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021', 'KC_')">Kocker Cup</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp()">Dice Roller</button>
+  <div></div>
+  <div onclick="popup('changelogDiv')"></div>
 </div>
 
-<canvas id="myCanvas">
+<canvas id="myCanvas" style="display: none;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-<div id="myApp" onclick="document.getElementById('settingsDiv').classList.add('invis')">
+<div id="myApp" style="display: none;">
   <div id="revealedDiceDiv"></div>
   <div id="diceDiv"></div>
-  <div id="controlsDiv" onclick="event.stopPropagation()">
+  <div id="controlsDiv">
     <div></div>
     <button onclick="addDice(-1)">-</button>
     <button onclick="rollDice()" >@</button>
     <button onclick="addDice(+1)">+</button>
-    <button id="settingsButton" onclick="document.getElementById('settingsDiv').classList.toggle('invis')">⚙</button>
+    <button id="settingsButton" onclick="popup('settingsDiv')">⚙</button>
   </div>
-  <div id="settingsDiv" class="invis" onclick="event.stopPropagation()">
+</div>
+<div id="popupContainer" style="display: none;">
+  <div id="settingsDiv" style="display: none;" onclick="event.stopPropagation()">
     <label><input type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br>
     <label><input type="checkbox" oninput="toggleMoveSetting(this.checked)">move revealed dice up</label><br>
+  </div>
+  <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v0.4.0</h4>
+    <ul>
+      <li>added changelog</li>
+    </ul>
+  </div>
+  <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
   </div>
 </div>
 
