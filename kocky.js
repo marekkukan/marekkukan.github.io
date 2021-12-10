@@ -155,7 +155,7 @@ function shakeEventHandler() {
 }
 
 function addDice(n, diceDiv = document.getElementById("diceDiv")) {
-  if (n > 0) {
+  if (n > 0 && n + numberOfDice <= 18) {
     for (let i = 0; i < n; i++) {
       diceDiv.insertAdjacentHTML('beforeend', generateDieDiv(numberOfDice));
       numberOfDice += 1;
