@@ -40,7 +40,7 @@ div#menuDiv button.active {
 }
 #myApp {
   height: 90%;
-  background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%, #645444 3%);
+  background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%);
 }
 div#revealedDiceDiv {
   height: 40%;
