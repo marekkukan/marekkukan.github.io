@@ -154,17 +154,16 @@ function shakeEventHandler() {
   rollDice();
 }
 
-function addDice(n) {
+function addDice(n, diceDiv = document.getElementById("diceDiv")) {
   if (n > 0) {
     for (let i = 0; i < n; i++) {
-      document.getElementById("diceDiv").innerHTML += generateDieDiv(numberOfDice);
+      diceDiv.insertAdjacentHTML('beforeend', generateDieDiv(numberOfDice));
       numberOfDice += 1;
     }
   }
   if (n == -1) {
     if (numberOfDice > 0) {
-      dd = document.getElementById("diceDiv");
-      dd.removeChild(dd.lastElementChild);
+      diceDiv.removeChild(diceDiv.lastElementChild);
       numberOfDice -= 1;
     }
   }
@@ -237,4 +236,3 @@ document.getElementById('popupContainer').addEventListener('click', (e) => {
   e.target.style.display = "none";
   for (x of e.target.children) x.style.display = "none";
 })
-
