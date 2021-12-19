@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.4.1</div>
+<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.5.0</div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
@@ -42,6 +42,10 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v0.5.0</h4>
+    <ul>
+      <li>Dice Roller settings are now persistent</li>
+    </ul>
     <h4>v0.4.0</h4>
     <ul>
       <li>added changelog</li>

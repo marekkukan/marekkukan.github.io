@@ -136,19 +136,17 @@ function toggleShakeSetting(checked) {
 }
 
 function toggleMoveSetting(checked) {
-  sessionStorage.setItem('setting2', checked);
+  localStorage.setItem('setting2', checked);
   document.styleSheets[0].cssRules[0].style.top = checked ? "-32vh" : "0";
 }
 
 function requestPermission() {
-  if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === 'function') {
+  if (typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function') {
+    debug('requesting permission to access Device Motion ..');
     DeviceMotionEvent.requestPermission()
-      .then(response => {
-        debug(response);
-      })
-      .catch(() => {
-        debug("error 1");
-      })
+      .then(response => {debug(response);})
+      .catch(() => {debug('failed');})
   }
 }
 
@@ -270,7 +268,7 @@ window.addEventListener('load', (e) => {
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
   document.getElementById('setting1').checked = localStorage.getItem('setting1') === 'true';
   document.getElementById('setting1').oninput();
-  document.getElementById('setting2').checked = sessionStorage.getItem('setting2') === 'true';
+  document.getElementById('setting2').checked = localStorage.getItem('setting2') === 'true';
   document.getElementById('setting2').oninput();
 });
 
