@@ -126,6 +126,7 @@ debug(`screen: ${window.screen.width}x${window.screen.height}`);
 debug(`window: ${window.innerWidth}x${window.innerHeight}`);
 
 function toggleShakeSetting(checked) {
+  localStorage.setItem('setting1', checked);
   if (checked) {
     requestPermission();
     shake.start();
@@ -135,6 +136,7 @@ function toggleShakeSetting(checked) {
 }
 
 function toggleMoveSetting(checked) {
+  sessionStorage.setItem('setting2', checked);
   document.styleSheets[0].cssRules[0].style.top = checked ? "-32vh" : "0";
 }
 
@@ -236,3 +238,39 @@ document.getElementById('popupContainer').addEventListener('click', (e) => {
   e.target.style.display = "none";
   for (x of e.target.children) x.style.display = "none";
 })
+
+
+function storageAvailable(type) {
+    var storage;
+    try {
+        storage = window[type];
+        var x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
+window.addEventListener('load', (e) => {
+  debug(`localStorage available: ${storageAvailable('localStorage')}`);
+  debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
+  document.getElementById('setting1').checked = localStorage.getItem('setting1') === 'true';
+  document.getElementById('setting1').oninput();
+  document.getElementById('setting2').checked = sessionStorage.getItem('setting2') === 'true';
+  document.getElementById('setting2').oninput();
+});
+
