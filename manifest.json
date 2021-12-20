@@ -2,8 +2,8 @@
   "name": "Kocky",
   "short_name": "Kocky",
   "start_url": "./kocky.html",
-  "background_color": "#abcdef",
-  "theme_color": "#cdabef",
+  "background_color": "#665646",
+  "theme_color": "#665646",
   "display": "fullscreen",
   "icons": [
     {
