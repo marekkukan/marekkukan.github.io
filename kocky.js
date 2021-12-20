@@ -1,3 +1,5 @@
+const DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'};
+
 var colors = [
     '#0000FF', //blue
     '#FF0000', //red
@@ -20,17 +22,26 @@ var colors = [
     '#efcdab'
 ];
 var app = document.getElementById("myApp");
+var app2 = document.getElementById("myApp2");
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 ctx.save();
 
 function displayApp() {
   app.style.display = "block";
+  app2.style.display = "none";
+  canvas.style.display = "none";
+}
+
+function displayApp2() {
+  app.style.display = "none";
+  app2.style.display = "block";
   canvas.style.display = "none";
 }
 
 function displayGraph(season, prefix = "") {
   app.style.display = "none";
+  app2.style.display = "none";
   canvas.style.display = "initial";
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight * 0.9;
@@ -109,15 +120,18 @@ function displayGraph(season, prefix = "") {
   );
 }
 
-displayGraph("2021");
+displayApp2();
 
-var numberOfDice = 0;
 addDice(6);
 
 var shake = new Shake({threshold: 15, timeout: 1000});
 window.addEventListener('shake', shakeEventHandler, false);
 
 function debug(s) {
+  // convert game state json to yaml (for better readability)
+  if (s.startsWith('server: GAME_STATE ')) {
+    s = `${s.slice(0, 19)}<pre>${jsyaml.dump(JSON.parse(s.slice(19)))}</pre>`;
+  }
   document.getElementById("debuglogDiv").insertAdjacentHTML('beforeend', `<p>[${(new Date()).toTimeString().slice(0, 8)}] ${s}</p>`);
 }
 
@@ -151,32 +165,33 @@ function requestPermission() {
 }
 
 function shakeEventHandler() {
-  rollDice();
+  rollDice('.dice-roller');
 }
 
-function addDice(n, diceDiv = document.getElementById("diceDiv")) {
+function addDice(n) {
+  var diceDiv = document.getElementById('diceDiv');
+  var dice = diceDiv.querySelectorAll('.die-div');
+  var numberOfDice = dice.length;
   if (n > 0 && n + numberOfDice <= 18) {
     for (let i = 0; i < n; i++) {
-      diceDiv.insertAdjacentHTML('beforeend', generateDieDiv(numberOfDice));
-      numberOfDice += 1;
+      diceDiv.insertAdjacentElement('beforeend', generateDieDiv(1, 'dice-roller'));
     }
-  }
-  if (n == -1) {
-    if (numberOfDice > 0) {
-      diceDiv.removeChild(diceDiv.lastElementChild);
-      numberOfDice -= 1;
-    }
+  } else if (n == -1 && numberOfDice > 0) {
+    diceDiv.removeChild(diceDiv.lastElementChild);
   }
 }
 
-function rollDice() {
-  const dice = [...document.querySelectorAll(".die-div:not(.revealed)")].map(x => x.firstElementChild);
-  dice.forEach(die => {
-    die.style["transition-duration"] = `${Math.random() + 1.5}s`;
-    die.classList.toggle("odd-roll");
-    die.classList.toggle("even-roll");
-    die.dataset.roll = getRandomNumber(1, 6);
-  });
+function rollDice(selector, roll = null) {
+  var dice = document.querySelectorAll(`${selector}.die-div:not(.revealed):not(.pre-revealed)`);
+  console.log(dice);
+  dice.forEach((die, i) => {rollDie(die, roll == null ? getRandomNumber(1, 6) : roll[i])});
+}
+function rollDie(dieDiv, roll) {
+  var die = dieDiv.firstElementChild;
+  die.style["transition-duration"] = `${Math.random() + 1.5}s`;
+  die.classList.toggle("odd-roll");
+  die.classList.toggle("even-roll");
+  die.dataset.roll = roll;
 }
 
 function getRandomNumber(min, max) {
@@ -185,11 +200,23 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateDieDiv(name) {
-  roll = Math.random() < 0.5 ? "even-roll" : "odd-roll";
-  return `
-    <div class="die-div" onclick="this.classList.toggle('revealed'); event.stopPropagation()">
-      <ol class="die-list ${roll}" data-roll="1" id="die${name}">
+function generateDieDiv(roll, ...classes) {
+  var div = document.createElement('div');
+  div.classList.add('die-div', ...classes);
+  // div.classList.add('blank');
+  if (div.classList.contains('dice-roller')) {
+    div.onclick = () => {div.classList.toggle('revealed'); event.stopPropagation()};
+  } else if (div.classList.contains('my-die')) {
+    div.onclick = () => {
+      if (gMyTurn && !gRevealed && !div.classList.contains('revealed') && !div.classList.contains('blank')) {
+        div.classList.toggle('pre-revealed');
+        var d = document.querySelectorAll('.pre-revealed');
+        document.getElementById('rollButton').disabled = gRolled && d.length == 0;
+      }
+    }
+  }
+  div.innerHTML = `
+      <ol class="die-list ${Math.random() < 0.5 ? "even-roll" : "odd-roll"}" data-roll="${roll}">
         <li class="die-item" data-side="1">
           <span class="dot"></span>
         </li>
@@ -223,8 +250,244 @@ function generateDieDiv(name) {
           <span class="dot"></span>
           <span class="dot"></span>
         </li>
-      </ol>
-    </div>`
+      </ol>`
+  return div;
+}
+
+function generatePlayerDiv(player) {
+  var thisIsMe = player.nickname == myNickname;
+  var playerDiv = document.createElement('div');
+  var bid = player.bid == null ? '' : player.bid.quantity + DICE_DICT[player.bid.number];
+  playerDiv.classList.add('playerDiv');
+  playerDiv.innerHTML = `
+      <div class="playerNameDiv" style="grid-area: name;">${player.nickname}</div>
+      <div class="playerActionDiv" style="grid-area: action;">${bid}</div>
+      <div class="playerTimeDiv" style="grid-area: time;">${player.time}</div>
+      <div class="playerDiceDiv" style="grid-area: dice;"></div>`
+  var playerDiceDiv = playerDiv.querySelector('.playerDiceDiv');
+  player.revealedDice.forEach(roll => playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(roll, 'revealed')));
+  player.unrevealedDice.forEach(roll => playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(roll, 'unrevealed')));
+  var n = player.numberOfDice - player.revealedDice.length - player.unrevealedDice.length;
+  var classes = ['blank'];
+  if (thisIsMe) {
+    gMyHiddenDice.forEach(roll => playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(roll, 'my-die')));
+    n -= gMyHiddenDice.length;
+    classes.push('my-die')
+  }
+  for (let i = 0; i < n; i++) {
+    playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(1, ...classes));
+  }
+  if (player.isCurrentPlayer) {
+    playerDiv.classList.add('currentPlayer');
+    // playerDiv.style.background = 'rgba(255, 255, 255, 0.2)';
+  }
+  return playerDiv;
+}
+
+function processGameState(state) {
+  // TODO handle state.finished(Round)
+  if (!gRolled) document.getElementById('rollButton').disabled = false;
+  if (state.finished) setTimeout(() => {displayLobby();}, 10000);
+  if (state.finishedRound) {
+    gMyHiddenDice = [];
+    gRolled = false;
+    document.getElementById('rollButton').disabled = true;
+  }
+  // rotate the list of players to make me the last one
+  var myIndex = state.players.findIndex(x => x.nickname == myNickname);
+  var players = state.players.slice(myIndex+1).concat(state.players.slice(0, myIndex+1))
+  // render game state
+  var playersDiv = document.getElementById('playersDiv');
+  playersDiv.replaceChildren(...players.map(x => generatePlayerDiv(x)));
+  // enable / disable buttons
+  gCurrentBidValue = bidValue(state.currentBid);
+  gMyTurn = state.players[myIndex].isCurrentPlayer;
+  if (gMyTurn) {
+    document.getElementById('bidButton').disabled = gMyBidValue <= gCurrentBidValue;
+    document.getElementById('challengeButton').disabled = (state.currentBid.quantity == 0 || gRevealed);
+  } else {
+    disableButtons();
+  }
+}
+
+
+var socket;
+function leaveLobby() {
+  debug('leaving lobby');
+  socket.send(`LEAVE`);
+  socket.onerror = (e) => {debug("connection error");}
+  socket.onclose = (e) => {debug("connection closed");}
+  socket.close(1000);
+  localStorage.removeItem('token');
+  localStorage.removeItem('nickname');
+  myNickname = '';
+  document.getElementById('myNicknameDiv').innerHTML = '';
+  document.getElementById('connectionStatusDiv').style.background = 'grey';
+  displayLogin();
+}
+function enterLobby(button) {
+  var nickname = document.getElementById("nickname").value;
+  if (nickname == '') return;
+  myNickname = nickname;
+  // button.disabled = true;
+  connectToServer();
+}
+function connectToServer() {
+  debug("connecting to server ..");
+  document.getElementById('connectionStatusDiv').style.background = 'blue';
+  socket = new WebSocket(window.location.protocol == "https:" ? "wss://8.209.115.233:443" : "ws://localhost:8765");
+  socket.onerror = (e) => {
+    debug("connection error");
+    document.getElementById('connectionStatusDiv').style.background = 'orange';
+  }
+  socket.onclose = (e) => {
+    debug("connection closed");
+    document.getElementById('connectionStatusDiv').style.background = 'red';
+    socket = null;
+    setTimeout(connectToServer, 5000);
+  }
+  socket.onopen = () => {
+    debug("connection established");
+    document.getElementById('connectionStatusDiv').style.background = 'green';
+    var token = localStorage.getItem('token');
+    if (token) {
+      socket.send(`RECONNECT ${token}`);
+    } else {
+      socket.send(`ENTER ${myNickname}`);
+    }
+  }
+  socket.onmessage = (e) => {
+    var message = e.data;
+    debug(`server: ${message}`);
+    if (message.startsWith('ENTER_SUCCESS ')) {
+      displayLobby();
+      var token = msg2array(message)[0];
+      localStorage.setItem('token', token);
+      localStorage.setItem('nickname', myNickname);
+      document.getElementById('myNicknameDiv').innerHTML = myNickname;
+    }
+    else if (message.startsWith('ENTER_ERROR ')) {
+      //TODO display error
+    }
+    else if (message.startsWith('RECONNECT_SUCCESS')) {
+      document.getElementById('loginDiv').style.display = 'none';
+      if (document.getElementById('lobbyDiv').style.display == 'none' &&
+          document.getElementById('waitingRoomDiv').style.display == 'none' &&
+          document.getElementById('gameDiv').style.display == 'none') {
+        displayLobby();
+      }
+      socket.send('GAME_STATE');
+    }
+    else if (message.startsWith('RECONNECT_ERROR ')) {
+      leaveLobby();
+    }
+    else if (message.startsWith("PLAYERS ")) {
+      document.getElementById("playersInLobbyList").innerHTML = msg2array(message).map(x => `<li>${x}</li>`).join('');
+    }
+    else if (message.startsWith("GAMES ")) {
+      document.getElementById("gamesList").innerHTML = msg2array(message).map(x => `<li onclick="popupJoinGame('${x}')">${x}</li>`).join('');
+    }
+    else if (message.startsWith("PLAYERS_IN_GAME ")) {
+      document.getElementById("playersInGameList").innerHTML = msg2array(message).map(x => `<li>${x}</li>`).join('');
+    }
+    else if (message.startsWith("JOIN_GAME_SUCCESS")) {
+      displayWaitingRoom();
+      document.getElementById('startGameButton').style.display = 'none';
+    }
+    else if (message.startsWith("JOIN_GAME_ERROR ")) {
+      // TODO display this in the popup
+      debug(message.slice(16));
+    }
+    else if (message.startsWith("GAME_ABANDONED")) {
+      displayLobby();
+    }
+    else if (message.startsWith("GAME_STARTED")) {
+      displayGame();
+      document.getElementById('rollButton').disabled = false;
+    }
+    else if (message.startsWith("GAME_STATE ")) {
+      displayGame();
+      processGameState(JSON.parse(message.slice(11)))
+    }
+    else if (message.startsWith('ROLL ')) {
+      gMyHiddenDice = msg2array(message).map(x => parseInt(x));
+      var dice = document.querySelectorAll('.my-die.blank');
+      setTimeout(() => {
+        for (die of dice) die.classList.remove('blank');
+        rollDice('.my-die', gMyHiddenDice);
+      }, 50);
+    }
+    else if (message == 'INVALID_MOVE') {
+      enableButtons();
+    }
+  }
+}
+
+function msg2array(msg) {
+  var parts = msg.split(' ').slice(1);
+  if (parts[0] == '') parts = [];
+  return parts
+}
+
+
+function displayLogin() {
+  document.getElementById('loginDiv').style.display = 'block';
+  document.getElementById('lobbyDiv').style.display = 'none';
+  document.getElementById('waitingRoomDiv').style.display = 'none';
+  document.getElementById('gameDiv').style.display = 'none';
+  // document.getElementById('nickname').focus();
+}
+function displayLobby() {
+  document.getElementById('loginDiv').style.display = 'none';
+  document.getElementById('lobbyDiv').style.display = 'grid';
+  document.getElementById('waitingRoomDiv').style.display = 'none';
+  document.getElementById('gameDiv').style.display = 'none';
+}
+function displayWaitingRoom() {
+  document.getElementById('loginDiv').style.display = 'none';
+  document.getElementById('lobbyDiv').style.display = 'none';
+  document.getElementById('waitingRoomDiv').style.display = 'grid';
+  document.getElementById('gameDiv').style.display = 'none';
+}
+function displayGame() {
+  document.getElementById('loginDiv').style.display = 'none';
+  document.getElementById('lobbyDiv').style.display = 'none';
+  document.getElementById('waitingRoomDiv').style.display = 'none';
+  document.getElementById('gameDiv').style.display = 'block';
+}
+
+
+function createGame(button) {
+  var password = document.getElementById("createGamePassword").value;
+  document.getElementById('popupContainer').click();
+  debug("creating game ..");
+  socket.send(`CREATE_GAME ${password}`);
+  displayWaitingRoom();
+  document.getElementById("startGameButton").style.display = "block";
+}
+
+function joinGame(button) {
+  var creator = document.getElementById("joinGameCreator").innerHTML;
+  var password = document.getElementById("joinGamePassword").value;
+  document.getElementById('popupContainer').click();
+  debug("joining game ..");
+  socket.send(`JOIN_GAME ${creator} ${password}`);
+}
+
+function leaveGame() {
+  debug("leaving game ..");
+  socket.send(`LEAVE_GAME`);
+  displayLobby();
+}
+
+function startGame() {
+  debug("starting game ..");
+  socket.send(`START_GAME`);
+}
+
+function popupJoinGame(creator) {
+  document.getElementById('joinGameCreator').innerHTML = creator;
+  popup('joinGameDiv');
 }
 
 function popup(divId) {
@@ -236,6 +499,120 @@ document.getElementById('popupContainer').addEventListener('click', (e) => {
   e.target.style.display = "none";
   for (x of e.target.children) x.style.display = "none";
 })
+
+
+
+document.getElementById('bidQuantityUpDiv').addEventListener('click', (e) => {
+  var div = document.getElementById('bidQuantityDiv');
+  div.dataset.value -= -1;
+  div.innerHTML = div.dataset.value;
+  processBidChange();
+})
+document.getElementById('bidQuantityDownDiv').addEventListener('click', (e) => {
+  var div = document.getElementById('bidQuantityDiv');
+  if (div.dataset.value <= 1) return;
+  div.dataset.value -= 1;
+  div.innerHTML = div.dataset.value;
+  processBidChange();
+})
+document.getElementById('bidNumberUpDiv').addEventListener('click', (e) => {
+  var div = document.getElementById('bidNumberDiv');
+  div.dataset.value -= -1;
+  if (div.dataset.value == 7) div.dataset.value = 1;
+  div.innerHTML = DICE_DICT[div.dataset.value];
+  processBidChange();
+})
+document.getElementById('bidNumberDownDiv').addEventListener('click', (e) => {
+  var div = document.getElementById('bidNumberDiv');
+  div.dataset.value -= 1;
+  if (div.dataset.value == 0) div.dataset.value = 6;
+  div.innerHTML = DICE_DICT[div.dataset.value];
+  processBidChange();
+})
+
+
+function processReveal() {
+  var dice = document.querySelectorAll('.pre-revealed');
+  if (dice.length > 0) {
+    var message = 'REVEAL';
+    for (die of dice) {
+      die.classList.remove('pre-revealed');
+      die.classList.add('revealed');
+      message += ' ' + die.firstElementChild.dataset.roll;
+    }
+    socket.send(message);
+    for (die of document.querySelectorAll('.my-die:not(.revealed)')) {
+      die.classList.add('blank');
+    }
+    gMyHiddenDice = [];
+    gRolled = false;
+    gRevealed = true;
+    document.getElementById('rollButton').disabled = false;
+  }
+}
+document.getElementById('bidButton').addEventListener('click', (e) => {
+  disableButtons()
+  processReveal();
+  gRevealed = false;
+  var q = document.getElementById('bidQuantityDiv').dataset.value;
+  var n = document.getElementById('bidNumberDiv').dataset.value;
+  setTimeout(() => {socket.send(`BID ${q} ${n}`);}, 100);
+})
+document.getElementById('challengeButton').addEventListener('click', (e) => {
+  disableButtons();
+  gRevealed = false;
+  socket.send(`CHALLENGE`);
+})
+document.getElementById('rollButton').addEventListener('click', (e) => {
+  processReveal();
+  gRolled = true;
+  document.getElementById('rollButton').disabled = true;
+  setTimeout(() => {socket.send(`ROLL`);}, 100);
+})
+
+function enableButtons() {
+  document.getElementById('bidButton').disabled = false;
+  document.getElementById('challengeButton').disabled = false;
+  document.getElementById('rollButton').disabled = false;
+}
+function disableButtons() {
+  document.getElementById('bidButton').disabled = true;
+  document.getElementById('challengeButton').disabled = true;
+}
+
+
+
+// trigger button click by pressing Enter
+document.getElementById("nickname").addEventListener("keydown", (e) => {
+  if (e.keyCode === 13) {e.preventDefault(); document.getElementById("loginButton").click();}
+})
+document.getElementById("createGamePassword").addEventListener("keydown", (e) => {
+  if (e.keyCode === 13) {e.preventDefault(); document.getElementById("createGameButton").click();}
+})
+document.getElementById("joinGamePassword").addEventListener("keydown", (e) => {
+  if (e.keyCode === 13) {e.preventDefault(); document.getElementById("joinGameButton").click();}
+})
+
+
+
+var bidValue = bid => 6 * bid.quantity * (1 + (bid.number == 1)) + bid.number;
+var gCurrentBidValue = 6;
+var gMyBidValue = 8;
+var gMyTurn = false;
+var gRolled = false;
+var gRevealed = false;
+var gMyHiddenDice = [];
+
+
+function processBidChange() {
+  var q = document.getElementById('bidQuantityDiv').dataset.value - 0;
+  var n = document.getElementById('bidNumberDiv').dataset.value - 0;
+  gMyBidValue = bidValue({'quantity': q, 'number': n});
+  if (gMyTurn) {
+    document.getElementById('bidButton').disabled = gMyBidValue <= gCurrentBidValue;
+  }
+}
+
 
 
 function storageAvailable(type) {
@@ -270,5 +647,22 @@ window.addEventListener('load', (e) => {
   document.getElementById('setting1').oninput();
   document.getElementById('setting2').checked = localStorage.getItem('setting2') === 'true';
   document.getElementById('setting2').oninput();
+  var nickname = localStorage.getItem('nickname');
+  if (nickname) {
+    myNickname = nickname;
+    document.getElementById('myNicknameDiv').innerHTML = nickname;
+    if (localStorage.getItem('token')) {
+      connectToServer();
+    }
+  }
+});
+
+window.addEventListener('offline', (e) => {
+  debug(`offline`);
+  document.getElementById('networkStatusDiv').style.background = 'grey';
+});
+window.addEventListener('online', (e) => {
+  debug(`online`);
+  document.getElementById('networkStatusDiv').style.background = 'green';
 });
 

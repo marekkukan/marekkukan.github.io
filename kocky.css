@@ -1,4 +1,4 @@
-.revealed {
+.revealed.dice-roller {
   position: relative;
   top: 0;
 }
@@ -7,6 +7,7 @@
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  cursor: default;
 }
 html {
   height: 100%;
@@ -42,6 +43,9 @@ div#menuDiv button.active {
   height: 90%;
   background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%);
 }
+#myApp2 {
+  height: 90%;
+}
 div#revealedDiceDiv {
   height: 40%;
 }
@@ -64,8 +68,102 @@ div#controlsDiv {
   width: 100%;
   height: 20%;
 }
+#gameDiv {
+  height: 100%;
+  background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%);
+  /* z-index: 2; */
+}
+div#playersDiv {
+  height: 80%;
+}
+div.playerDiv {
+  width: 100%;
+  height: 14.28%;
+  display: grid;
+  grid-template-areas:
+    "name name dice"
+    "action time dice";
+  grid-template-columns: 1fr 1fr 8fr;
+  grid-template-rows: 1fr 1fr;
+  font: 3vmin sans-serif;
+}
+div.playerDiv > * {
+  border: 1px solid;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+div.playerDiv .playerDiceDiv {
+  /* background: rgba(0, 255, 0, 0.1); */
+  /* align-items: center; */
+  display: grid;
+  /* grid-gap: 0rem; */
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: 1fr;
+  justify-items: center;
+  /* padding: 0rem; */
+}
+@media (orientation: landscape) {
+  div.playerDiv .playerDiceDiv {
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 1fr;
+  }
+}
+div.playerDiv .playerDiceDiv .die-div {
+  /* transform: scale(0.7); */
+}
+div.playerDiv.currentPlayer .playerNameDiv {
+  font-weight: bold;
+  /* background-color: white; */
+}
+div.playerDiv .playerActionDiv {
+  font-size: 4vmin;
+  /* background-color: white; */
+}
+div#gameControlsDiv {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  height: 20%;
+  /* background-color: rgba(255, 0, 0, 0.1); */
+  display: grid;
+  grid-template-areas:
+    "a b c d e"
+    "f g c d e"
+    "f g h i j"
+    "k l h i j";
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  /* font-size: 7vmin; */
+  box-sizing: border-box;
+  padding-left: 3vw;
+  padding-right: 3vw;
+  padding-bottom: 3vh;
+}
+div#gameControlsDiv * {
+  align-self: center;
+  justify-self: center;
+  font: 4vh monospace;
+}
+#bidQuantityDiv {
+  font-size: 5vh !important;
+}
+#bidNumberDiv {
+  font-size: 7vh !important;
+}
+div#gameControlsDiv button {
+  width: 90%;
+  height: 100%;
+  /* font-size: 7vmin; */
+  background: orange;
+  border-radius: 10px;
+  border: none;
+}
 div#controlsDiv button {
-  font: bold 6vh monospace;
+  font: 6vh monospace;
   color: orange;
   background: none;
   border: none;
@@ -78,8 +176,123 @@ div#controlsDiv button:focus {
 div#controlsDiv button:active {
   outline: none;
 }
-div#controlsDiv button#settingsButton {
+div#controlsDiv button.settingsButton, .settingsButton {
   color: grey;
+}
+#loginDiv {
+  background-color: lightgrey;
+  height: 100%;
+  text-align: center;
+  /* z-index: 1; */
+}
+#loginDiv * {
+  position: relative;
+  top: 30%;
+  font: 3.5vh monospace;
+}
+input[type=text] {
+  font: 3.5vh monospace !important;
+}
+#lobbyDiv {
+  background-color: lightgrey;
+  height: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 7fr 1fr;
+  grid-template-areas:
+    "players games"
+    "leave create";
+  font-size: 3vmin;
+  /* padding: 5vmin; */
+  /* box-sizing: border-box; */
+}
+#lobbyDiv button {
+  font-size: 100%;
+}
+#playersInLobbyDiv {
+  grid-area: players;
+}
+#gamesDiv {
+  grid-area: games;
+}
+#leaveLobbyButton {
+  grid-area: leave;
+}
+#newGameButton {
+  grid-area: create;
+}
+#waitingRoomDiv {
+  background-color: lightgrey;
+  height: 100%;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 7fr 1fr;
+  grid-template-areas:
+    "players x"
+    "leave start";
+  font-size: 3vmin;
+  /* padding: 5vmin; */
+  /* box-sizing: border-box; */
+}
+#playersInGameDiv {
+  grid-area: players;
+  padding: 5vmin;
+}
+#waitingRoomDiv button {
+  /* height: 5vmin;
+  width: 5vmin;
+  border: none; */
+  font-size: 100%;
+  /* width: 80%; */
+}
+#startGameButton {
+  grid-area: start;
+}
+#leaveGameButton {
+  grid-area: leave;
+}
+#waitingRoomDiv ul {
+  height: 50vh;
+  overflow-y: auto;
+  list-style-type: none;
+  margin-top: 5vmin;
+}
+#waitingRoomDiv li {
+  border: 2px solid;
+  border-radius: 7px;
+  height: 7vmin;
+  line-height: 7vmin;
+  padding: 7px;
+  margin: 7px;
+}
+#playersInLobbyDiv {
+  padding: 5vmin;
+  /* background: lightyellow; */
+  font-size: 3vmin;
+}
+#gamesDiv {
+  padding: 5vmin;
+  /* background: lightblue; */
+  font-size: 3vmin;
+}
+/* #gamesDiv button {
+  height: 5vmin;
+  width: 5vmin;
+  margin-left: 5vmin;
+  border: none;
+  font-size: 100%;
+} */
+#lobbyDiv ul {
+  height: 50vh;
+  overflow-y: auto;
+  list-style-type: none;
+  margin-top: 5vmin;
+}
+#lobbyDiv li {
+  border: 2px solid;
+  border-radius: 7px;
+  height: 7vmin;
+  line-height: 7vmin;
+  padding: 7px;
+  margin: 7px;
 }
 #popupContainer {
   position: fixed;
@@ -105,13 +318,16 @@ div#controlsDiv button#settingsButton {
 #popupContainer > div > * {
   font-size: 3vmin;
 }
-#popupContainer > div.log > * {
+#popupContainer > div > button {
+  font: 3.5vh monospace;
+}
+#popupContainer > div.log > *, #popupContainer > .settingsDiv > h1 {
   font-size: revert;
   font-family: monospace, monospace;
   margin: revert;
   padding: revert;
 }
-#settingsDiv input {
+.settingsDiv input {
   width: 30px;
   height: 30px;
   margin: 30px;
@@ -125,6 +341,10 @@ div#controlsDiv button#settingsButton {
   padding: 2rem;
   perspective: 600px;
   transform: scale(0.7);
+}
+#myApp2 .die-div {
+  padding: 0rem;
+  transform: scale(0.4);
 }
 .die-list {
   display: grid;
@@ -164,6 +384,15 @@ div#controlsDiv button#settingsButton {
 .revealed .die-item {
   background-color: yellow;
 }
+.pre-revealed .die-item {
+  background-color: #ffff99;
+}
+.lost .die-item {
+  background-color: #ff000080;
+}
+.gained .die-item {
+  background-color: #00ff0080;
+}
 .dot {
   align-self: center;
   background-color: blue;
@@ -173,6 +402,9 @@ div#controlsDiv button#settingsButton {
   justify-self: center;
   width:  75%;
   height: 75%;
+}
+.blank .dot {
+  display: none;
 }
 [data-side="1"] .dot {
   background-color: red;

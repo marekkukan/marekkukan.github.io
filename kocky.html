@@ -6,18 +6,22 @@
 <link rel="apple-touch-icon" href="icon192.png">
 <link rel="stylesheet" href="kocky.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <script src="shake.js"></script>
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 10px; right: 10px;">v0.5.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.0.0</div>
+<div id="networkStatusDiv" style="position: fixed; top: 7%; right: 1vmin; width: 2vmin; height: 2vmin; background: green; border-radius: 50%;"></div>
+<div id="connectionStatusDiv" style="position: fixed; top: 7%; right: 4vmin; width: 2vmin; height: 2vmin; background: grey; border-radius: 50%;"></div>
+<div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font-family: monospace;"></div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')" class="active">Season 2021</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')">Season 2021</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021', 'KC_')">Kocker Cup</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp()">Dice Roller</button>
-  <div></div>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp2()" class="active">Play Online</button>
   <div onclick="popup('changelogDiv')"></div>
 </div>
 
@@ -30,23 +34,89 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   <div id="controlsDiv">
     <div></div>
     <button onclick="addDice(-1)">-</button>
-    <button onclick="rollDice()" >@</button>
+    <button onclick="rollDice('.dice-roller')" >⟳</button>
     <button onclick="addDice(+1)">+</button>
-    <button id="settingsButton" onclick="popup('settingsDiv')">⚙</button>
+    <button class="settingsButton" onclick="popup('settingsDiv')">⚙</button>
   </div>
 </div>
+
+<div id="myApp2" style="display: none;">
+  <div id="loginDiv">
+    <input id="nickname" type="text" placeholder="nickname" maxlength="10" size="10">
+    <button id="loginButton" onclick="enterLobby(this)">enter lobby</button>
+  </div>
+
+  <div id="lobbyDiv" style="display: none;">
+    <div id="playersInLobbyDiv">
+      <h2>Players</h2>
+      <ul id="playersInLobbyList"></ul>
+    </div>
+    <div id="gamesDiv">
+      <h2>Games</h2>
+      <ul id="gamesList"></ul>
+    </div>
+    <button id="leaveLobbyButton" onclick="leaveLobby()">leave lobby</button>
+    <button id="newGameButton" onclick="popup('createGameDiv')">new game</button>
+  </div>
+
+  <div id="waitingRoomDiv" style="display: none;">
+    <div id="playersInGameDiv">
+      <h2>Players</h2>
+      <ul id="playersInGameList"></ul>
+    </div>
+    <button id="startGameButton" onclick="startGame()">start</button>
+    <button id="leaveGameButton" onclick="leaveGame()">leave</button>
+  </div>
+
+  <div id="gameDiv" style="display: none;">
+    <div id="playersDiv"></div>
+    <div id="gameControlsDiv">
+      <div id="bidQuantityDiv" style="grid-area: f;" data-value="1">1</div>
+      <div id="bidQuantityUpDiv" style="grid-area: a;">▲</div>
+      <div id="bidQuantityDownDiv" style="grid-area: k;">▼</div>
+      <div id="bidNumberDiv" style="grid-area: g;" data-value="2">⚁</div>
+      <div id="bidNumberUpDiv" style="grid-area: b;">▲</div>
+      <div id="bidNumberDownDiv" style="grid-area: l;">▼</div>
+      <button id="bidButton" disabled style="grid-area: c;">✓</button>
+      <button id="challengeButton" disabled style="grid-area: d;">✖</button>
+      <button id="rollButton" disabled style="grid-area: e;">⟳</button>
+      <div onclick="popup('gamelogDiv')" style="grid-area: i;">📖</div>
+      <div class="settingsButton" onclick="popup('settingsDiv2')" style="grid-area: j;">⚙</div>
+    </div>
+  </div>
+</div>
+
 <div id="popupContainer" style="display: none;">
-  <div id="settingsDiv" style="display: none;" onclick="event.stopPropagation()">
+  <div class="settingsDiv" id="settingsDiv" style="display: none;" onclick="event.stopPropagation()">
+    <h1>settings</h1>
     <label><input id="setting1" type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br>
     <label><input id="setting2" type="checkbox" oninput="toggleMoveSetting(this.checked)">move revealed dice up</label><br>
   </div>
+  <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="event.stopPropagation()">
+    <h1>settings</h1>
+    <!-- <label><input type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br> -->
+  </div>
+  <div id="createGameDiv" style="display: none;" onclick="event.stopPropagation()">
+    <h3>creating a game</h3><br><br>
+    <input id="createGamePassword" type="text" placeholder="choose password" size="15">
+    <button id="createGameButton" onclick="createGame(this)">create</button>
+  </div>
+  <div id="joinGameDiv" style="display: none;" onclick="event.stopPropagation()">
+    <h3>joining <span id="joinGameCreator"></span>'s game</h3><br><br>
+    <input id="joinGamePassword" type="text" placeholder="enter password" size="15">
+    <button id="joinGameButton" onclick="joinGame(this)">join</button>
+  </div>
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
-    <h4>v0.5.0</h4>
+    <h4>v1.0.0 [2021-12-20]</h4>
+    <ul>
+      <li>added Play Online app</li>
+    </ul>
+    <h4>v0.5.0 [2021-12-19]</h4>
     <ul>
       <li>Dice Roller settings are now persistent</li>
     </ul>
-    <h4>v0.4.0</h4>
+    <h4>v0.4.0 [2021-12-10]</h4>
     <ul>
       <li>added changelog</li>
       <li>removed zoom on double tap</li>
@@ -57,6 +127,9 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
+  </div>
+  <div id="gamelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1>gamelog</h1>
   </div>
 </div>
 
