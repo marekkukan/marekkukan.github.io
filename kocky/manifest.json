@@ -1,7 +1,7 @@
 {
   "name": "Kocky",
   "short_name": "Kocky",
-  "start_url": "./kocky.html",
+  "start_url": "./index.html",
   "background_color": "#665646",
   "theme_color": "#665646",
   "display": "fullscreen",
