@@ -49,6 +49,7 @@ function displayGraph(season, prefix = "") {
   var spreadsheetId;
   if (season == "2020") spreadsheetId = "1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU";
   if (season == "2021") spreadsheetId = "1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M";
+  if (season == "2022") spreadsheetId = "1mVjQi_iY3BpdJO58tXPjmBONose6rMCHtmw3NLvGysY";
   var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:Z100&ranges=${prefix}kumulativne%20body!B2:Z100&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(
     url,
