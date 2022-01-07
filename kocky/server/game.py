@@ -111,9 +111,9 @@ class Game:
             for die in dice:
                 self.cp().hidden_dice.remove(die)
                 self.cp().revealed_dice.append(die)
+            self.cp().roll()
             await self.broadcast_state()
             await self.broadcast('PLAYER_REVEALS ' + self.cp().nickname + ' ' + ' '.join(parts[1:]))
-            self.cp().roll()
             await self.eval_move(await self.cp().play(), False, False)
         elif parts[0] == 'CHALLENGE':
             if not challenge_possible:
