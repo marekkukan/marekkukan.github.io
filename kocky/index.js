@@ -1,4 +1,5 @@
 const DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'};
+const CLOCK_DELAY = 15;
 
 var colors = [
     '#0000FF', //blue
@@ -263,8 +264,9 @@ function generatePlayerDiv(player) {
   playerDiv.innerHTML = `
       <div class="playerNameDiv" style="grid-area: name;">${player.nickname}</div>
       <div class="playerActionDiv" style="grid-area: action;">${bid}</div>
-      <div class="playerTimeDiv" style="grid-area: time;">${player.time}</div>
+      <div class="playerTimeDiv" style="grid-area: time;">${toMMSS(player.time)}</div>
       <div class="playerDiceDiv" style="grid-area: dice;"></div>`
+  var playerTimeDiv = playerDiv.querySelector('.playerTimeDiv');
   var playerDiceDiv = playerDiv.querySelector('.playerDiceDiv');
   player.revealedDice.forEach(roll => playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(roll, 'revealed')));
   player.unrevealedDice.forEach(roll => playerDiceDiv.insertAdjacentElement('beforeend', generateDieDiv(roll, 'unrevealed')));
@@ -281,8 +283,31 @@ function generatePlayerDiv(player) {
   if (player.isCurrentPlayer) {
     playerDiv.classList.add('currentPlayer');
     // playerDiv.style.background = 'rgba(255, 255, 255, 0.2)';
+    var div = document.createElement('div');
+    div.style = 'grid-area: time; position: relative; border: none; background: #00ff0040;';
+    var w = 100 * player.delay / CLOCK_DELAY;
+    div.style.width = `${w}%`;
+    playerDiv.insertAdjacentElement('beforeend', div);
+    if (gInterval !== null) clearInterval(gInterval);
+    gInterval = setInterval(() => {
+      w -= 1;
+      if (w < 0) {
+        div.style.width = '0';
+        var time = 0;
+        clearInterval(gInterval);
+        gInterval = setInterval(() => {
+          time += 1;
+          playerTimeDiv.innerHTML = toMMSS(player.time - time);
+        }, 1000);
+      }
+      div.style.width = `${w}%`;
+    }, 10 * CLOCK_DELAY);
   }
   return playerDiv;
+}
+
+function toMMSS(seconds) {
+  return new Date(seconds * 1000).toISOString().substr(14, 5);
 }
 
 function processGameState(state) {
@@ -603,6 +628,7 @@ var gMyTurn = false;
 var gRolled = false;
 var gRevealed = false;
 var gMyHiddenDice = [];
+var gInterval = null;
 
 
 function processBidChange() {

@@ -17,6 +17,8 @@ class Game:
         self.finished = False
         self.finished_round = False
         self.cpi = 0
+        self.time = 600
+        self.delay = 15
 
     def state(self):
         state = {
@@ -26,7 +28,8 @@ class Game:
             'players': [{
                 'nickname': player.nickname,
                 'bid': bid2dict(player.bid),
-                'time': player.time,
+                'time': player.get_current_time(),
+                'delay': player.get_current_delay(),
                 'numberOfDice': player.n_dice,
                 'revealedDice': player.revealed_dice,
                 'unrevealedDice': player.hidden_dice if self.finished_round else [],
@@ -50,7 +53,7 @@ class Game:
             player.n_dice = 6
             # player.hidden_dice = []
             player.revealed_dice = []
-            player.time = 600
+            player.time = self.time
         while not self.finished:
             await self.play_round()
         await self.broadcast_state()
@@ -174,5 +177,5 @@ class Game:
             await self.cp().socket.send('INVALID_MOVE')
         except websockets.ConnectionClosed:
             pass
-        new_move = await self.cp().play()
+        new_move = await self.cp().play(previous_move_invalid=True)
         return new_move

@@ -47,6 +47,7 @@ players:
         quantity: 8
         number: 6
     time: 120
+    delay: 15
     numberOfDice: 6
     revealedDice: [1, 1, 6]
     unrevealedDice: []
@@ -56,6 +57,7 @@ players:
         quantity: 4
         number: 1
     time: 88
+    delay: 4
     numberOfDice: 5
     revealedDice: []
     unrevealedDice: []
