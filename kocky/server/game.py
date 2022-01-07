@@ -30,7 +30,7 @@ class Game:
                 'numberOfDice': player.n_dice,
                 'revealedDice': player.revealed_dice,
                 'unrevealedDice': player.hidden_dice if self.finished_round else [],
-                'isCurrentPlayer': player == self.cp()
+                'isCurrentPlayer': player == self.cp() and not self.finished_round
             } for player in self.players]}
         return json.dumps(state)
 
