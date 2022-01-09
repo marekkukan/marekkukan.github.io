@@ -282,25 +282,33 @@ function generatePlayerDiv(player) {
   }
   if (player.isCurrentPlayer) {
     playerDiv.classList.add('currentPlayer');
-    // playerDiv.style.background = 'rgba(255, 255, 255, 0.2)';
+    var clockTimeAnchor = Date.now();
+    var time = 0;
+    var w = 100 * player.delay / CLOCK_DELAY;
+    document.onvisibilitychange = function () {
+      if (document.visibilityState === 'visible') {
+        var t1 = Math.round((Date.now() - clockTimeAnchor) / 1000) - 1;
+        var t2 = Math.round((Date.now() - clockTimeAnchor) / (10 * CLOCK_DELAY));
+        time = Math.max(0, t1 - player.delay);
+        w = 100 * player.delay / CLOCK_DELAY - t2;
+      }
+    };
     var div = document.createElement('div');
     div.style = 'grid-area: time; position: relative; border: none; background: #00ff0040;';
-    var w = 100 * player.delay / CLOCK_DELAY;
     div.style.width = `${w}%`;
     playerDiv.insertAdjacentElement('beforeend', div);
-    if (gInterval !== null) clearInterval(gInterval);
     gInterval = setInterval(() => {
       w -= 1;
       if (w < 0) {
         div.style.width = '0';
-        var time = 0;
         clearInterval(gInterval);
         gInterval = setInterval(() => {
           time += 1;
           playerTimeDiv.innerHTML = toMMSS(player.time - time);
         }, 1000);
+      } else {
+        div.style.width = `${w}%`;
       }
-      div.style.width = `${w}%`;
     }, 10 * CLOCK_DELAY);
   }
   return playerDiv;
@@ -311,7 +319,7 @@ function toMMSS(seconds) {
 }
 
 function processGameState(state) {
-  // TODO handle state.finished(Round)
+  if (gInterval !== null) clearInterval(gInterval);
   if (!gRolled) document.getElementById('rollButton').disabled = false;
   if (state.finished) setTimeout(() => {displayLobby();}, 10000);
   if (state.finishedRound) {
