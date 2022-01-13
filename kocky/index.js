@@ -412,6 +412,7 @@ function connectToServer() {
         displayLobby();
       }
       socket.send('GAME_STATE');
+      socket.send('GAME_LOG');
     }
     else if (message.startsWith('RECONNECT_ERROR ')) {
       leaveLobby();
@@ -442,7 +443,13 @@ function connectToServer() {
     }
     else if (message.startsWith("GAME_STATE ")) {
       displayGame();
-      processGameState(JSON.parse(message.slice(11)))
+      processGameState(JSON.parse(message.slice(11)));
+    }
+    else if (message.startsWith("GAME_LOG_RECORD ")) {
+      document.getElementById('gamelogP').insertAdjacentHTML('afterbegin', message.slice(16));
+    }
+    else if (message.startsWith("GAME_LOG ")) {
+      document.getElementById('gamelogP').innerHTML = message.slice(9);
     }
     else if (message.startsWith('ROLL ')) {
       gMyHiddenDice = msg2array(message).map(x => parseInt(x));

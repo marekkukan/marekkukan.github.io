@@ -84,6 +84,7 @@ async def join_game(player, message):
 
 async def leave_game(player):
     if player.game is None: return
+    log(f'{player.nickname} left {player.game.creator.nickname}\'s game')
     game = player.game
     game.players.remove(player)
     player.game = None
@@ -135,8 +136,9 @@ async def handler(socket, path):
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None and player.game.started:
                     await socket.send('GAME_STATE ' + player.game.state())
+                elif message == 'GAME_LOG' and player.game is not None and player.game.started:
+                    await socket.send('GAME_LOG ' + player.game.log)
                 elif message.startswith('BID ') or message.startswith('REVEAL ') or message.startswith('CHALLENGE'):
-                    log(f'player {player.nickname} makes move {message}')
                     player.move.set_result(message)
     except websockets.ConnectionClosed:
         pass

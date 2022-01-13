@@ -13,6 +13,8 @@
  | `BID 8 6` | bid eight sixes |
  | `CHALLENGE` | challenge |
  | `REVEAL 1 1 6` | reveal two ones and one six |
+ | `GAME_STATE` | request for `GAME_STATE` |
+ | `GAME_LOG` | request for `GAME_LOG` |
 
 ## server -> client
 
@@ -29,7 +31,9 @@
 | `JOIN_GAME_ERROR error` | specific player | couldn't join the game because of `error` |
 | `GAME_ABANDONED` | everyone in this game | game is canceled (creator has left) |
 | `GAME_STARTED` | everyone in this game | game has started |
-| `GAME_STATE <json>` | everyone in this game | current state of the game |
+| `GAME_STATE <json>` | everyone in this game / specific player | current state of the game |
+| `GAME_LOG_RECORD record` | everyone in this game | latest `record` of the gamelog |
+| `GAME_LOG gamelog` | specific player | entire `gamelog` |
 | `ROLL 5 2 1 2` | specific player | you rolled `5 2 1 2` |
 | `INVALID_MOVE` | specific player | you played an invalid move |
 

@@ -3,7 +3,9 @@ import websockets
 import random
 import json
 from bid import Bid, bid2dict
-from utils import log
+from utils import log, get_time
+
+DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'}
 
 
 class Game:
@@ -19,6 +21,7 @@ class Game:
         self.cpi = 0
         self.time = 600
         self.delay = 15
+        self.log = ''
 
     def state(self):
         state = {
@@ -42,6 +45,11 @@ class Game:
 
     async def broadcast_state(self):
         await self.broadcast('GAME_STATE ' + self.state())
+
+    async def record(self, message, dice_table = ''):
+        record = dice_table + get_time() + ' ' + self.cp().nickname + ' ' + message + '<br>'
+        self.log = record + self.log
+        await self.broadcast('GAME_LOG_RECORD ' + record)
 
     async def start(self):
         self.started = True
@@ -71,7 +79,6 @@ class Game:
             self.cpi = (self.cpi + 1) % len(self.players)
 
     async def play_round(self):
-        await self.broadcast('NEW_ROUND')
         self.finished_round = False
         self.bid = Bid(0, 6)
         for i, p in enumerate(self.players):
@@ -99,7 +106,7 @@ class Game:
                 return
             self.bid = bid
             self.cp().bid = bid
-            await self.broadcast('PLAYER_BIDS ' + self.cp().nickname + ' ' + str(bid))
+            await self.record('bids ' + str(bid.quantity) + DICE_DICT[bid.number])
         elif parts[0] == 'REVEAL':
             try:
                 assert reveal_possible
@@ -116,19 +123,21 @@ class Game:
                 self.cp().revealed_dice.append(die)
             self.cp().roll()
             await self.broadcast_state()
-            await self.broadcast('PLAYER_REVEALS ' + self.cp().nickname + ' ' + ' '.join(parts[1:]))
+            await self.record('reveals ' + ' '.join(DICE_DICT[x] for x in dice))
             await self.eval_move(await self.cp().play(), False, False)
         elif parts[0] == 'CHALLENGE':
             if not challenge_possible:
                 await self.eval_move(await self.invalid_move(move), challenge_possible, reveal_possible)
                 return
             self.finished_round = True
-            await self.broadcast('PLAYER_CHALLENGES ' + self.cp().nickname)
             await self.broadcast_state()
             await asyncio.sleep(4 * (self.n_players - 1))
+            dice_table = '<br><pre>'
             for i in range(self.n_players):
-                await self.broadcast('PLAYER_HAD ' + self.cp().nickname + ' ' + ' '.join(str(x) for x in self.cp().hidden_dice))
+                dice_table += f'{self.cp().nickname.ljust(11)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
                 self.shift_cpi()
+            dice_table += '</pre><br>'
+            await self.record('challenges', dice_table)
             all_dice = []
             for p in self.players:
                 all_dice.extend(p.revealed_dice)
@@ -150,10 +159,11 @@ class Game:
                 bid = Bid(self.bid.quantity + 1, self.bid.number)
                 self.bid = bid
                 self.cp().bid = bid
-                await self.broadcast('PLAYER_BIDS ' + self.cp().nickname + ' ' + str(bid))
+                await self.record('bids ' + str(bid.quantity) + DICE_DICT[bid.number])
         elif parts[0] == '_SURRENDER':
             self.finished_round = True
             self.cp().n_dice = 0
+            await self.record('surrenders')
             await self.check_if_loses()
             await asyncio.sleep(4)
         else:
@@ -164,12 +174,11 @@ class Game:
             self.cp().n_dice = 0
             self.cp().hidden_dice = []
             self.n_players -= 1
-            # await self.cp().socket.send('YOU_LOSE')
+            await self.record('lost')
             self.shift_cpi()
             if self.n_players < 2:
                 self.finished = True
-                self.winner = self.cp()
-                # await self.cp().socket.send('YOU_WIN')
+                await self.record('won')
 
     async def invalid_move(self, move):
         log('invalid move by player ' + self.cp().nickname + ' (' + move + ')')
