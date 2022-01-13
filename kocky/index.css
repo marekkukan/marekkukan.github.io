@@ -73,8 +73,25 @@ div#controlsDiv {
   background: repeating-linear-gradient(#625242 0%, #665646 1%, #685848 2%);
   /* z-index: 2; */
 }
+div#diceCounterDiv {
+  height: 3%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  text-align: center;
+  font: 1.6vh monospace;
+  background: #FFD580;
+}
+div#diceCounterDiv div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+div#diceCounterDiv div.highlighted {
+  background: orange;
+}
 div#playersDiv {
-  height: 80%;
+  height: 77%;
 }
 div.playerDiv {
   width: 100%;

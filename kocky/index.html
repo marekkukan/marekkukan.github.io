@@ -70,6 +70,16 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
 
   <div id="gameDiv" style="display: none;">
+    <div id="diceCounterDiv">
+      <div><span id="counterAll"></span>■</div>
+      <div><span id="counterBlank"></span>□</div>
+      <div id="counter1Div"><span id="counter1"></span>⚀</div>
+      <div id="counter2Div"><span id="counter2"></span>⚁</div>
+      <div id="counter3Div"><span id="counter3"></span>⚂</div>
+      <div id="counter4Div"><span id="counter4"></span>⚃</div>
+      <div id="counter5Div"><span id="counter5"></span>⚄</div>
+      <div id="counter6Div"><span id="counter6"></span>⚅</div>
+    </div>
     <div id="playersDiv"></div>
     <div id="gameControlsDiv">
       <div id="bidQuantityDiv" style="grid-area: f;" data-value="1">1</div>
@@ -95,7 +105,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="event.stopPropagation()">
     <h1>settings</h1>
-    <!-- <label><input type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br> -->
+    <label><input id="setting3" type="checkbox" oninput="toggleSetting3(this.checked)">show dice counter</label><br>
   </div>
   <div id="createGameDiv" style="display: none;" onclick="event.stopPropagation()">
     <h3>creating a game</h3><br><br>

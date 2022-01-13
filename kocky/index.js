@@ -157,6 +157,12 @@ function toggleMoveSetting(checked) {
   document.styleSheets[0].cssRules[0].style.top = checked ? "-32vh" : "0";
 }
 
+function toggleSetting3(checked) {
+  localStorage.setItem('setting3', checked);
+  document.getElementById('diceCounterDiv').style.display = checked ? 'grid' : 'none';
+  document.getElementById('playersDiv').style.height = checked ? '77%' : '80%';
+}
+
 function requestPermission() {
   if (typeof DeviceMotionEvent !== 'undefined' &&
       typeof DeviceMotionEvent.requestPermission === 'function') {
@@ -343,6 +349,24 @@ function processGameState(state) {
   } else {
     disableButtons();
   }
+  // update dice counter
+  document.getElementById('counterAll').innerHTML = document.querySelectorAll('div.die-div:not(.dice-roller)').length;
+  document.getElementById('counterBlank').innerHTML = document.querySelectorAll('div.die-div:not(.dice-roller).blank').length;
+  var dice = [...document.querySelectorAll('div.die-div:not(.dice-roller).revealed, div.die-div:not(.dice-roller).unrevealed')];
+  var counter1 = dice.filter(x => x.firstElementChild.dataset.roll == '1').length;
+  document.getElementById('counter1').innerHTML = counter1;
+  document.getElementById('counter2').innerHTML = dice.filter(x => x.firstElementChild.dataset.roll == '2').length + counter1;
+  document.getElementById('counter3').innerHTML = dice.filter(x => x.firstElementChild.dataset.roll == '3').length + counter1;
+  document.getElementById('counter4').innerHTML = dice.filter(x => x.firstElementChild.dataset.roll == '4').length + counter1;
+  document.getElementById('counter5').innerHTML = dice.filter(x => x.firstElementChild.dataset.roll == '5').length + counter1;
+  document.getElementById('counter6').innerHTML = dice.filter(x => x.firstElementChild.dataset.roll == '6').length + counter1;
+  document.getElementById('counter1Div').classList.remove('highlighted');
+  document.getElementById('counter2Div').classList.remove('highlighted');
+  document.getElementById('counter3Div').classList.remove('highlighted');
+  document.getElementById('counter4Div').classList.remove('highlighted');
+  document.getElementById('counter5Div').classList.remove('highlighted');
+  document.getElementById('counter6Div').classList.remove('highlighted');
+  if (state.currentBid.quantity != 0) document.getElementById(`counter${state.currentBid.number}Div`).classList.add('highlighted');
 }
 
 
@@ -456,6 +480,7 @@ function connectToServer() {
       var dice = document.querySelectorAll('.my-die.blank');
       setTimeout(() => {
         for (die of dice) die.classList.remove('blank');
+        document.getElementById('counterBlank').innerHTML = document.querySelectorAll('div.die-div:not(.dice-roller).blank').length;
         rollDice('.my-die', gMyHiddenDice);
       }, 50);
     }
@@ -690,6 +715,8 @@ window.addEventListener('load', (e) => {
   document.getElementById('setting1').oninput();
   document.getElementById('setting2').checked = localStorage.getItem('setting2') === 'true';
   document.getElementById('setting2').oninput();
+  document.getElementById('setting3').checked = localStorage.getItem('setting3') === 'true';
+  document.getElementById('setting3').oninput();
   var nickname = localStorage.getItem('nickname');
   if (nickname) {
     myNickname = nickname;
