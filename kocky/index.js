@@ -64,6 +64,7 @@ function displayGraph(season, prefix = "") {
         lowestScore = Math.min(...data.valueRanges[1].values.map(x => Math.min(...x.map(parseFloat))));
         highestScore = Math.max(...data.valueRanges[1].values.map(x => Math.max(...x.map(parseFloat))));
         numberOfGames = data.valueRanges[1].values[0].length - 1;
+        ctx.fillText('games: ' + numberOfGames, 50, 50);
         var dx = 0.8 * canvas.width / numberOfGames;
         var sx = 0.02 * canvas.width;
         var sy = 0.9 * canvas.height * highestScore / (highestScore - lowestScore) + 0.05 * canvas.height;
