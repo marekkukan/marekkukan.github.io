@@ -131,13 +131,13 @@ class Game:
                 return
             self.finished_round = True
             await self.broadcast_state()
-            await asyncio.sleep(4 * (self.n_players - 1))
             dice_table = '<br><pre>'
             for i in range(self.n_players):
                 dice_table += f'{self.cp().nickname.ljust(11)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
                 self.shift_cpi()
             dice_table += '</pre><br>'
             await self.record('challenges', dice_table)
+            await asyncio.sleep(max(5, 0.7 * self.n_dice))
             all_dice = []
             for p in self.players:
                 all_dice.extend(p.revealed_dice)
