@@ -106,6 +106,12 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="event.stopPropagation()">
     <h1>settings</h1>
     <label><input id="setting3" type="checkbox" oninput="toggleSetting3(this.checked)">show dice counter</label><br>
+    <ul>ask for confirmation when I
+      <li><label><input id="setting4" type="checkbox" checked oninput="toggleSetting4(this.checked)">bid</label></li>
+      <li><label><input id="setting5" type="checkbox" checked oninput="toggleSetting5(this.checked)">challenge</label></li>
+      <li><label><input id="setting6" type="checkbox" checked oninput="toggleSetting6(this.checked)">reveal</label></li>
+      <li><label><input id="setting7" type="checkbox" checked oninput="toggleSetting7(this.checked)">bid higher than necessary</label></li>
+    </ul>
   </div>
   <div id="createGameDiv" style="display: none;" onclick="event.stopPropagation()">
     <h3>creating a game</h3><br><br>
@@ -161,6 +167,9 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   <div id="gamelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1>gamelog</h1>
     <p id="gamelogP" style="font-size: 1.6vmax;"></p>
+  </div>
+  <div id="confirmDiv" style="display: none;">
+    <p id="confirmP" style="font: 3vh monospace;"></p>
   </div>
 </div>
 

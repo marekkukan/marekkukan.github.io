@@ -163,6 +163,23 @@ function toggleSetting3(checked) {
   document.getElementById('playersDiv').style.height = checked ? '77%' : '80%';
 }
 
+function toggleSetting4(checked) {
+  localStorage.setItem('setting4', checked);
+  gConfirmB = checked;
+}
+function toggleSetting5(checked) {
+  localStorage.setItem('setting5', checked);
+  gConfirmC = checked;
+}
+function toggleSetting6(checked) {
+  localStorage.setItem('setting6', checked);
+  gConfirmR = checked;
+}
+function toggleSetting7(checked) {
+  localStorage.setItem('setting7', checked);
+  gConfirmBB = checked;
+}
+
 function requestPermission() {
   if (typeof DeviceMotionEvent !== 'undefined' &&
       typeof DeviceMotionEvent.requestPermission === 'function') {
@@ -557,9 +574,9 @@ function popupJoinGame(creator) {
   popup('joinGameDiv');
 }
 
-function popup(divId) {
+function popup(divId, display = 'block') {
   document.getElementById('popupContainer').style.display = "block";
-  document.getElementById(divId).style.display = "block";
+  document.getElementById(divId).style.display = display;
 }
 
 document.getElementById('popupContainer').addEventListener('click', (e) => {
@@ -598,6 +615,20 @@ document.getElementById('bidNumberDownDiv').addEventListener('click', (e) => {
 })
 
 
+function confirmMove(needsConfirmation, moveString, moveFunction) {
+  if (needsConfirmation) {
+    document.getElementById('confirmP').innerHTML = moveString;
+    document.getElementById('confirmDiv').onclick = (e) => {
+      e.stopPropagation();
+      document.getElementById('popupContainer').click();
+      moveFunction();
+    };
+    popup('confirmDiv', 'flex');
+  } else {
+    moveFunction();
+  }
+}
+
 function processReveal() {
   var dice = document.querySelectorAll('.pre-revealed');
   if (dice.length > 0) {
@@ -618,23 +649,43 @@ function processReveal() {
   }
 }
 document.getElementById('bidButton').addEventListener('click', (e) => {
-  disableButtons()
-  processReveal();
-  gRevealed = false;
-  var q = document.getElementById('bidQuantityDiv').dataset.value;
-  var n = document.getElementById('bidNumberDiv').dataset.value;
-  setTimeout(() => {socket.send(`BID ${q} ${n}`);}, 100);
+  var q = document.getElementById('bidQuantityDiv').dataset.value - 0;
+  var n = document.getElementById('bidNumberDiv').dataset.value - 0;
+  var moveString = 'bid ' + q + DICE_DICT[n];
+  var needsConfirmation = gConfirmB || (gConfirmBB && isBigBid({'quantity': q, 'number': n}));
+  var dice = document.querySelectorAll('.pre-revealed');
+  if (dice.length > 0) {
+    moveString = 'reveal ' + [...dice].map(x => DICE_DICT[x.firstElementChild.dataset.roll-0]).join(' ') + '<br>' + moveString;
+    needsConfirmation = gConfirmR || needsConfirmation;
+  }
+  confirmMove(needsConfirmation, moveString, () => {
+    disableButtons()
+    processReveal();
+    gRevealed = false;
+    setTimeout(() => {socket.send(`BID ${q} ${n}`);}, 100);
+  });
 })
 document.getElementById('challengeButton').addEventListener('click', (e) => {
-  disableButtons();
-  gRevealed = false;
-  socket.send(`CHALLENGE`);
+  confirmMove(gConfirmC, 'challenge', () => {
+    disableButtons();
+    gRevealed = false;
+    socket.send(`CHALLENGE`);
+  });
 })
 document.getElementById('rollButton').addEventListener('click', (e) => {
-  processReveal();
-  gRolled = true;
-  document.getElementById('rollButton').disabled = true;
-  setTimeout(() => {socket.send(`ROLL`);}, 100);
+  var moveString = '';
+  var needsConfirmation = false;
+  var dice = document.querySelectorAll('.pre-revealed');
+  if (dice.length > 0) {
+    moveString = 'reveal ' + [...dice].map(x => DICE_DICT[x.firstElementChild.dataset.roll-0]).join(' ');
+    needsConfirmation = gConfirmR;
+  }
+  confirmMove(needsConfirmation, moveString, () => {
+    processReveal();
+    gRolled = true;
+    document.getElementById('rollButton').disabled = true;
+    setTimeout(() => {socket.send(`ROLL`);}, 100);
+  });
 })
 
 function enableButtons() {
@@ -663,6 +714,7 @@ document.getElementById("joinGamePassword").addEventListener("keydown", (e) => {
 
 
 var bidValue = bid => 6 * bid.quantity * (1 + (bid.number == 1)) + bid.number;
+var isBigBid = bid => bidValue({'quantity': bid.quantity - 1, 'number': bid.number}) > bidValue(gCurrentBid)
 var gCurrentBid = {'quantity': 0, 'number': 6};
 var gMyBid = {'quantity': 1, 'number': 2};
 var gMyTurn = false;
@@ -711,12 +763,12 @@ function storageAvailable(type) {
 window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  document.getElementById('setting1').checked = localStorage.getItem('setting1') === 'true';
-  document.getElementById('setting1').oninput();
-  document.getElementById('setting2').checked = localStorage.getItem('setting2') === 'true';
-  document.getElementById('setting2').oninput();
-  document.getElementById('setting3').checked = localStorage.getItem('setting3') === 'true';
-  document.getElementById('setting3').oninput();
+  for (let i = 1; i < 8; i++) {
+    var element = document.getElementById(`setting${i}`);
+    var storedValue = localStorage.getItem(`setting${i}`);
+    if (storedValue !== null) element.checked = storedValue === 'true';
+    element.oninput();
+  }
   var nickname = localStorage.getItem('nickname');
   if (nickname) {
     myNickname = nickname;
