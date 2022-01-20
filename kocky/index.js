@@ -341,10 +341,10 @@ function processGameState(state) {
   var playersDiv = document.getElementById('playersDiv');
   playersDiv.replaceChildren(...players.map(x => generatePlayerDiv(x)));
   // enable / disable buttons
-  gCurrentBidValue = bidValue(state.currentBid);
+  gCurrentBid = state.currentBid;
   gMyTurn = state.players[myIndex].isCurrentPlayer;
   if (gMyTurn) {
-    document.getElementById('bidButton').disabled = gMyBidValue <= gCurrentBidValue;
+    document.getElementById('bidButton').disabled = bidValue(gMyBid) <= bidValue(gCurrentBid);
     document.getElementById('challengeButton').disabled = (state.currentBid.quantity == 0 || gRevealed);
   } else {
     disableButtons();
@@ -663,8 +663,8 @@ document.getElementById("joinGamePassword").addEventListener("keydown", (e) => {
 
 
 var bidValue = bid => 6 * bid.quantity * (1 + (bid.number == 1)) + bid.number;
-var gCurrentBidValue = 6;
-var gMyBidValue = 8;
+var gCurrentBid = {'quantity': 0, 'number': 6};
+var gMyBid = {'quantity': 1, 'number': 2};
 var gMyTurn = false;
 var gRolled = false;
 var gRevealed = false;
@@ -675,9 +675,9 @@ var gInterval = null;
 function processBidChange() {
   var q = document.getElementById('bidQuantityDiv').dataset.value - 0;
   var n = document.getElementById('bidNumberDiv').dataset.value - 0;
-  gMyBidValue = bidValue({'quantity': q, 'number': n});
+  gMyBid = {'quantity': q, 'number': n};
   if (gMyTurn) {
-    document.getElementById('bidButton').disabled = gMyBidValue <= gCurrentBidValue;
+    document.getElementById('bidButton').disabled = bidValue(gMyBid) <= bidValue(gCurrentBid);
   }
 }
 
