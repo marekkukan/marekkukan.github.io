@@ -28,6 +28,12 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 ctx.save();
 
+var gLabelAllPoints = false;
+canvas.addEventListener('click', (e) => {
+  gLabelAllPoints = !gLabelAllPoints
+  drawGraph(gData);
+});
+
 function displayApp() {
   app.style.display = "block";
   app2.style.display = "none";
@@ -52,75 +58,100 @@ function displayGraph(season, prefix = "") {
   if (season == "2021") spreadsheetId = "1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M";
   if (season == "2022") spreadsheetId = "1mVjQi_iY3BpdJO58tXPjmBONose6rMCHtmw3NLvGysY";
   var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:Z100&ranges=${prefix}kumulativne%20body!B2:Z100&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
-  $.get(
-    url,
-    function(data) {
-        ctx.restore();
-        ctx.save();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 2vmin sans-serif';
-        c = 0;
-        labels = [];
-        lowestScore = Math.min(...data.valueRanges[1].values.map(x => Math.min(...x.map(parseFloat))));
-        highestScore = Math.max(...data.valueRanges[1].values.map(x => Math.max(...x.map(parseFloat))));
-        numberOfGames = data.valueRanges[1].values[0].length - 1;
-        ctx.fillText('games: ' + numberOfGames, 50, 50);
-        var dx = 0.8 * canvas.width / numberOfGames;
-        var sx = 0.02 * canvas.width;
-        var sy = 0.9 * canvas.height * highestScore / (highestScore - lowestScore) + 0.05 * canvas.height;
-        var my = 0.9 * canvas.height / (highestScore - lowestScore);
-        for ([idx, column] of data.valueRanges[0].values.entries()) {
-            c %= colors.length;
-            ctx.strokeStyle = colors[c++];
-            ctx.fillStyle = ctx.strokeStyle;
-            ctx.lineWidth = 4;
-            var x = sx;
-            var y = sy;
-            var started = false;
-            for (i of column.slice(2)) {
-                if (!started && i == "") {
-                  x += dx;
-                  continue;
-                }
-                if (!started) {
-                  ctx.beginPath();
-                  ctx.arc(x, y, 6, 0, 2 * Math.PI);
-                  ctx.fill();
-                  started = true;
-                }
-                ctx.beginPath();
-                ctx.moveTo(x, y);
-                ctx.setLineDash([]);
-                if (i == "") {
-                    i = "0";
-                    ctx.setLineDash([1, 3]);
-                }
-                x = x + dx;
-                y = y - my*parseFloat(i);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(x, y, 2, 0, 2 * Math.PI);
-                ctx.fill();
+  gNumberOfGamesToQualify = prefix == "" ? 6 : 0;
+  $.get(url, (data) => {gData = data; drawGraph(data);});
+}
+
+function drawGraph(data) {
+    ctx.restore();
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = 'bold 2vmin sans-serif';
+    ctx.textBaseline = 'middle';
+    var c = 0;
+    var labels = [];
+    var lowestScore = Math.min(...data.valueRanges[1].values.map(x => Math.min(...x.map(parseFloat))));
+    var highestScore = Math.max(...data.valueRanges[1].values.map(x => Math.max(...x.map(parseFloat))));
+    var numberOfGames = data.valueRanges[1].values[0].length - 1;
+    var currentHighestScore = Math.max(...data.valueRanges[1].values.map(x => parseFloat(x[numberOfGames])));
+    ctx.fillText('games: ' + numberOfGames, 50, 50);
+    var dx = 0.8 * canvas.width / numberOfGames;
+    var sx = 0.02 * canvas.width;
+    var sy = 0.9 * canvas.height * highestScore / (highestScore - lowestScore) + 0.05 * canvas.height;
+    var my = 0.9 * canvas.height / (highestScore - lowestScore);
+    for ([idx, column] of data.valueRanges[0].values.entries()) {
+        c %= colors.length;
+        var color = colors[c++];
+        if (column.filter(x => x != "").length < gNumberOfGamesToQualify + 1) color = 'grey';
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 4;
+        var x = sx;
+        var y = sy;
+        var started = false;
+        for ([ii, i] of column.slice(2).entries()) {
+            if (!started && i == "") {
+              x += dx;
+              continue;
             }
-            if (column.length > 0) labels.push([column[0] + ' (' + data.valueRanges[1].values[idx][numberOfGames] + ')', x+5, y+5]);
+            if (!started) {
+              ctx.beginPath();
+              ctx.arc(x, y, 6, 0, 2 * Math.PI);
+              ctx.fill();
+              started = true;
+            }
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.setLineDash([]);
+            if (i == "") {
+                i = "0";
+                ctx.setLineDash([1, 3]);
+            }
+            x = x + dx;
+            y = y - my*parseFloat(i);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            if (gLabelAllPoints && parseFloat(i) != 0 && ii < column.length - 3) {
+                ctx.fillText(data.valueRanges[1].values[idx][ii + 1], x + 5, y);
+            }
         }
-        ctx.fillStyle = 'black';
-        for (x of labels) {
-            if ((prefix == "KC_") && (x[0].startsWith("Čmelo"))) {
-                ctx.fillStyle = colors[0];
-                ctx.fillText(x[0], x[1], x[2] - 10);
-                ctx.fillStyle = 'black';
-            } else if ((prefix == "KC_") && (x[0].startsWith("Matúš"))) {
-                ctx.fillStyle = colors[4];
-                ctx.fillText(x[0], x[1], x[2] + 10);
-                ctx.fillStyle = 'black';
-            } else {
-                ctx.fillText(x[0], x[1], x[2]);
+        if (column.length > 0) {
+            let currentScore = data.valueRanges[1].values[idx][numberOfGames];
+            let label = column[0] + ' (' + currentScore + ')'
+            if (currentScore == currentHighestScore) label += ' 👑'
+            labels.push([label, x, y, 0, false, color]); // [label, x, y, yShift, isOverlapping, color]
+        }
+    }
+    // space out labels so they don't overlap
+    let m = ctx.measureText('');
+    let h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
+    let epsilon = 0.001
+    for ([i, x] of labels.entries()) {
+        for ([j, y] of labels.entries()) {
+            if (i <= j) continue;
+            if (x[1] == y[1] ||
+              (x[1] < y[1] && ctx.measureText(x[0]).width > y[1] - x[1]) ||
+              (x[1] > y[1] && ctx.measureText(y[0]).width > x[1] - y[1])) {
+                let d = y[2] - x[2];
+                let ad = Math.abs(d);
+                let s = h*h/(h+ad)/2;
+                if (d < 0.001) s = -s;
+                x[3] -= s
+                y[3] += s
+            }
+            if (Math.abs(x[1] - y[1]) < epsilon && Math.abs(x[2] - y[2]) < epsilon) {
+                x[4] = true;
+                y[4] = true;
             }
         }
     }
-  );
+    for (x of labels) {
+        ctx.fillStyle = (x[4] || x[5] == 'grey') ? x[5] : 'black';
+        ctx.fillText(x[0], x[1] + 5, x[2] + x[3]);
+    }
 }
 
 displayApp2();
