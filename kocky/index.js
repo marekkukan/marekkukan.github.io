@@ -128,7 +128,7 @@ function drawGraph(data) {
     // space out labels so they don't overlap
     let m = ctx.measureText('');
     let h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
-    let epsilon = 0.001
+    const epsilon = 0.001
     for ([i, x] of labels.entries()) {
         for ([j, y] of labels.entries()) {
             if (i <= j) continue;
@@ -138,7 +138,7 @@ function drawGraph(data) {
                 let d = y[2] - x[2];
                 let ad = Math.abs(d);
                 let s = h*h/(h+ad)/2;
-                if (d < 0.001) s = -s;
+                if (d < epsilon) s = -s;
                 x[3] -= s
                 y[3] += s
             }
