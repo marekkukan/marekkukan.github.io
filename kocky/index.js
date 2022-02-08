@@ -126,8 +126,8 @@ function drawGraph(data) {
         }
     }
     // space out labels so they don't overlap
-    let m = ctx.measureText('');
-    let h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
+    let m = ctx.measureText('()');
+    let h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
     const epsilon = 0.001
     for ([i, x] of labels.entries()) {
         for ([j, y] of labels.entries()) {
