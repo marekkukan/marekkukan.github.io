@@ -474,7 +474,7 @@ function connectToServer() {
       document.getElementById('myNicknameDiv').innerHTML = myNickname;
     }
     else if (message.startsWith('ENTER_ERROR ')) {
-      //TODO display error
+      popupError(message.slice(12));
     }
     else if (message.startsWith('RECONNECT_SUCCESS')) {
       document.getElementById('loginDiv').style.display = 'none';
@@ -503,8 +503,7 @@ function connectToServer() {
       document.getElementById('startGameButton').style.display = 'none';
     }
     else if (message.startsWith("JOIN_GAME_ERROR ")) {
-      // TODO display this in the popup
-      debug(message.slice(16));
+      popupError(message.slice(16))
     }
     else if (message.startsWith("GAME_ABANDONED")) {
       displayLobby();
@@ -603,6 +602,11 @@ function startGame() {
 function popupJoinGame(creator) {
   document.getElementById('joinGameCreator').innerHTML = creator;
   popup('joinGameDiv');
+}
+
+function popupError(message) {
+  document.getElementById('errorSpan').innerHTML = message;
+  popup('errorDiv');
 }
 
 function popup(divId, display = 'block') {

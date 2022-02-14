@@ -177,6 +177,10 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   <div id="confirmDiv" style="display: none;">
     <p id="confirmP" style="font: 3vh monospace;"></p>
   </div>
+  <div id="errorDiv" style="display: none;" onclick="event.stopPropagation()">
+    <span style="color: red; font-size: 4vh">⚠ </span>
+    <span id="errorSpan" style="font: 2vh monospace;"></span>
+  </div>
 </div>
 
 <script src="index.js"></script>
