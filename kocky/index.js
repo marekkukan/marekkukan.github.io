@@ -376,7 +376,7 @@ function toMMSS(seconds) {
 function processGameState(state) {
   if (!state.started) {
     displayWaitingRoom();
-    document.getElementById("playersInGameList").innerHTML = state.players.map(x => `<li>${x.nickname}</li>`).join('');
+    document.getElementById("playersInGameList").innerHTML = state.players.map(x => `<li>${x.nickname}${x.isReady ? ' (ready)' : ''}</li>`).join('');
     return;
   }
   displayGame();
@@ -503,7 +503,6 @@ function connectToServer() {
     }
     else if (message.startsWith("JOIN_GAME_SUCCESS")) {
       displayWaitingRoom();
-      document.getElementById('startGameButton').style.display = 'none';
     }
     else if (message.startsWith("JOIN_GAME_ERROR ")) {
       popupError(message.slice(16))
@@ -579,7 +578,6 @@ function createGame(button) {
   debug("creating game ..");
   socket.send(`CREATE_GAME ${password}`);
   displayWaitingRoom();
-  document.getElementById("startGameButton").style.display = "block";
 }
 
 function joinGame(button) {
@@ -596,9 +594,9 @@ function leaveGame() {
   displayLobby();
 }
 
-function startGame() {
-  debug("starting game ..");
-  socket.send(`START_GAME`);
+function toggleReady() {
+  debug("toggling ready ..");
+  socket.send(`READY`);
 }
 
 function popupJoinGame(creator) {

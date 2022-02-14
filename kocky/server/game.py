@@ -42,7 +42,8 @@ class Game:
         } if self.started else {
             'started': self.started,
             'players': [{
-                'nickname': player.nickname
+                'nickname': player.nickname,
+                'isReady': player.is_ready
             } for player in self.players]
         }
         return json.dumps(state)
@@ -69,6 +70,7 @@ class Game:
             # player.hidden_dice = []
             player.revealed_dice = []
             player.time = self.time
+            player.is_ready = False
         while not self.finished:
             await self.play_round()
         await self.broadcast_state()

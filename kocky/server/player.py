@@ -20,6 +20,7 @@ class Player:
         self.time = 0
         self.delay = 0
         self.is_my_turn = False
+        self.is_ready = False
 
     def __str__(self):
         return self.nickname

@@ -15,6 +15,7 @@
  | `REVEAL 1 1 6` | reveal two ones and one six |
  | `GAME_STATE` | request for `GAME_STATE` |
  | `GAME_LOG` | request for `GAME_LOG` |
+ | `READY` | I am (not) ready (for the game to start) |
 
 ## server -> client
 
@@ -72,5 +73,7 @@ players:
 started: false
 players:
   - nickname: alice
+    isReady: true
   - nickname: bob
+    isReady: false
 ```

@@ -88,9 +88,12 @@ async def leave_game(player):
     game = player.game
     game.players.remove(player)
     player.game = None
+    player.is_ready = False
     if player == game.creator:
         websockets.broadcast((x.socket for x in game.players), 'GAME_ABANDONED')
-        for player in game.players: player.game = None
+        for player in game.players:
+            player.game = None
+            player.is_ready = False
         games.remove(game)
         websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
     else:
@@ -125,13 +128,14 @@ async def handler(socket, path):
                     await join_game(player, message)
                 elif message.startswith('LEAVE_GAME'):
                     await leave_game(player)
-                elif message.startswith('START_GAME'):
+                elif message.startswith('READY'):
                     if player.game is None: continue
-                    if player != player.game.creator: continue
-                    if len(player.game.players) < 2: continue
-                    games.remove(player.game)
-                    websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
-                    asyncio.create_task(player.game.start())
+                    player.is_ready = not player.is_ready
+                    await player.game.broadcast_state()
+                    if len(player.game.players) > 1 and all(x.is_ready for x in player.game.players):
+                        games.remove(player.game)
+                        websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
+                        asyncio.create_task(player.game.start())
                 elif message == 'ROLL':
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None:
