@@ -26,7 +26,6 @@
 | `RECONNECT_ERROR error` | specific player | couldn't reconnect because of `error` |
 | `PLAYERS a b c` | everyone | players `a`, `b` and `c` are currently online |
 | `GAMES a b c` | everyone | games created by `a`, `b` and `c` are currently open |
-| `PLAYERS_IN_GAME a b c` | everyone in this game | players `a`, `b` and `c` are in this game |
 | `JOIN_GAME_SUCCESS` | specific player | successfully joined the game |
 | `JOIN_GAME_ERROR error` | specific player | couldn't join the game because of `error` |
 | `GAME_ABANDONED` | everyone in this game | game is canceled (creator has left) |
@@ -37,9 +36,10 @@
 | `ROLL 5 2 1 2` | specific player | you rolled `5 2 1 2` |
 | `INVALID_MOVE` | specific player | you played an invalid move |
 
-### game state yaml example
+### game state yaml examples
 
 ```yaml
+started: true
 finished: false
 finishedRound: false
 currentBid:
@@ -66,4 +66,11 @@ players:
     revealedDice: []
     unrevealedDice: []
     isCurrentPlayer: true
+```
+
+```yaml
+started: false
+players:
+  - nickname: alice
+  - nickname: bob
 ```

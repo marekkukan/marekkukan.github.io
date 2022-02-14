@@ -78,7 +78,7 @@ async def join_game(player, message):
         game.players.append(player)
         await player.socket.send('JOIN_GAME_SUCCESS')
         log(f'{player.nickname} joined {creator_nickname}\'s game')
-        websockets.broadcast((x.socket for x in game.players), 'PLAYERS_IN_GAME ' + ' '.join(x.nickname for x in game.players))
+        await game.broadcast_state()
     except MyException as e:
         await player.socket.send(f'JOIN_GAME_ERROR {e}')
 
@@ -94,7 +94,7 @@ async def leave_game(player):
         games.remove(game)
         websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
     else:
-        websockets.broadcast((x.socket for x in game.players), 'PLAYERS_IN_GAME ' + ' '.join(x.nickname for x in game.players))
+        await game.broadcast_state()
 
 
 async def handler(socket, path):
@@ -119,7 +119,7 @@ async def handler(socket, path):
                     game = Game(player, password)
                     games.append(game)
                     player.game = game
-                    await socket.send(f'PLAYERS_IN_GAME {player.nickname}')
+                    await game.broadcast_state()
                     websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
                 elif message.startswith('JOIN_GAME '):
                     await join_game(player, message)
@@ -134,7 +134,7 @@ async def handler(socket, path):
                     asyncio.create_task(player.game.start())
                 elif message == 'ROLL':
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
-                elif message == 'GAME_STATE' and player.game is not None and player.game.started:
+                elif message == 'GAME_STATE' and player.game is not None:
                     await socket.send('GAME_STATE ' + player.game.state())
                 elif message == 'GAME_LOG' and player.game is not None and player.game.started:
                     await socket.send('GAME_LOG ' + player.game.log)

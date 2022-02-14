@@ -374,6 +374,12 @@ function toMMSS(seconds) {
 }
 
 function processGameState(state) {
+  if (!state.started) {
+    displayWaitingRoom();
+    document.getElementById("playersInGameList").innerHTML = state.players.map(x => `<li>${x.nickname}</li>`).join('');
+    return;
+  }
+  displayGame();
   if (gInterval !== null) clearInterval(gInterval);
   if (!gRolled) document.getElementById('rollButton').disabled = false;
   if (state.finished) setTimeout(() => {displayLobby();}, 10000);
@@ -495,9 +501,6 @@ function connectToServer() {
     else if (message.startsWith("GAMES ")) {
       document.getElementById("gamesList").innerHTML = msg2array(message).map(x => `<li onclick="popupJoinGame('${x}')">${x}</li>`).join('');
     }
-    else if (message.startsWith("PLAYERS_IN_GAME ")) {
-      document.getElementById("playersInGameList").innerHTML = msg2array(message).map(x => `<li>${x}</li>`).join('');
-    }
     else if (message.startsWith("JOIN_GAME_SUCCESS")) {
       displayWaitingRoom();
       document.getElementById('startGameButton').style.display = 'none';
@@ -513,7 +516,6 @@ function connectToServer() {
       document.getElementById('rollButton').disabled = false;
     }
     else if (message.startsWith("GAME_STATE ")) {
-      displayGame();
       processGameState(JSON.parse(message.slice(11)));
     }
     else if (message.startsWith("GAME_LOG_RECORD ")) {

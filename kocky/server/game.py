@@ -25,6 +25,7 @@ class Game:
 
     def state(self):
         state = {
+            'started': self.started,
             'finished': self.finished,
             'finishedRound': self.finished_round,
             'currentBid': bid2dict(self.bid),
@@ -37,7 +38,13 @@ class Game:
                 'revealedDice': player.revealed_dice,
                 'unrevealedDice': player.hidden_dice if self.finished_round else [],
                 'isCurrentPlayer': player == self.cp() and not self.finished_round
-            } for player in self.players]}
+            } for player in self.players]
+        } if self.started else {
+            'started': self.started,
+            'players': [{
+                'nickname': player.nickname
+            } for player in self.players]
+        }
         return json.dumps(state)
 
     async def broadcast(self, msg):
