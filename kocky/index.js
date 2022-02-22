@@ -210,6 +210,10 @@ function toggleSetting7(checked) {
   localStorage.setItem('setting7', checked);
   gConfirmBB = checked;
 }
+function toggleSetting8(checked) {
+  localStorage.setItem('setting8', checked);
+  gAutoSetBidQuantity = checked;
+}
 
 function requestPermission() {
   if (typeof DeviceMotionEvent !== 'undefined' &&
@@ -639,6 +643,7 @@ document.getElementById('bidNumberUpDiv').addEventListener('click', (e) => {
   div.dataset.value -= -1;
   if (div.dataset.value == 7) div.dataset.value = 1;
   div.innerHTML = DICE_DICT[div.dataset.value];
+  autoSetBidQuantity(div.dataset.value);
   processBidChange();
 })
 document.getElementById('bidNumberDownDiv').addEventListener('click', (e) => {
@@ -646,6 +651,7 @@ document.getElementById('bidNumberDownDiv').addEventListener('click', (e) => {
   div.dataset.value -= 1;
   if (div.dataset.value == 0) div.dataset.value = 6;
   div.innerHTML = DICE_DICT[div.dataset.value];
+  autoSetBidQuantity(div.dataset.value);
   processBidChange();
 })
 
@@ -768,6 +774,20 @@ function processBidChange() {
   }
 }
 
+function minQ(bid, n) {
+  if (bid.number == 1) return n == 1 ? bid.quantity + 1 : bid.quantity * 2;
+  if (n > bid.number) return bid.quantity;
+  return n == 1 ? Math.floor(bid.quantity / 2) + 1 : bid.quantity + 1;
+}
+
+function autoSetBidQuantity(bidNumber) {
+  if (gAutoSetBidQuantity) {
+    var div = document.getElementById('bidQuantityDiv');
+    var q = minQ(gCurrentBid, bidNumber);
+    div.dataset.value = q;
+    div.innerHTML = q;
+  };
+}
 
 
 function storageAvailable(type) {
@@ -798,7 +818,7 @@ function storageAvailable(type) {
 window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  for (let i = 1; i < 8; i++) {
+  for (let i = 1; i < 9; i++) {
     var element = document.getElementById(`setting${i}`);
     var storedValue = localStorage.getItem(`setting${i}`);
     if (storedValue !== null) element.checked = storedValue === 'true';
