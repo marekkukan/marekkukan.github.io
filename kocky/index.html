@@ -66,6 +66,25 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <h2>Players</h2>
       <ul id="playersInGameList"></ul>
     </div>
+    <div id="gameOptionsDiv">
+      <h2>Options</h2>
+      <br><br>
+      <p>minutes per game: <span id="option1Span">10</span></p>
+      <input id="option1" type="range" style="width: 100%;" min="0" max="10" value="10" disabled
+        oninput="document.getElementById('option1Span').innerHTML=this.value" onchange="sendGameOptions()">
+      <br><br>
+      <p>seconds per turn: <span id="option2Span">15</span></p>
+      <input id="option2" type="range" style="width: 100%;" min="0" max="30" value="15" disabled
+        oninput="document.getElementById('option2Span').innerHTML=this.value" onchange="sendGameOptions()">
+      <br><br>
+      <p>starting number of dice: <span id="option3Span">6</span></p>
+      <input id="option3" type="range" style="width: 100%;" min="1" max="12" value="6" disabled
+        oninput="document.getElementById('option3Span').innerHTML=this.value" onchange="sendGameOptions()">
+      <br><br>
+      <label><input id="option4" type="checkbox" disabled onchange="sendGameOptions()">starting number of dice equals nickname length</label>
+      <br><br>
+      <label><input id="option5" type="checkbox" disabled onchange="sendGameOptions()">random order</label>
+    </div>
     <button id="toggleReadyButton" onclick="toggleReady()">ready</button>
     <button id="leaveGameButton" onclick="leaveGame()">leave</button>
   </div>

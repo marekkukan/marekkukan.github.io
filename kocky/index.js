@@ -1,5 +1,5 @@
 const DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'};
-const CLOCK_DELAY = 15;
+var CLOCK_DELAY = 15;
 
 var colors = [
     '#0000FF', //blue
@@ -343,13 +343,13 @@ function generatePlayerDiv(player) {
     playerDiv.classList.add('currentPlayer');
     var clockTimeAnchor = Date.now();
     var time = 0;
-    var w = 100 * player.delay / CLOCK_DELAY;
+    var w = CLOCK_DELAY == 0 ? 0 : 100 * player.delay / CLOCK_DELAY;
     document.onvisibilitychange = function () {
       if (document.visibilityState === 'visible') {
         var t1 = Math.round((Date.now() - clockTimeAnchor) / 1000) - 1;
         var t2 = Math.round((Date.now() - clockTimeAnchor) / (10 * CLOCK_DELAY));
         time = Math.max(0, t1 - player.delay);
-        w = 100 * player.delay / CLOCK_DELAY - t2;
+        w = CLOCK_DELAY == 0 ? 0 : 100 * player.delay / CLOCK_DELAY - t2;
       }
     };
     var div = document.createElement('div');
@@ -377,10 +377,35 @@ function toMMSS(seconds) {
   return new Date(seconds * 1000).toISOString().substr(14, 5);
 }
 
+function sendGameOptions() {
+  options = {
+    'minutesPerGame': parseInt(document.getElementById('option1').value),
+    'secondsPerTurn': parseInt(document.getElementById('option2').value),
+    'startingNumberOfDice': parseInt(document.getElementById('option3').value),
+    'startingNumberOfDiceEqualsNicknameLength': document.getElementById('option4').checked,
+    'randomOrder': document.getElementById('option5').checked,
+  };
+  socket.send(`GAME_OPTIONS ${JSON.stringify(options)}`);
+}
+
 function processGameState(state) {
   if (!state.started) {
     displayWaitingRoom();
     document.getElementById("playersInGameList").innerHTML = state.players.map(x => `<li>${x.nickname}${x.isReady ? ' (ready)' : ''}</li>`).join('');
+    var isMyGame = state.players[0].nickname == myNickname;
+    for (let i = 1; i <= 5; i++) {
+      var element = document.getElementById(`option${i}`);
+      element.disabled = !isMyGame;
+    }
+    document.getElementById('option1').value = state.options.minutesPerGame;
+    document.getElementById('option1').oninput();
+    document.getElementById('option2').value = state.options.secondsPerTurn;
+    document.getElementById('option2').oninput();
+    CLOCK_DELAY = state.options.secondsPerTurn;
+    document.getElementById('option3').value = state.options.startingNumberOfDice;
+    document.getElementById('option3').oninput();
+    document.getElementById('option4').checked = state.options.startingNumberOfDiceEqualsNicknameLength;
+    document.getElementById('option5').checked = state.options.randomOrder;
     return;
   }
   displayGame();
@@ -581,7 +606,6 @@ function createGame(button) {
   document.getElementById('popupContainer').click();
   debug("creating game ..");
   socket.send(`CREATE_GAME ${password}`);
-  displayWaitingRoom();
 }
 
 function joinGame(button) {

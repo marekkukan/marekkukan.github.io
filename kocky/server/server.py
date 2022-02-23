@@ -5,6 +5,7 @@ import websockets
 import pathlib
 import ssl
 import sys
+import json
 from player import Player
 from game import Game
 from utils import log, generate_token
@@ -136,6 +137,14 @@ async def handler(socket, path):
                         games.remove(player.game)
                         websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
                         asyncio.create_task(player.game.start())
+                elif message.startswith('GAME_OPTIONS '):
+                    if player.game is None: continue
+                    if player != player.game.creator: continue
+                    options = json.loads(message[13:])
+                    player.game.set_options(options)
+                    for p in player.game.players:
+                        p.is_ready = False
+                    await player.game.broadcast_state()
                 elif message == 'ROLL':
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None:

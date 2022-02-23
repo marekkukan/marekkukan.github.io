@@ -243,7 +243,7 @@ input[type=text] {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 7fr 1fr;
   grid-template-areas:
-    "players x"
+    "players options"
     "leave ready";
   font-size: 3vmin;
   /* padding: 5vmin; */
@@ -288,6 +288,11 @@ input[type=text] {
 #gamesDiv {
   padding: 5vmin;
   /* background: lightblue; */
+  font-size: 3vmin;
+}
+#gameOptionsDiv {
+  grid-area: options;
+  padding: 5vmin;
   font-size: 3vmin;
 }
 /* #gamesDiv button {
@@ -365,7 +370,7 @@ input[type=text] {
   margin: revert;
   padding: revert;
 }
-.settingsDiv input {
+input[type=checkbox] {
   width: 20px;
   height: 20px;
   margin: 10px;

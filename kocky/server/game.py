@@ -19,9 +19,28 @@ class Game:
         self.finished = False
         self.finished_round = False
         self.cpi = 0
-        self.time = 600
-        self.delay = 15
         self.log = ''
+        self.minutes_per_game = 10
+        self.seconds_per_turn = 15
+        self.starting_number_of_dice = 6
+        self.snodenl = False
+        self.random_order = True
+
+    def set_options(self, options):
+        self.minutes_per_game = options['minutesPerGame']
+        self.seconds_per_turn = options['secondsPerTurn']
+        self.starting_number_of_dice = options['startingNumberOfDice']
+        self.snodenl = options['startingNumberOfDiceEqualsNicknameLength']
+        self.random_order = options['randomOrder']
+
+    def get_options(self):
+        return {
+            'minutesPerGame': self.minutes_per_game,
+            'secondsPerTurn': self.seconds_per_turn,
+            'startingNumberOfDice': self.starting_number_of_dice,
+            'startingNumberOfDiceEqualsNicknameLength': self.snodenl,
+            'randomOrder': self.random_order
+        }
 
     def state(self):
         state = {
@@ -44,7 +63,8 @@ class Game:
             'players': [{
                 'nickname': player.nickname,
                 'isReady': player.is_ready
-            } for player in self.players]
+            } for player in self.players],
+            'options': self.get_options()
         }
         return json.dumps(state)
 
@@ -64,10 +84,12 @@ class Game:
         self.n_players = len(self.players)
         log(f'{self.creator}\'s game has started with {self.n_players} players')
         await self.broadcast('GAME_STARTED')
-        random.shuffle(self.players)
+        if self.random_order:
+            random.shuffle(self.players)
+        self.time = 60 * self.minutes_per_game
+        self.delay = self.seconds_per_turn
         for player in self.players:
-            player.n_dice = 6
-            # player.hidden_dice = []
+            player.n_dice = len(player.nickname) if self.snodenl else self.starting_number_of_dice
             player.revealed_dice = []
             player.time = self.time
             player.is_ready = False
