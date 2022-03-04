@@ -137,6 +137,7 @@ class Game:
                 return
             self.bid = bid
             self.cp().bid = bid
+            await self.broadcast('PLAYER_BIDS')
             await self.record('bids ' + str(bid.quantity) + DICE_DICT[bid.number])
         elif parts[0] == 'REVEAL':
             try:
@@ -154,6 +155,7 @@ class Game:
                 self.cp().revealed_dice.append(die)
             self.cp().roll()
             await self.broadcast_state()
+            await self.broadcast('PLAYER_REVEALS')
             await self.record('reveals ' + ' '.join(DICE_DICT[x] for x in dice))
             await self.eval_move(await self.cp().play(), False, False)
         elif parts[0] == 'CHALLENGE':
@@ -167,6 +169,7 @@ class Game:
                 dice_table += f'{self.cp().nickname.ljust(11)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
                 self.shift_cpi()
             dice_table += '</pre><br>'
+            await self.broadcast('PLAYER_CHALLENGES')
             await self.record('challenges', dice_table)
             await asyncio.sleep(max(5, 0.7 * self.n_dice))
             all_dice = []
@@ -190,6 +193,7 @@ class Game:
                 bid = Bid(self.bid.quantity + 1, self.bid.number)
                 self.bid = bid
                 self.cp().bid = bid
+                await self.broadcast('PLAYER_BIDS')
                 await self.record('bids ' + str(bid.quantity) + DICE_DICT[bid.number])
         elif parts[0] == '_SURRENDER':
             self.finished_round = True

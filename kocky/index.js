@@ -1,3 +1,10 @@
+const SOUND_GAME_STARTED = new Audio('res/sounds/game_started.mp3');
+const SOUND_MY_TURN = new Audio('res/sounds/my_turn.mp3');
+const SOUND_PLAYER_BIDS = new Audio('res/sounds/player_bids.mp3');
+const SOUND_PLAYER_REVEALS = new Audio('res/sounds/player_reveals.mp3');
+const SOUND_PLAYER_CHALLENGES = new Audio('res/sounds/player_challenges.mp3');
+const SOUND_ROLL_DICE = new Audio('res/sounds/roll_dice.mp3');
+
 const DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'};
 var CLOCK_DELAY = 15;
 
@@ -214,6 +221,18 @@ function toggleSetting8(checked) {
   localStorage.setItem('setting8', checked);
   gAutoSetBidQuantity = checked;
 }
+function toggleSetting9(checked) {
+  localStorage.setItem('setting9', checked);
+  gSounds = checked;
+}
+function toggleSetting10(checked) {
+  localStorage.setItem('setting10', checked);
+  gVibrate = checked;
+}
+
+function playSound(sound) {
+  if (gSounds) sound.play();
+}
 
 function requestPermission() {
   if (typeof DeviceMotionEvent !== 'undefined' &&
@@ -244,7 +263,7 @@ function addDice(n) {
 
 function rollDice(selector, roll = null) {
   var dice = document.querySelectorAll(`${selector}.die-div:not(.revealed):not(.pre-revealed)`);
-  console.log(dice);
+  playSound(SOUND_ROLL_DICE);
   dice.forEach((die, i) => {rollDie(die, roll == null ? getRandomNumber(1, 6) : roll[i])});
 }
 function rollDie(dieDiv, roll) {
@@ -427,6 +446,8 @@ function processGameState(state) {
   gCurrentBid = state.currentBid;
   gMyTurn = state.players[myIndex].isCurrentPlayer;
   if (gMyTurn) {
+    playSound(SOUND_MY_TURN);
+    if (gVibrate) navigator.vibrate([100,50,100]);
     document.getElementById('bidButton').disabled = bidValue(gMyBid) <= bidValue(gCurrentBid);
     document.getElementById('challengeButton').disabled = (state.currentBid.quantity == 0 || gRevealed);
   } else {
@@ -541,6 +562,7 @@ function connectToServer() {
     }
     else if (message.startsWith("GAME_STARTED")) {
       displayGame();
+      playSound(SOUND_GAME_STARTED);
       document.getElementById('rollButton').disabled = false;
     }
     else if (message.startsWith("GAME_STATE ")) {
@@ -563,6 +585,15 @@ function connectToServer() {
     }
     else if (message == 'INVALID_MOVE') {
       enableButtons();
+    }
+    else if (message == 'PLAYER_BIDS') {
+      playSound(SOUND_PLAYER_BIDS);
+    }
+    else if (message == 'PLAYER_REVEALS') {
+      playSound(SOUND_PLAYER_REVEALS);
+    }
+    else if (message == 'PLAYER_CHALLENGES') {
+      playSound(SOUND_PLAYER_CHALLENGES);
     }
   }
 }
@@ -842,7 +873,7 @@ function storageAvailable(type) {
 window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  for (let i = 1; i < 9; i++) {
+  for (let i = 1; i <= 10; i++) {
     var element = document.getElementById(`setting${i}`);
     var storedValue = localStorage.getItem(`setting${i}`);
     if (storedValue !== null) element.checked = storedValue === 'true';
