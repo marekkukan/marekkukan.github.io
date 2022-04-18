@@ -396,6 +396,11 @@ function toMMSS(seconds) {
   return new Date(seconds * 1000).toISOString().substr(14, 5);
 }
 
+function sendAddBot() {
+  var level = document.getElementById('botSelect').value;
+  socket.send(`ADD_BOT ${level}`);
+}
+
 function sendGameOptions() {
   options = {
     'minutesPerGame': parseInt(document.getElementById('option1').value),
@@ -416,6 +421,7 @@ function processGameState(state) {
       var element = document.getElementById(`option${i}`);
       element.disabled = !isMyGame;
     }
+    document.getElementById('addBotButton').disabled = !isMyGame;
     document.getElementById('option1').value = state.options.minutesPerGame;
     document.getElementById('option1').oninput();
     document.getElementById('option2').value = state.options.secondsPerTurn;

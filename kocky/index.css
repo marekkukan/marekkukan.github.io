@@ -266,7 +266,7 @@ input[type=text] {
   grid-area: players;
   padding: 5vmin;
 }
-#waitingRoomDiv button {
+#waitingRoomDiv button, select {
   /* height: 5vmin;
   width: 5vmin;
   border: none; */

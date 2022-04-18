@@ -8,11 +8,13 @@ import sys
 import json
 from player import Player
 from game import Game
+from bot import spawn_bot
 from utils import log, generate_token
 
 sockets = []
 players = []
 games = []
+bots = []
 
 class MyException(Exception):
     pass
@@ -124,6 +126,15 @@ async def handler(socket, path):
                     player = await enter(socket, message)
                 elif message.startswith('RECONNECT '):
                     player = await reconnect(socket, message)
+                elif message.startswith('_BOT '):
+                    token = message[5:]
+                    bot, game = next((bot, game) for (bot, game) in bots if bot.token == token)
+                    bots.remove((bot, game))
+                    player = Player(socket, bot.nickname, bot.token)
+                    player.game = game
+                    player.game.players.append(player)
+                    player.is_ready = True
+                    await player.game.broadcast_state()
             else:
                 if message == 'LEAVE':
                     await leave(player)
@@ -153,8 +164,19 @@ async def handler(socket, path):
                     options = json.loads(message[13:])
                     player.game.set_options(options)
                     for p in player.game.players:
-                        p.is_ready = False
+                        if not 'bot_' in p.nickname:
+                            p.is_ready = False
                     await player.game.broadcast_state()
+                elif message.startswith('ADD_BOT '):
+                    if player.game is None: continue
+                    if player != player.game.creator: continue
+                    if len(player.game.players) > 6: continue
+                    level = message[8:]
+                    protocol = 'wss' if port == 443 else 'ws'
+                    ws = await websockets.connect(f'{protocol}://localhost:{port}')
+                    bot = spawn_bot(ws, level, player.game)
+                    bots.append((bot, player.game))
+                    asyncio.create_task(bot.run())
                 elif message == 'ROLL':
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None:
@@ -172,6 +194,7 @@ async def handler(socket, path):
 
 
 async def main():
+    global port
     if len(sys.argv) > 1 and sys.argv[1] == 'l':
         # run locally
         ip = 'localhost'

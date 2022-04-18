@@ -26,6 +26,7 @@ class Game:
         self.starting_number_of_dice = 6
         self.snodenl = False
         self.random_order = True
+        self.n_bots = 0
 
     def set_options(self, options):
         self.minutes_per_game = options['minutesPerGame']
@@ -98,6 +99,7 @@ class Game:
         while not self.finished:
             await self.play_round()
         await self.broadcast_state()
+        await self.broadcast('GAME_ENDED')
         log(f'{self.creator}\'s game has ended')
 
     def cp(self):
