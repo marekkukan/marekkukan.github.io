@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import random
 import json
+import copy
 from bid import Bid, bid2dict
 from utils import log, get_time
 
@@ -14,7 +15,7 @@ class Game:
         self.creator = creator
         self.password = password
         self.players = [creator]
-        self.observers = [] #TODO
+        self.spectators = []
         self.started = False
         self.finished = False
         self.finished_round = False
@@ -69,7 +70,8 @@ class Game:
         return json.dumps(state)
 
     async def broadcast(self, msg):
-        websockets.broadcast((x.socket for x in self.players), msg)
+        receivers = set(x for x in self.players if not x.is_fake).union(self.spectators)
+        websockets.broadcast((x.socket for x in receivers), msg)
 
     async def broadcast_state(self):
         await self.broadcast('GAME_STATE ' + self.state())
@@ -96,8 +98,6 @@ class Game:
         while not self.finished:
             await self.play_round()
         await self.broadcast_state()
-        for player in self.players:
-            player.game = None
         log(f'{self.creator}\'s game has ended')
 
     def cp(self):
@@ -210,10 +210,12 @@ class Game:
             self.cp().hidden_dice = []
             self.n_players -= 1
             await self.record('lost')
+            self.deactivate_player()
             self.shift_cpi()
             if self.n_players < 2:
                 self.finished = True
                 await self.record('won')
+                self.deactivate_player()
 
     async def invalid_move(self, move):
         log('invalid move by player ' + self.cp().nickname + ' (' + move + ')')
@@ -223,3 +225,15 @@ class Game:
             pass
         new_move = await self.cp().play(previous_move_invalid=True)
         return new_move
+
+    def deactivate_player(self):
+        """
+            Replace current player (who just lost) with a fake player, so that one can see
+            that this player was in the game, but the player no longer receives game states.
+        """
+        self.spectators.append(self.cp())
+        fake_player = copy.copy(self.cp())
+        fake_player.hidden_dice = []
+        fake_player.revealed_dice = []
+        fake_player.is_fake = True
+        self.players[self.cpi] = fake_player

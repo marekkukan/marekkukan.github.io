@@ -430,7 +430,6 @@ function processGameState(state) {
   displayGame();
   if (gInterval !== null) clearInterval(gInterval);
   if (!gRolled) document.getElementById('rollButton').disabled = false;
-  if (state.finished) setTimeout(() => {displayLobby();}, 10000);
   if (state.finishedRound) {
     gMyHiddenDice = [];
     gRolled = false;
@@ -443,8 +442,9 @@ function processGameState(state) {
   var playersDiv = document.getElementById('playersDiv');
   playersDiv.replaceChildren(...players.map(x => generatePlayerDiv(x)));
   // enable / disable buttons
+  setSpectatorMode(myIndex == -1 || state.players[myIndex].numberOfDice == 0 || state.finished);
   gCurrentBid = state.currentBid;
-  gMyTurn = state.players[myIndex].isCurrentPlayer;
+  gMyTurn = myIndex > -1 && state.players[myIndex].isCurrentPlayer;
   if (gMyTurn) {
     playSound(SOUND_MY_TURN);
     if (gVibrate) navigator.vibrate([100,50,100]);
@@ -471,6 +471,14 @@ function processGameState(state) {
   document.getElementById('counter5Div').classList.remove('highlighted');
   document.getElementById('counter6Div').classList.remove('highlighted');
   if (state.currentBid.quantity != 0) document.getElementById(`counter${state.currentBid.number}Div`).classList.add('highlighted');
+}
+
+function setSpectatorMode(b) {
+  document.getElementById('leaveGameDiv').style.display = b ? 'block' : 'none';
+  document.getElementById('bidControllerDiv').style.display = b ? 'none' : 'grid';
+  document.getElementById('bidButton').style.display = b ? 'none' : 'block';
+  document.getElementById('challengeButton').style.display = b ? 'none' : 'block';
+  document.getElementById('rollButton').style.display = b ? 'none' : 'block';
 }
 
 

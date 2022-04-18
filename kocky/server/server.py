@@ -73,13 +73,15 @@ async def join_game(player, message):
         if len(filtered_games) == 0: raise MyException('game not found')
         game = filtered_games[0]
         if game.password != password: raise MyException('incorrect password')
-        if len(game.players) > 6: raise MyException('game is full')
-        if game.started: raise MyException('game already started')
+        if game.started or len(game.players) > 6:
+            game.spectators.append(player)
+            log(f'{player.nickname} joined {creator_nickname}\'s game as spectator')
+            await player.socket.send('GAME_STATE ' + game.state())
+        else:
+            game.players.append(player)
+            log(f'{player.nickname} joined {creator_nickname}\'s game')
+            await game.broadcast_state()
         player.game = game
-        game.players.append(player)
-        await player.socket.send('JOIN_GAME_SUCCESS')
-        log(f'{player.nickname} joined {creator_nickname}\'s game')
-        await game.broadcast_state()
     except MyException as e:
         await player.socket.send(f'JOIN_GAME_ERROR {e}')
 
@@ -87,18 +89,28 @@ async def leave_game(player):
     if player.game is None: return
     log(f'{player.nickname} left {player.game.creator.nickname}\'s game')
     game = player.game
-    game.players.remove(player)
     player.game = None
-    player.is_ready = False
-    if player == game.creator:
-        websockets.broadcast((x.socket for x in game.players), 'GAME_ABANDONED')
-        for player in game.players:
-            player.game = None
-            player.is_ready = False
-        games.remove(game)
-        websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
+    if player in game.spectators:
+        game.spectators.remove(player)
+    elif player in game.players:
+        game.players.remove(player)
+        player.is_ready = False
+        if player == game.creator:
+            websockets.broadcast((x.socket for x in game.players), 'GAME_ABANDONED')
+            for player in game.players:
+                player.game = None
+                player.is_ready = False
+            games.remove(game)
+            websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
+        else:
+            await game.broadcast_state()
     else:
-        await game.broadcast_state()
+        log(f'{player.nickname} not in players nor spectators')
+
+async def start_game(game):
+    await game.start()
+    games.remove(game)
+    websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
 
 
 async def handler(socket, path):
@@ -134,9 +146,7 @@ async def handler(socket, path):
                     player.is_ready = not player.is_ready
                     await player.game.broadcast_state()
                     if len(player.game.players) > 1 and all(x.is_ready for x in player.game.players):
-                        games.remove(player.game)
-                        websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
-                        asyncio.create_task(player.game.start())
+                        asyncio.create_task(start_game(player.game))
                 elif message.startswith('GAME_OPTIONS '):
                     if player.game is None: continue
                     if player != player.game.creator: continue

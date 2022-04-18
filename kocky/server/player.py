@@ -21,6 +21,7 @@ class Player:
         self.delay = 0
         self.is_my_turn = False
         self.is_ready = False
+        self.is_fake = False
 
     def __str__(self):
         return self.nickname

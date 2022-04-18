@@ -102,15 +102,18 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     </div>
     <div id="playersDiv"></div>
     <div id="gameControlsDiv">
-      <div id="bidQuantityDiv" style="grid-area: f;" data-value="1">1</div>
-      <div id="bidQuantityUpDiv" style="grid-area: a;">▲</div>
-      <div id="bidQuantityDownDiv" style="grid-area: k;">▼</div>
-      <div id="bidNumberDiv" style="grid-area: g;" data-value="2">⚁</div>
-      <div id="bidNumberUpDiv" style="grid-area: b;">▲</div>
-      <div id="bidNumberDownDiv" style="grid-area: l;">▼</div>
+      <div id="bidControllerDiv">
+        <div id="bidQuantityDiv" style="grid-area: f;" data-value="1">1</div>
+        <div id="bidQuantityUpDiv" style="grid-area: a;">▲</div>
+        <div id="bidQuantityDownDiv" style="grid-area: k;">▼</div>
+        <div id="bidNumberDiv" style="grid-area: g;" data-value="2">⚁</div>
+        <div id="bidNumberUpDiv" style="grid-area: b;">▲</div>
+        <div id="bidNumberDownDiv" style="grid-area: l;">▼</div>
+      </div>
       <button id="bidButton" disabled style="grid-area: c;">✓</button>
       <button id="challengeButton" disabled style="grid-area: d;">✖</button>
       <button id="rollButton" disabled style="grid-area: e;">🎲</button>
+      <div id="leaveGameDiv" onclick="leaveGame()" style="grid-area: h; display: none;">❌</div>
       <div onclick="popup('gamelogDiv')" style="grid-area: i;">📖</div>
       <div class="settingsButton" onclick="popup('settingsDiv2')" style="grid-area: j;">⚙</div>
     </div>
