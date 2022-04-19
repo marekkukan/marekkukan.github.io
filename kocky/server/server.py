@@ -173,7 +173,8 @@ async def handler(socket, path):
                     if len(player.game.players) > 6: continue
                     level = message[8:]
                     protocol = 'wss' if port == 443 else 'ws'
-                    ws = await websockets.connect(f'{protocol}://localhost:{port}')
+                    ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH) if port == 443 else None
+                    ws = await websockets.connect(f'{protocol}://localhost:{port}', ssl=ssl_context)
                     bot = spawn_bot(ws, level, player.game)
                     bots.append((bot, player.game))
                     asyncio.create_task(bot.run())
