@@ -140,6 +140,9 @@ div.playerDiv .playerActionDiv {
   font-size: 4vmin;
   /* background-color: white; */
 }
+.playerNameDiv, .playerActionDiv, .playerTimeDiv {
+  background: lightyellow;
+}
 div#gameControlsDiv {
   position: relative;
   bottom: 0;
