@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="theme-color" content="#665646">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon192.png">
+<link rel="stylesheet" href="index.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v0.1.0</div>
+
+<div id="menuDiv">
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2014')">2013-14</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2015')">2014-15</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2016')">2015-16</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2017')">2016-17</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2018')">2017-18</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2019')">2018-19</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">2019-20</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')">2020-21</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2022')" class="active">2021-22</button>
+  <button onclick="location.reload()">⟳</button>
+  <div onclick="popup('changelogDiv')"></div>
+</div>
+
+<div id="myPlot" style="width:100%; height:90%;"></div>
+
+<div id="popupContainer" style="display: none;">
+  <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v0.1.0 [2022-06-28]</h4>
+    <ul>
+      <li>first version</li>
+    </ul>
+  </div>
+  <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
+  </div>
+</div>
+
+<script src="index.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(() => { console.log('SW Registered'); });
+}
+</script>
+</body>
+</html>
