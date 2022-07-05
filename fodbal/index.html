@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v0.1.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.0.0</div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2014')">2013-14</button>
@@ -28,11 +28,48 @@
   <div onclick="popup('changelogDiv')"></div>
 </div>
 
-<div id="myPlot" style="width:100%; height:90%;"></div>
+<div id="myWrapper">
+  <div id="myPlot"></div>
+  <div id="myApp">
+    <div id="myAppLeft">
+      <div id="filterDiv">
+        <h4>vyber hracov:</h4>
+        <label><input id="filterAll"         type="radio" name="radioFilter" oninput="setFilter(this.id)">vsetkych</label><br>
+        <label><input id="filterQualified"   type="radio" name="radioFilter" oninput="setFilter(this.id)">vsetkych co maju aspon 6 zapasov</label><br>
+        <label><input id="filterRegulars"    type="radio" name="radioFilter" oninput="setFilter(this.id)" checked>stalych</label><br>
+        <label><input id="filterSubstitutes" type="radio" name="radioFilter" oninput="setFilter(this.id)">nahradnikov</label><br>
+      </div>
+      <div id="playersDiv">
+        <h4>zoznam hracov: (vybratych: <span id="checkedPlayersNumber"></span>)</h4>
+        <ul id="playersList"></ul>
+      </div>
+    </div>
+    <div id="myAppRight">
+      <div id="priorityDiv">
+        <h4>vyber kriterium:</h4>
+        <label><input id="priority1" type="radio" name="radioPriority" oninput="setPriority(this.id)">zapasove body</label><br>
+        <label><input id="priority2" type="radio" name="radioPriority" oninput="setPriority(this.id)">kanadske body</label><br>
+        <label><input id="priority3" type="radio" name="radioPriority" oninput="setPriority(this.id)" checked>oboje</label><br>
+        <br>
+        <label><input id="evenSubstitutes" type="checkbox" oninput="setEvenSubstitutes(this.checked)" checked>podel rovnomerne nahradnikov</label><br>
+      </div>
+      <button id="createOptimalTeamsButton" disabled onclick="createOptimalTeams()">vytvor optimalne timy</button>
+      <div id="teamsDiv" style="display: none;">
+        <table id="teamsTable"></table>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="popupContainer" style="display: none;">
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.0.0 [2022-07-05]</h4>
+    <ul>
+      <li>added button for creating optimal teams</li>
+      <li>added several options to (de)select players</li>
+      <li>red markers for regular (non-substitute) players</li>
+    </ul>
     <h4>v0.1.0 [2022-06-28]</h4>
     <ul>
       <li>first version</li>

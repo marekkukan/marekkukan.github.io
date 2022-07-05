@@ -68,3 +68,69 @@ div#menuDiv button.active {
 .modebar {
   display: none !important;
 }
+#myWrapper {
+  width: 100%;
+  height: 90%;
+}
+#myPlot {
+  width: 100%;
+  height: 100%;
+}
+#myApp {
+  width: 100%;
+  height: 100%;
+  background-color: lightgrey;
+  display: flex;
+  font-size: 2.5vmin;
+  font-family: monospace;
+}
+#myAppLeft {
+  width: 50%;
+  height: 100%;
+  padding: 10px;
+}
+#myAppRight {
+  width: 50%;
+  height: 100%;
+  padding: 10px;
+}
+@media (orientation: portrait) {
+  #myPlot {height: 50%;}
+  #myApp {height: 50%;}
+}
+@media (orientation: landscape) {
+  #myWrapper {display: flex;}
+  #myPlot {width: 50%;}
+  #myApp {width: 50%;}
+}
+#createOptimalTeamsButton {
+  font: bold 3vmin sans-serif;
+}
+#myAppLeft #filterDiv {
+  height: 25%;
+}
+#myAppLeft #playersDiv {
+  height: 75%;
+}
+#myAppLeft #playersDiv h4 {
+  height: 8%;
+}
+#myAppLeft #playersDiv ul {
+  height: 88%;
+  overflow-y: auto;
+  list-style-type: none;
+  background-color: #eeeeee;
+}
+#myAppRight #priorityDiv {
+  height: 25%;
+}
+#myAppRight #teamsDiv {
+  margin-top: 20px;
+  background-color: #eeeeee;
+}
+#myAppRight #teamsDiv #teamsTable {
+  width: 100%;
+}
+#myAppRight #teamsDiv #teamsTable th {
+  text-align: left;
+}
