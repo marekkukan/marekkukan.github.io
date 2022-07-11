@@ -64,6 +64,7 @@ class Bot(ABC):
 import bots.dummy
 import bots.easy
 import bots.rand
+import bots.medium
 
 def spawn_bot(socket, level, game):
     game.n_bots += 1
@@ -75,3 +76,6 @@ def spawn_bot(socket, level, game):
         return bots.easy.EasyBot(socket, nickname, token)
     if level == 'rand':
         return bots.rand.RandBot(socket, nickname, token)
+    if level == 'medium':
+        return bots.medium.MediumBot(socket, nickname, token)
+    return bots.dummy.DummyBot(socket, nickname, token)

@@ -168,7 +168,7 @@ class Game:
             await self.broadcast_state()
             dice_table = '<br><pre>'
             for i in range(self.n_players):
-                dice_table += f'{self.cp().nickname.ljust(11)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
+                dice_table += f'{self.cp().nickname.ljust(12)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
                 self.shift_cpi()
             dice_table += '</pre><br>'
             await self.broadcast('PLAYER_CHALLENGES')

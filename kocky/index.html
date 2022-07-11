@@ -91,8 +91,8 @@ Your browser does not support the HTML5 canvas tag.</canvas>
         <button id="addBotButton" disabled onclick="sendAddBot()">add</button>
         <select id="botSelect">
           <option value="easy">easy</option>
-          <option value="dummy">dummy</option>
-          <option value="rand">rand</option>
+          <option value="medium" selected>medium</option>
+          <option value="hard" disabled>hard</option>
         </select>
         bot
       </p>
@@ -163,6 +163,11 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.9.0 [2022-07-11]</h4>
+    <ul>
+      <li>added medium bot</li>
+      <li>removed dummy and rand bots</li>
+    </ul>
     <h4>v1.8.0 [2022-04-18]</h4>
     <ul>
       <li>playing against bots is now possible</li>
