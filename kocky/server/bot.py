@@ -25,7 +25,7 @@ class Bot(ABC):
 
     async def play_reveal(self, dice):
         await asyncio.sleep(1)
-        await self.socket.send('REVEAL ' + ' '.join(dice))
+        await self.socket.send('REVEAL ' + ' '.join(map(str, dice)))
         self.my_hidden_dice = None
 
     async def play_challenge(self):
