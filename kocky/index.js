@@ -233,6 +233,10 @@ function toggleSetting10(checked) {
   localStorage.setItem('setting10', checked);
   gVibrate = checked;
 }
+function toggleSetting11(checked) {
+  localStorage.setItem('setting11', checked);
+  gAnimation = checked;
+}
 
 function playSound(sound) {
   if (gSounds) sound.play();
@@ -268,11 +272,12 @@ function addDice(n) {
 function rollDice(selector, roll = null) {
   var dice = document.querySelectorAll(`${selector}.die-div:not(.revealed):not(.pre-revealed)`);
   playSound(SOUND_ROLL_DICE);
-  dice.forEach((die, i) => {rollDie(die, roll == null ? getRandomNumber(1, 6) : roll[i])});
+  var animation = gAnimation || selector == '.dice-roller';
+  dice.forEach((die, i) => {rollDie(die, roll == null ? getRandomNumber(1, 6) : roll[i], animation)});
 }
-function rollDie(dieDiv, roll) {
+function rollDie(dieDiv, roll, animation) {
   var die = dieDiv.firstElementChild;
-  die.style["transition-duration"] = `${Math.random() + 1.5}s`;
+  die.style["transition-duration"] = animation ? `${Math.random() + 1.5}s` : `0s`;
   die.classList.toggle("odd-roll");
   die.classList.toggle("even-roll");
   die.dataset.roll = roll;
@@ -891,7 +896,7 @@ function storageAvailable(type) {
 window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 11; i++) {
     var element = document.getElementById(`setting${i}`);
     var storedValue = localStorage.getItem(`setting${i}`);
     if (storedValue !== null) element.checked = storedValue === 'true';
