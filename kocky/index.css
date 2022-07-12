@@ -143,6 +143,11 @@ div.playerDiv .playerActionDiv {
 .playerNameDiv, .playerActionDiv, .playerTimeDiv {
   background: lightyellow;
 }
+.currentPlayer .playerNameDiv,
+.currentPlayer .playerActionDiv,
+.currentPlayer .playerTimeDiv {
+  background: yellow;
+}
 div#gameControlsDiv {
   position: relative;
   bottom: 0;
