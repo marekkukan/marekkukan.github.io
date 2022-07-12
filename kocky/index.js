@@ -169,6 +169,10 @@ var shake = new Shake({threshold: 15, timeout: 1000});
 window.addEventListener('shake', shakeEventHandler, false);
 
 function debug(s) {
+  // don't put gamelog messages in debuglog
+  if (s.startsWith('server: GAME_LOG')) {
+    return;
+  }
   // convert game state json to yaml (for better readability)
   if (s.startsWith('server: GAME_STATE ')) {
     s = `${s.slice(0, 19)}<pre>${jsyaml.dump(JSON.parse(s.slice(19)))}</pre>`;
