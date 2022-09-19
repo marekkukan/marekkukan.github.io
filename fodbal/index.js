@@ -57,6 +57,7 @@ function displayGraph(season) {
   if (season == "2020") sheetName = "TABULKY_19%2F20";
   if (season == "2021") sheetName = "TABULKY_20%2F21";
   if (season == "2022") sheetName = "TABULKY_21%2F22";
+  if (season == "2023") sheetName = "TABULKY_22%2F23";
   var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:J100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(url, processData);
 }
