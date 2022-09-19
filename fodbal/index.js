@@ -74,6 +74,7 @@ function processData(data) {
         'textColor': row[1] >= NUMBER_OF_GAMES_TO_QUALIFY ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
+        'markerSize': Number(row[1]) / 2 + 5,
       })
     }
   }
@@ -165,7 +166,7 @@ function renderPlot() {
     },
     textposition: 'center right',
     marker: {
-      size: 20,
+      size: checkedPlayers().map(x => x.markerSize),
       color: checkedPlayers().map(x => x.markerColor),
       line: {
         color: checkedPlayers().map(x => x.markerLineColor),
