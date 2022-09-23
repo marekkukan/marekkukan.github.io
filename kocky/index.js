@@ -519,6 +519,12 @@ function enterLobby(button) {
   connectToServer();
 }
 function connectToServer() {
+  if (gConnectionAttempts >= 3) {
+    popupError('connecting to server failed');
+    gConnectionAttempts = 0;
+    return;
+  }
+  gConnectionAttempts += 1;
   debug("connecting to server ..");
   document.getElementById('connectionStatusDiv').style.background = 'blue';
   socket = new WebSocket(window.location.protocol == "https:" ? "wss://144.24.184.91:443" : "ws://localhost:8765");
@@ -530,7 +536,7 @@ function connectToServer() {
     debug("connection closed");
     document.getElementById('connectionStatusDiv').style.background = 'red';
     socket = null;
-    setTimeout(connectToServer, 5000);
+    setTimeout(connectToServer, 3000);
   }
   socket.onopen = () => {
     debug("connection established");
@@ -902,6 +908,7 @@ window.addEventListener('load', (e) => {
     if (storedValue !== null) element.checked = storedValue === 'true';
     element.oninput();
   }
+  gConnectionAttempts = 0;
   var nickname = localStorage.getItem('nickname');
   if (nickname) {
     myNickname = nickname;
@@ -920,4 +927,3 @@ window.addEventListener('online', (e) => {
   debug(`online`);
   document.getElementById('networkStatusDiv').style.background = 'green';
 });
-
