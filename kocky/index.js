@@ -527,7 +527,7 @@ function connectToServer() {
   gConnectionAttempts += 1;
   debug("connecting to server ..");
   document.getElementById('connectionStatusDiv').style.background = 'blue';
-  socket = new WebSocket(window.location.protocol == "https:" ? "wss://144.24.184.91:443" : "ws://localhost:8765");
+  socket = new WebSocket(window.location.protocol == "https:" ? "wss://marekkukan.mooo.com:443" : "ws://localhost:8765");
   socket.onerror = (e) => {
     debug("connection error");
     document.getElementById('connectionStatusDiv').style.background = 'orange';
