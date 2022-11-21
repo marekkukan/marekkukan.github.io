@@ -130,6 +130,8 @@ async function createOptimalTeams() {
     }
   }
   var team2 = players.filter(x => !team1.includes(x));
+  // swap teams if necessary, so that team1 is the stronger team
+  if (p1sum(team1) < p1sum(team2)) [team1, team2] = [team2, team1];
   document.getElementById("teamsTable").innerHTML = `
     <tr><th style="width: 50%;">bieli</th><th style="width: 50%;">cierni</th></tr>
     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
