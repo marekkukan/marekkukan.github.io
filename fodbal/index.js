@@ -263,5 +263,5 @@ window.addEventListener('load', (e) => {
     gFilter = storedValue;
     document.getElementById(gFilter).checked = true;
   }
-  displayGraph('2022');
+  displayGraph('2023');
 });
