@@ -112,7 +112,7 @@ async function createOptimalTeams() {
     } else if (gPriority == 'priority2') {
       isBetter = (p2diff < p2diffBest || (p2diff == p2diffBest && p1diff < p1diffBest));
     } else if (gPriority == 'priority3') {
-      isBetter = (p1diff + p2diff < p1diffBest + p2diffBest);
+      isBetter = ((p1diff + p2diff < p1diffBest + p2diffBest) || ((p1diff + p2diff == p1diffBest + p2diffBest) && p1diff < p1diffBest));
     }
     if (gEvenSubstitutes) isBetter &&= subsDiff <= 1;
     if (isBetter) {
