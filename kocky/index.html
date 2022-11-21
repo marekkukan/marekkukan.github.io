@@ -35,7 +35,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 <div id="myApp" style="display: none;">
   <div id="revealedDiceDiv"></div>
   <div id="diceDiv"></div>
-  <div id="controlsDiv">
+  <div id="controlsDiv" class="unselectable">
     <div></div>
     <button onclick="addDice(-1)">-</button>
     <button onclick="rollDice('.dice-roller')" >🎲</button>
@@ -113,7 +113,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <div id="counter6Div"><span id="counter6"></span>⚅</div>
     </div>
     <div id="playersDiv"></div>
-    <div id="gameControlsDiv">
+    <div id="gameControlsDiv" class="unselectable">
       <div id="bidControllerDiv">
         <div id="bidQuantityDiv" style="grid-area: f;" data-value="1">1</div>
         <div id="bidQuantityUpDiv" style="grid-area: a;">▲</div>
