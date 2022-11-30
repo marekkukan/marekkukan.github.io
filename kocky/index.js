@@ -349,9 +349,9 @@ function generatePlayerDiv(player) {
   var bid = player.bid == null ? '' : player.bid.quantity + DICE_DICT[player.bid.number];
   playerDiv.classList.add('playerDiv');
   playerDiv.innerHTML = `
-      <div class="playerNameDiv" style="grid-area: name;">${player.nickname}</div>
-      <div class="playerActionDiv" style="grid-area: action;">${bid}</div>
-      <div class="playerTimeDiv" style="grid-area: time;">${toMMSS(player.time)}</div>
+      <div class="playerHeader playerNameDiv" style="grid-area: name;">${player.nickname}</div>
+      <div class="playerHeader playerActionDiv" style="grid-area: action;">${bid}</div>
+      <div class="playerHeader playerTimeDiv" style="grid-area: time;">${toMMSS(player.time)}</div>
       <div class="playerDiceDiv" style="grid-area: dice;"></div>`
   var playerTimeDiv = playerDiv.querySelector('.playerTimeDiv');
   var playerDiceDiv = playerDiv.querySelector('.playerDiceDiv');
