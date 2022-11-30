@@ -237,6 +237,10 @@ function toggleSetting11(checked) {
   localStorage.setItem('setting11', checked);
   gAnimation = checked;
 }
+function toggleSetting12(checked) {
+  localStorage.setItem('setting12', checked);
+  gAutoRoll = checked;
+}
 
 function playSound(sound) {
   if (gSounds) sound.play();
@@ -487,6 +491,11 @@ function processGameState(state) {
   document.getElementById('counter5Div').classList.remove('highlighted');
   document.getElementById('counter6Div').classList.remove('highlighted');
   if (state.currentBid.quantity != 0) document.getElementById(`counter${state.currentBid.number}Div`).classList.add('highlighted');
+  if (state.currentBid.quantity == 0 && !gRolled && gAutoRoll) {
+    gRolled = true;
+    document.getElementById('rollButton').disabled = true;
+    setTimeout(() => {socket.send(`ROLL`);}, 100);
+  }
 }
 
 function setSpectatorMode(b) {
@@ -903,7 +912,7 @@ function storageAvailable(type) {
 window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  for (let i = 1; i <= 11; i++) {
+  for (let i = 1; i <= 12; i++) {
     var element = document.getElementById(`setting${i}`);
     var storedValue = localStorage.getItem(`setting${i}`);
     if (storedValue !== null) element.checked = storedValue === 'true';
