@@ -111,10 +111,11 @@ div.playerDiv {
   grid-template-columns: 1fr 1fr 8fr;
   grid-template-rows: 1fr 1fr;
   font: 3vmin sans-serif;
-}
-div.playerDiv > * {
-  border: 1px solid;
+  border-bottom: 3px solid black;
   box-sizing: border-box;
+  border-collapse: collapse;
+}
+div.playerDiv > div {
   width: 100%;
   height: 100%;
   display: flex;
@@ -122,14 +123,11 @@ div.playerDiv > * {
   align-items: center;
 }
 div.playerDiv .playerDiceDiv {
-  /* background: rgba(0, 255, 0, 0.1); */
-  /* align-items: center; */
   display: grid;
-  /* grid-gap: 0rem; */
   grid-template-columns: repeat(6, 1fr);
   grid-auto-rows: 1fr;
   justify-items: center;
-  /* padding: 0rem; */
+  border-left: 3px solid black;
 }
 @media (orientation: landscape) {
   div.playerDiv .playerDiceDiv {
@@ -137,19 +135,14 @@ div.playerDiv .playerDiceDiv {
     grid-template-rows: 1fr;
   }
 }
-div.playerDiv .playerDiceDiv .die-div {
-  /* transform: scale(0.7); */
-}
-div.playerDiv.currentPlayer .playerNameDiv {
-  font-weight: bold;
-  /* background-color: white; */
-}
 div.playerDiv .playerActionDiv {
   font-size: 4vmin;
-  /* background-color: white; */
 }
 .playerHeader {
   background: lightyellow;
+  border: 1px solid lightgrey;
+  box-sizing: border-box;
+  border-collapse: collapse;
 }
 .currentPlayer .playerHeader {
   background: yellow;
