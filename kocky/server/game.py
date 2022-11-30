@@ -4,7 +4,7 @@ import random
 import json
 import copy
 from bid import Bid, bid2dict
-from utils import log, get_time
+from utils import log, get_time, get_wp
 
 DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'}
 
@@ -52,6 +52,7 @@ class Game:
             'currentBid': bid2dict(self.bid),
             'players': [{
                 'nickname': player.nickname,
+                'wp': player.wp,
                 'bid': bid2dict(player.bid),
                 'time': player.get_current_time(),
                 'delay': player.get_current_delay(),
@@ -98,6 +99,9 @@ class Game:
             player.is_ready = False
         while not self.finished:
             await self.play_round()
+        for player in self.players:
+            player.wp = '0%'
+        self.cp().wp = '100%'
         await self.broadcast_state()
         await self.broadcast('GAME_ENDED')
         log(f'{self.creator}\'s game has ended')
@@ -114,11 +118,14 @@ class Game:
     async def play_round(self):
         self.finished_round = False
         self.bid = Bid(0, 6)
+        dice_tuple = tuple(p.n_dice for p in self.players)
+        self.n_dice = sum(dice_tuple)
+        wp = get_wp(dice_tuple, self.cpi)
         for i, p in enumerate(self.players):
             p.revealed_dice = []
             p.roll()
             p.bid = None
-        self.n_dice = sum(p.n_dice for p in self.players)
+            p.wp = wp[i]
         await self.broadcast_state()
         await self.eval_move(await self.cp().play(), challenge_possible=False)
         while not self.finished and not self.finished_round:

@@ -22,6 +22,7 @@ class Player:
         self.is_my_turn = False
         self.is_ready = False
         self.is_fake = False
+        self.wp = '%'
 
     def __str__(self):
         return self.nickname

@@ -6,10 +6,11 @@ import pathlib
 import ssl
 import sys
 import json
+import pickle
 from player import Player
 from game import Game
 from bot import spawn_bot
-from utils import log, generate_token
+from utils import log, generate_token, set_wp_dict
 
 sockets = []
 players = []
@@ -210,6 +211,10 @@ async def main():
         ssl_context.load_cert_chain(cert_file)
     async with websockets.serve(handler, ip, port, ssl=ssl_context):
         log(f'listening on {ip} on port {port}')
+        log(f'loading win probabilities ..')
+        with open('wp.pkl', 'rb') as f:
+            set_wp_dict(pickle.load(f))
+        log(f'wp loaded successfully')
         await asyncio.Future()
 
 

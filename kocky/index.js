@@ -352,6 +352,7 @@ function generatePlayerDiv(player) {
       <div class="playerHeader playerNameDiv" style="grid-area: name;">${player.nickname}</div>
       <div class="playerHeader playerActionDiv" style="grid-area: action;">${bid}</div>
       <div class="playerHeader playerTimeDiv" style="grid-area: time;">${toMMSS(player.time)}</div>
+      <div class="playerHeader playerWPDiv" style="grid-area: wp;">${player.wp}</div>
       <div class="playerDiceDiv" style="grid-area: dice;"></div>`
   var playerTimeDiv = playerDiv.querySelector('.playerTimeDiv');
   var playerDiceDiv = playerDiv.querySelector('.playerDiceDiv');
