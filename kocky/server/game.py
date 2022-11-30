@@ -180,7 +180,7 @@ class Game:
             dice_table += '</pre><br>'
             await self.broadcast('PLAYER_CHALLENGES')
             await self.record('challenges', dice_table)
-            await asyncio.sleep(max(5, 0.7 * self.n_dice))
+            await asyncio.sleep(max(2, 0.2 * self.n_dice))
             all_dice = []
             for p in self.players:
                 all_dice.extend(p.revealed_dice)
