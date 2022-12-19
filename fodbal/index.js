@@ -187,6 +187,8 @@ function renderPlot() {
     xaxis: {range: [0, 2], title: "priemerne zapasove body"},
     yaxis: {range: [0, 4], title: "priemerne kanadske body"},
     font: {size: 20},
+    paper_bgcolor: "lightgrey",
+    plot_bgcolor: "lightgrey",
   };
   Plotly.newPlot("myPlot", data, layout);
 }
