@@ -69,10 +69,10 @@ function processData(data) {
       gPlayers.push({
         'name': row[0],
         'games': Number(row[1]),
-        'p1': row[1] == 0 ? NaN : Number(row[6].replace(',', '.')), // priemerne zapasove body
-        'p2': row[1] == 0 ? NaN : Number(row[9].replace(',', '.')), // priemerne kanadske body
+        'p1': row[1] == 0 ? 1 : Number(row[6].replace(',', '.')), // priemerne zapasove body
+        'p2': row[1] == 0 ? 1 : Number(row[9].replace(',', '.')), // priemerne kanadske body
         'checked': true,
-        'textColor': row[1] >= NUMBER_OF_GAMES_TO_QUALIFY ? 'black' : 'grey',
+        'textColor': row[1] > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerSize': Number(row[1]) / 2 + 5,
@@ -89,8 +89,8 @@ function resetTeams() {
   }
 }
 
-var p1sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p1 : 1), 0);
-var p2sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p2 : 1), 0);
+var p1sum = players => players.reduce((p, n) => p + n.p1, 0);
+var p2sum = players => players.reduce((p, n) => p + n.p2, 0);
 
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
@@ -171,9 +171,11 @@ function renderPlayersList() {
 }
 
 function renderPlot() {
+  var players = checkedPlayers();
+  var showTeams = (players.length == 10 && players[0].markerColor != players[0].markerLineColor);
   var data = [{
-    x: checkedPlayers().map(x => x.p1),
-    y: checkedPlayers().map(x => x.p2),
+    x: checkedPlayers().map(x => x.games == 0 && !showTeams ? NaN : x.p1),
+    y: checkedPlayers().map(x => x.games == 0 && !showTeams ? NaN : x.p2),
     text: checkedPlayers().map(x => x.name),
     textfont: {
       color: checkedPlayers().map(x => x.textColor),
@@ -191,8 +193,7 @@ function renderPlot() {
     },
     mode: "markers+text",
   }];
-  var players = checkedPlayers();
-  if (players[0].markerColor != players[0].markerLineColor) {
+  if (showTeams) {
     data.unshift(generateWeb(players, 'black'));
     data.unshift(generateWeb(players, 'white'));
   }
