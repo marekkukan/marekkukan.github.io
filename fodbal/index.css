@@ -75,6 +75,7 @@ div#menuDiv button.active {
 #myPlot {
   width: 100%;
   height: 100%;
+  background-color: lightgrey;
 }
 #myApp {
   width: 100%;

@@ -89,12 +89,13 @@ function resetTeams() {
   }
 }
 
+var p1sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p1 : 1), 0);
+var p2sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p2 : 1), 0);
+
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
   var players = checkedPlayers();
   if (players.length != 10) return;
-  var p1sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p1 : 1), 0);
-  var p2sum = players => players.reduce((p, n) => p + (n.games > 0 ? n.p2 : 1), 0);
   var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
   var p1total = p1sum(players);
   var p2total = p2sum(players);
@@ -177,13 +178,19 @@ function renderPlot() {
     marker: {
       size: checkedPlayers().map(x => x.markerSize),
       color: checkedPlayers().map(x => x.markerColor),
+      opacity: 0.9,
       line: {
         color: checkedPlayers().map(x => x.markerLineColor),
-        width: 4,
+        width: 1,
       },
     },
     mode: "markers+text",
   }];
+  var players = checkedPlayers();
+  if (players[0].markerColor != players[0].markerLineColor) {
+    data.unshift(generateWeb(players, 'black'));
+    data.unshift(generateWeb(players, 'white'));
+  }
   Plotly.react("myPlot", data, generateLayout(gAutoRange));
 }
 
@@ -194,6 +201,22 @@ function generateLayout(autorange) {
     font: {size: 20},
     paper_bgcolor: "lightgrey",
     plot_bgcolor: "lightgrey",
+    showlegend: false,
+  };
+}
+
+function generateWeb(players, color) {
+  var team = players.filter(x => x.markerColor == color);
+  // asserting team.length == 5
+  var x = p1sum(team) / 5;
+  var y = p2sum(team) / 5;
+  return {
+    mode: 'lines+markers',
+    line: {color: color, width: 2},
+    marker: {size: [10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10], symbol: 'square', line: {width: 0}},
+    x: [x, team[0].p1, x, team[1].p1, x, team[2].p1, x, team[3].p1, x, team[4].p1, x],
+    y: [y, team[0].p2, y, team[1].p2, y, team[2].p2, y, team[3].p2, y, team[4].p2, y],
+    opacity: 0.7,
   };
 }
 
