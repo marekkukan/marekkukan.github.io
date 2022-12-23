@@ -173,6 +173,7 @@ function renderPlot() {
       color: checkedPlayers().map(x => x.textColor),
     },
     textposition: 'center right',
+    cliponaxis: false,
     marker: {
       size: checkedPlayers().map(x => x.markerSize),
       color: checkedPlayers().map(x => x.markerColor),
@@ -183,14 +184,17 @@ function renderPlot() {
     },
     mode: "markers+text",
   }];
-  var layout = {
-    xaxis: {range: [0, 2], title: "priemerne zapasove body"},
-    yaxis: {range: [0, 4], title: "priemerne kanadske body"},
+  Plotly.react("myPlot", data, generateLayout(gAutoRange));
+}
+
+function generateLayout(autorange) {
+  return {
+    xaxis: {autorange: autorange, range: [0, 2], title: "priemerne zapasove body"},
+    yaxis: {autorange: autorange, range: [0, 4], title: "priemerne kanadske body"},
     font: {size: 20},
     paper_bgcolor: "lightgrey",
     plot_bgcolor: "lightgrey",
   };
-  Plotly.newPlot("myPlot", data, layout);
 }
 
 function debug(s) {
@@ -270,5 +274,15 @@ window.addEventListener('load', (e) => {
     gFilter = storedValue;
     document.getElementById(gFilter).checked = true;
   }
+  gAutoRange = false;
+  var storedValue = localStorage.getItem(`autoRange`);
+  if (storedValue !== null) {
+    gAutoRange = storedValue === 'true';
+  }
+  Plotly.newPlot("myPlot", [], generateLayout(false));
+  document.getElementById('myPlot').on('plotly_doubleclick', (e) => {
+    gAutoRange = !gAutoRange;
+    localStorage.setItem('autoRange', gAutoRange);
+  });
   displayGraph('2023');
 });
