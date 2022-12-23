@@ -131,7 +131,7 @@ async function createOptimalTeams() {
       for (const p of team) {
         p.markerColor = 'white';
       }
-      render();
+      renderPlot();
       await new Promise(r => setTimeout(r, 100));
     }
   }
