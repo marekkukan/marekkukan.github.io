@@ -143,6 +143,8 @@ async function createOptimalTeams() {
     for (const p of team2) p.markerColor = 'black';
     renderPlot();
   }
+  team1.sort((a, b) => b.p2 - a.p2);
+  team2.sort((a, b) => b.p2 - a.p2);
   document.getElementById("teamsTable").innerHTML = `
     <tr><th style="width: 50%;">bieli</th><th style="width: 50%;">cierni</th></tr>
     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
