@@ -15,7 +15,7 @@
 
 <script src="../snow.js"></script>
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.2.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.3.0</div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2014')">2013-14</button>
@@ -68,6 +68,13 @@
 <div id="popupContainer" style="display: none;">
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.3.0 [2022-12-23]</h4>
+    <ul>
+      <li>improved default criterion for creating optimal teams</li>
+      <li>improved visualization</li>
+      <li>players within teams are now sorted by average goals+assists</li>
+      <li>double-click zoom is now persistent (double-click again to unzoom)</li>
+    </ul>
     <h4>v1.2.0 [2022-11-21]</h4>
     <ul>
       <li>changed default season to 2022-23</li>
