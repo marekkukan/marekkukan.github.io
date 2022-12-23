@@ -100,26 +100,31 @@ async function createOptimalTeams() {
   var p1total = p1sum(players);
   var p2total = p2sum(players);
   var subsTotal = numberOfSubs(players);
-  var p1diffBest = 1000;
-  var p2diffBest = 1000;
+  var p1best = 1000;
+  var p2best = 1000;
+  var p3best = 1000;
   var team1;
   for (const team of combinationN(players, 5)) {
-    var p1diff = Math.abs(p1total - 2*p1sum(team));
-    var p2diff = Math.abs(p2total - 2*p2sum(team));
+    var p1diff = p1total - 2*p1sum(team);
+    var p2diff = p2total - 2*p2sum(team);
+    var p1 = Math.abs(p1diff);
+    var p2 = Math.abs(p2diff);
+    var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
     var isBetter;
     if (gPriority == 'priority1') {
-      isBetter = (p1diff < p1diffBest || (p1diff == p1diffBest && p2diff < p2diffBest));
+      isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
     } else if (gPriority == 'priority2') {
-      isBetter = (p2diff < p2diffBest || (p2diff == p2diffBest && p1diff < p1diffBest));
+      isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
     } else if (gPriority == 'priority3') {
-      isBetter = ((p1diff + p2diff < p1diffBest + p2diffBest) || ((p1diff + p2diff == p1diffBest + p2diffBest) && p1diff < p1diffBest));
+      isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
     }
     if (gEvenSubstitutes) isBetter &&= subsDiff <= 1;
     if (isBetter) {
       team1 = team;
-      p1diffBest = p1diff;
-      p2diffBest = p2diff;
+      p1best = p1;
+      p2best = p2;
+      p3best = p3;
       for (const p of players) {
         p.markerColor = 'black';
       }
