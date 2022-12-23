@@ -91,12 +91,12 @@ function resetTeams() {
 
 var p1sum = players => players.reduce((p, n) => p + n.p1, 0);
 var p2sum = players => players.reduce((p, n) => p + n.p2, 0);
+var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
 
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
   var players = checkedPlayers();
   if (players.length != 10) return;
-  var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
   var p1total = p1sum(players);
   var p2total = p2sum(players);
   var subsTotal = numberOfSubs(players);
@@ -112,25 +112,17 @@ async function createOptimalTeams() {
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
     var isBetter;
-    if (gPriority == 'priority1') {
-      isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
-    } else if (gPriority == 'priority2') {
-      isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
-    } else if (gPriority == 'priority3') {
-      isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
-    }
+    if (gPriority == 'priority1') isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
+    if (gPriority == 'priority2') isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
+    if (gPriority == 'priority3') isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
     if (gEvenSubstitutes) isBetter &&= subsDiff <= 1;
     if (isBetter) {
       team1 = team;
       p1best = p1;
       p2best = p2;
       p3best = p3;
-      for (const p of players) {
-        p.markerColor = 'black';
-      }
-      for (const p of team) {
-        p.markerColor = 'white';
-      }
+      for (const p of players) p.markerColor = 'black';
+      for (const p of team) p.markerColor = 'white';
       renderPlot();
       await new Promise(r => setTimeout(r, 100));
     }
@@ -176,20 +168,20 @@ function renderPlot() {
   var players = checkedPlayers();
   var showTeams = (players.length == 10 && players[0].markerColor != players[0].markerLineColor);
   var data = [{
-    x: checkedPlayers().map(x => x.games == 0 && !showTeams ? NaN : x.p1),
-    y: checkedPlayers().map(x => x.games == 0 && !showTeams ? NaN : x.p2),
-    text: checkedPlayers().map(x => x.name),
+    x: players.map(x => x.games == 0 && !showTeams ? NaN : x.p1),
+    y: players.map(x => x.games == 0 && !showTeams ? NaN : x.p2),
+    text: players.map(x => x.name),
     textfont: {
-      color: checkedPlayers().map(x => x.textColor),
+      color: players.map(x => x.textColor),
     },
     textposition: 'center right',
     cliponaxis: false,
     marker: {
-      size: checkedPlayers().map(x => x.markerSize),
-      color: checkedPlayers().map(x => x.markerColor),
+      size: players.map(x => x.markerSize),
+      color: players.map(x => x.markerColor),
       opacity: 0.9,
       line: {
-        color: checkedPlayers().map(x => x.markerLineColor),
+        color: players.map(x => x.markerLineColor),
         width: 1,
       },
     },
