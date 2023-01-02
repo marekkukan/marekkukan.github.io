@@ -106,9 +106,9 @@ div.playerDiv {
   height: 14.28%;
   display: grid;
   grid-template-areas:
-    "name name name dice"
-    "action time wp dice";
-  grid-template-columns: 1fr 1fr 1fr 8fr;
+    "name name name name dice"
+    "action time luck wp dice";
+  grid-template-columns: 1fr 1fr 1fr 1fr 8fr;
   grid-template-rows: 1fr 1fr;
   font: 3vmin sans-serif;
   border-bottom: 3px solid black;
@@ -138,7 +138,7 @@ div.playerDiv .playerDiceDiv {
 div.playerDiv .playerActionDiv {
   font-size: 4vmin;
 }
-div.playerDiv .playerWPDiv {
+div.playerDiv .playerWPDiv, div.playerDiv .playerLuckDiv {
   font: 1.8vmin monospace;
   justify-content: right;
   padding-right: 3px;

@@ -348,6 +348,17 @@ function generateDieDiv(roll, ...classes) {
   return div;
 }
 
+function playerLuck2HTML(player) {
+  var luckDiffHTML = '';
+  if (player.luckDiff > 0) luckDiffHTML = `<span style="font-size: 90%; color: green;">↑${player.luckDiff.toFixed(1)}</span>`;
+  if (player.luckDiff < 0) luckDiffHTML = `<span style="font-size: 90%; color:   red;">↓${-player.luckDiff.toFixed(1)}</span>`;
+  var luckHTML = '0';
+  if (player.luck > 0) luckHTML = `<span style="color: green;">+${player.luck.toFixed(1)}</span>`;
+  if (player.luck < 0) luckHTML = `<span style="color:   red;">${player.luck.toFixed(1)}</span>`;
+  // return `${luckDiffHTML}&nbsp;<span onclick="popup('aboutLuckDiv')">${luckHTML}🍀</span>`;
+  return `<span onclick="popup('aboutLuckDiv')">${luckHTML}🍀</span>`;
+}
+
 function generatePlayerDiv(player) {
   var thisIsMe = player.nickname == myNickname;
   var playerDiv = document.createElement('div');
@@ -357,6 +368,7 @@ function generatePlayerDiv(player) {
       <div class="playerHeader playerNameDiv" style="grid-area: name;">${player.nickname}</div>
       <div class="playerHeader playerActionDiv" style="grid-area: action;">${bid}</div>
       <div class="playerHeader playerTimeDiv" style="grid-area: time;">${toMMSS(player.time)}</div>
+      <div class="playerHeader playerLuckDiv" style="grid-area: luck;">${playerLuck2HTML(player)}</div>
       <div class="playerHeader playerWPDiv" style="grid-area: wp;">${player.wp}</div>
       <div class="playerDiceDiv" style="grid-area: dice;"></div>`
   var playerTimeDiv = playerDiv.querySelector('.playerTimeDiv');

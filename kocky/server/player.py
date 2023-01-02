@@ -15,6 +15,7 @@ class Player:
         self.n_dice = 6
         self.hidden_dice = []
         self.revealed_dice = []
+        self.hinted_dice = [False] * 7
         self.move = asyncio.Future()
         self.bid = None
         self.time = 0
@@ -23,6 +24,8 @@ class Player:
         self.is_ready = False
         self.is_fake = False
         self.wp = '%'
+        self.luck = 0
+        self.luck_diff = 0
 
     def __str__(self):
         return self.nickname
@@ -30,6 +33,7 @@ class Player:
     def roll(self):
         self.hidden_dice = [random.randint(1, 6) for _ in
                             range(self.n_dice - len(self.revealed_dice))]
+        self.hinted_dice = [False] * 7
 
     async def play(self, previous_move_invalid = False):
         # await self.socket.send('PLAY ' + ' '.join(str(x) for x in self.hidden_dice))

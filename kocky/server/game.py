@@ -4,7 +4,7 @@ import random
 import json
 import copy
 from bid import Bid, bid2dict
-from utils import log, get_time, get_wp
+from utils import log, get_time, get_wp, calc_dl
 
 DICE_DICT = {1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅'}
 
@@ -52,6 +52,8 @@ class Game:
             'currentBid': bid2dict(self.bid),
             'players': [{
                 'nickname': player.nickname,
+                'luck': player.luck,
+                'luckDiff': player.luck_diff,
                 'wp': player.wp,
                 'bid': bid2dict(player.bid),
                 'time': player.get_current_time(),
@@ -95,6 +97,8 @@ class Game:
         for player in self.players:
             player.n_dice = len(player.nickname) if self.snodenl else self.starting_number_of_dice
             player.revealed_dice = []
+            player.luck = 0
+            player.luck_diff = 0
             player.time = self.time
             player.is_ready = False
         while not self.finished:
@@ -108,6 +112,9 @@ class Game:
 
     def cp(self):
         return self.players[self.cpi]
+
+    def pp(self):
+        return self.players[self.ppi]
 
     def shift_cpi(self):
         self.ppi = self.cpi
@@ -126,6 +133,7 @@ class Game:
             p.roll()
             p.bid = None
             p.wp = wp[i]
+            # p.luck_diff = 0
         await self.broadcast_state()
         await self.eval_move(await self.cp().play(), challenge_possible=False)
         while not self.finished and not self.finished_round:
@@ -144,6 +152,8 @@ class Game:
             except:
                 await self.eval_move(await self.invalid_move(move), challenge_possible, reveal_possible)
                 return
+            if reveal_possible or bid.number != self.bid.number:
+                self.cp().hinted_dice[bid.number] = True
             self.bid = bid
             self.cp().bid = bid
             await self.broadcast('PLAYER_BIDS')
@@ -182,18 +192,37 @@ class Game:
             await self.record('challenges', dice_table)
             await asyncio.sleep(max(2, 0.2 * self.n_dice))
             all_dice = []
+            nonhinted_dice = []
+            nonhinted_dice_cp = []
             for p in self.players:
+                p.luck_diff = 0
                 all_dice.extend(p.revealed_dice)
                 all_dice.extend(p.hidden_dice)
-            diff = self.bid.quantity - sum([1 for die in all_dice if die == self.bid.number or die == 1])
-            if diff < 0:
-                self.cp().n_dice += diff
-            elif diff > 0:
-                self.players[self.ppi].n_dice -= diff
+                if not p.hinted_dice[self.bid.number]:
+                    nonhinted_dice.extend(p.hidden_dice)
+                    if p != self.cp():
+                        nonhinted_dice_cp.extend(p.hidden_dice)
+            actual_quantity = sum([1 for die in all_dice if die == self.bid.number or die == 1])
+            actual_quantity2 = sum([1 for die in nonhinted_dice if die == self.bid.number or die == 1])
+            actual_quantity3 = sum([1 for die in nonhinted_dice_cp if die == self.bid.number or die == 1])
+            diff = self.bid.quantity - actual_quantity
+            if len(nonhinted_dice) > 0:
+                _, dl_challengee = calc_dl(len(nonhinted_dice), diff + actual_quantity2, actual_quantity2, self.cp().n_dice, self.pp().n_dice, self.bid.number == 1)
+                self.pp().luck_diff = dl_challengee
+                self.pp().luck += dl_challengee
+            if len(nonhinted_dice_cp) > 0:
+                dl_challenger, _ = calc_dl(len(nonhinted_dice_cp), diff + actual_quantity3, actual_quantity3, self.cp().n_dice, self.pp().n_dice, self.bid.number == 1)
+                self.cp().luck_diff = dl_challenger
+                self.cp().luck += dl_challenger
+            if diff > 0: # challenger won
+                self.pp().n_dice -= diff
                 self.cpi = self.ppi
-            else:
-                self.cp().n_dice -= 1
-                self.players[self.ppi].n_dice += 1
+            else: # challenger lost
+                if diff < 0:
+                    self.cp().n_dice += diff
+                else: # spot on bid, challengee gains one die
+                    self.cp().n_dice -= 1
+                    self.pp().n_dice += 1
             await self.check_if_loses()
         elif parts[0] == '_BID+1':
             if self.bid.quantity > self.n_dice:

@@ -245,6 +245,14 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     <h1>gamelog</h1>
     <p id="gamelogP" style="font-size: 1.6vmax;"></p>
   </div>
+  <div id="aboutLuckDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+    <h1>about luck detector</h1>
+    <p>Numbers with 🍀 symbol represent player's <span style="font-style: italic;">luck score</span>.</p>
+    <p>Luck score is defined as</p>
+    <p style="font-style: italic;"><math display="block">&lt;luck score&gt; = &lt;number of dice a player has&gt; - &lt;number of dice a player should have (with neutral luck)&gt;</math></p>
+    <p>Therefore lucky players have positive luck score, and vice versa.</p>
+    <p>Players with 0🍀 are neither lucky, nor unlucky.</p>
+  </div>
   <div id="confirmDiv" style="display: none;">
     <p id="confirmP" style="font: 3vh monospace;"></p>
   </div>
