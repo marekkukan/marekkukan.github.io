@@ -190,7 +190,7 @@ class Game:
             dice_table += '</pre><br>'
             await self.broadcast('PLAYER_CHALLENGES')
             await self.record('challenges', dice_table)
-            await asyncio.sleep(max(2, 0.2 * self.n_dice))
+            await asyncio.sleep(2.5 + 0.2 * self.n_dice)
             all_dice = []
             nonhinted_dice = []
             nonhinted_dice_cp = []
