@@ -80,8 +80,8 @@ class Game:
     async def broadcast_state(self):
         await self.broadcast('GAME_STATE ' + self.state())
 
-    async def record(self, message, dice_table = ''):
-        record = dice_table + get_time() + ' ' + self.cp().nickname + ' ' + message + '<br>'
+    async def record(self, message, summary = ''):
+        record = summary + get_time() + ' ' + self.cp().nickname + ' ' + message + '<br>'
         self.log = record + self.log
         await self.broadcast('GAME_LOG_RECORD ' + record)
 
@@ -183,13 +183,8 @@ class Game:
                 return
             self.finished_round = True
             await self.broadcast_state()
-            dice_table = '<br><pre>'
-            for i in range(self.n_players):
-                dice_table += f'{self.cp().nickname.ljust(12)}{" ".join(DICE_DICT[x] for x in self.cp().revealed_dice + self.cp().hidden_dice)}<br>'
-                self.shift_cpi()
-            dice_table += '</pre><br>'
             await self.broadcast('PLAYER_CHALLENGES')
-            await self.record('challenges', dice_table)
+            await self.record('challenges', self.create_summary())
             await asyncio.sleep(2.5 + 0.2 * self.n_dice)
             all_dice = []
             nonhinted_dice = []
@@ -275,3 +270,17 @@ class Game:
         fake_player.revealed_dice = []
         fake_player.is_fake = True
         self.players[self.cpi] = fake_player
+
+    def create_summary(self):
+        all_dice = []
+        for p in self.players:
+            all_dice.extend(p.revealed_dice)
+            all_dice.extend(p.hidden_dice)
+        summary = '<br><pre>'
+        summary += f'{"".join(str(sum([1 for die in all_dice if die == x or die == 1])).rjust(3) + DICE_DICT[x] for x in range(1,7))}<br>'
+        summary += '_' * 25 + '<br>'
+        for p in self.players:
+            if p.n_dice <= 0: continue
+            summary += f'{p.nickname.ljust(12)}| {" ".join(DICE_DICT[x] for x in p.revealed_dice + p.hidden_dice)}<br>'
+        summary += '</pre><br>'
+        return summary

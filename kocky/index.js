@@ -468,12 +468,10 @@ function processGameState(state) {
     gRolled = false;
     document.getElementById('rollButton').disabled = true;
   }
-  // rotate the list of players to make me the last one
   var myIndex = state.players.findIndex(x => x.nickname == myNickname);
-  var players = state.players.slice(myIndex+1).concat(state.players.slice(0, myIndex+1))
   // render game state
   var playersDiv = document.getElementById('playersDiv');
-  playersDiv.replaceChildren(...players.map(x => generatePlayerDiv(x)));
+  playersDiv.replaceChildren(...state.players.map(x => generatePlayerDiv(x)));
   // enable / disable buttons
   setSpectatorMode(myIndex == -1 || state.players[myIndex].numberOfDice == 0 || state.finished);
   gCurrentBid = state.currentBid;
