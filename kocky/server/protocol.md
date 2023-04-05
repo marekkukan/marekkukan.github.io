@@ -36,6 +36,7 @@
 | `GAME_LOG_RECORD record` | everyone in this game | latest `record` of the gamelog |
 | `GAME_LOG gamelog` | specific player | entire `gamelog` |
 | `ROLL 5 2 1 2` | specific player | you rolled `5 2 1 2` |
+| `INDEX 0` | specific player | your index is `0` |
 | `INVALID_MOVE` | specific player | you played an invalid move |
 
 ### game state yaml examples

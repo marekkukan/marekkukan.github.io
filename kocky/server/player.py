@@ -26,6 +26,7 @@ class Player:
         self.wp = '%'
         self.luck = 0
         self.luck_diff = 0
+        self.index = -1
 
     def __str__(self):
         return self.nickname
@@ -53,7 +54,7 @@ class Player:
             self.delay = 0
         if self.time < 0:
             self.time = 0
-        log(f'player {self} took {t}s to make move {move}')
+        log(f'player {self} took {round(t, 1)}s to make move {move}')
         self.is_my_turn = False
         return move
 

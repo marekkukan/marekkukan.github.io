@@ -182,6 +182,7 @@ async def handler(socket, path):
                 elif message == 'ROLL':
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None:
+                    await socket.send(f'INDEX {player.index}')
                     await socket.send('GAME_STATE ' + player.game.state())
                 elif message == 'GAME_LOG' and player.game is not None and player.game.started:
                     await socket.send('GAME_LOG ' + player.game.log)

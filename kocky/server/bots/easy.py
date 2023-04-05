@@ -4,8 +4,8 @@ from bot import Bot
 
 class EasyBot(Bot):
 
-    async def process_game_state(self, state, my_hidden_dice):
-        me = next(x for x in state['players'] if x['nickname'] == self.nickname)
+    async def process_game_state(self, state):
+        me = state['players'][self.my_index]
         n_dice = sum(x['numberOfDice'] for x in state['players'])
         q = state['currentBid']['quantity']
         n = state['currentBid']['number']

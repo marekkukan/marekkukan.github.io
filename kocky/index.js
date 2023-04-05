@@ -359,8 +359,8 @@ function playerLuck2HTML(player) {
   return `<span onclick="popup('aboutLuckDiv')">${luckHTML}🍀</span>`;
 }
 
-function generatePlayerDiv(player) {
-  var thisIsMe = player.nickname == myNickname;
+function generatePlayerDiv(player, index) {
+  var thisIsMe = index == gMyIndex;
   var playerDiv = document.createElement('div');
   var bid = player.bid == null ? '' : player.bid.quantity + DICE_DICT[player.bid.number];
   playerDiv.classList.add('playerDiv');
@@ -435,6 +435,7 @@ function sendGameOptions() {
     'startingNumberOfDice': parseInt(document.getElementById('option3').value),
     'startingNumberOfDiceEqualsNicknameLength': document.getElementById('option4').checked,
     'randomOrder': document.getElementById('option5').checked,
+    'incognito': document.getElementById('option6').checked,
   };
   socket.send(`GAME_OPTIONS ${JSON.stringify(options)}`);
 }
@@ -444,7 +445,7 @@ function processGameState(state) {
     displayWaitingRoom();
     document.getElementById("playersInGameList").innerHTML = state.players.map(x => `<li>${x.nickname}${x.isReady ? ' (ready)' : ''}</li>`).join('');
     var isMyGame = state.players[0].nickname == myNickname;
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 6; i++) {
       var element = document.getElementById(`option${i}`);
       element.disabled = !isMyGame;
     }
@@ -458,6 +459,7 @@ function processGameState(state) {
     document.getElementById('option3').oninput();
     document.getElementById('option4').checked = state.options.startingNumberOfDiceEqualsNicknameLength;
     document.getElementById('option5').checked = state.options.randomOrder;
+    document.getElementById('option6').checked = state.options.incognito;
     return;
   }
   displayGame();
@@ -468,10 +470,10 @@ function processGameState(state) {
     gRolled = false;
     document.getElementById('rollButton').disabled = true;
   }
-  var myIndex = state.players.findIndex(x => x.nickname == myNickname);
+  var myIndex = gMyIndex;
   // render game state
   var playersDiv = document.getElementById('playersDiv');
-  playersDiv.replaceChildren(...state.players.map(x => generatePlayerDiv(x)));
+  playersDiv.replaceChildren(...state.players.map((x, i) => generatePlayerDiv(x, i)));
   // enable / disable buttons
   setSpectatorMode(myIndex == -1 || state.players[myIndex].numberOfDice == 0 || state.finished);
   gCurrentBid = state.currentBid;
@@ -614,6 +616,9 @@ function connectToServer() {
       displayGame();
       playSound(SOUND_GAME_STARTED);
       document.getElementById('rollButton').disabled = false;
+    }
+    else if (message.startsWith("INDEX ")) {
+      gMyIndex = parseInt(message.slice(6));
     }
     else if (message.startsWith("GAME_STATE ")) {
       processGameState(JSON.parse(message.slice(11)));
@@ -867,6 +872,7 @@ var gMyTurn = false;
 var gRolled = false;
 var gRevealed = false;
 var gMyHiddenDice = [];
+var gMyIndex = -1;
 var gInterval = null;
 
 

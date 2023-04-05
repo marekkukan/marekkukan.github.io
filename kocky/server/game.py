@@ -26,6 +26,7 @@ class Game:
         self.starting_number_of_dice = 6
         self.snodenl = False
         self.random_order = True
+        self.incognito = False
         self.n_bots = 0
 
     def set_options(self, options):
@@ -34,6 +35,7 @@ class Game:
         self.starting_number_of_dice = options['startingNumberOfDice']
         self.snodenl = options['startingNumberOfDiceEqualsNicknameLength']
         self.random_order = options['randomOrder']
+        self.incognito = options['incognito']
 
     def get_options(self):
         return {
@@ -41,7 +43,8 @@ class Game:
             'secondsPerTurn': self.seconds_per_turn,
             'startingNumberOfDice': self.starting_number_of_dice,
             'startingNumberOfDiceEqualsNicknameLength': self.snodenl,
-            'randomOrder': self.random_order
+            'randomOrder': self.random_order,
+            'incognito': self.incognito
         }
 
     def state(self):
@@ -51,7 +54,7 @@ class Game:
             'finishedRound': self.finished_round,
             'currentBid': bid2dict(self.bid),
             'players': [{
-                'nickname': player.nickname,
+                'nickname': self.get_nickname(player),
                 'luck': player.luck,
                 'luckDiff': player.luck_diff,
                 'wp': player.wp,
@@ -81,7 +84,7 @@ class Game:
         await self.broadcast('GAME_STATE ' + self.state())
 
     async def record(self, message, summary = ''):
-        record = summary + get_time() + ' ' + self.cp().nickname + ' ' + message + '<br>'
+        record = summary + get_time() + ' ' + self.get_nickname(self.cp()) + ' ' + message + '<br>'
         self.log = record + self.log
         await self.broadcast('GAME_LOG_RECORD ' + record)
 
@@ -94,13 +97,15 @@ class Game:
             random.shuffle(self.players)
         self.time = 60 * self.minutes_per_game
         self.delay = self.seconds_per_turn
-        for player in self.players:
+        for (i, player) in enumerate(self.players):
             player.n_dice = len(player.nickname) if self.snodenl else self.starting_number_of_dice
             player.revealed_dice = []
             player.luck = 0
             player.luck_diff = 0
             player.time = self.time
             player.is_ready = False
+            player.index = i
+            await player.socket.send(f'INDEX {i}')
         while not self.finished:
             await self.play_round()
         for player in self.players:
@@ -246,9 +251,9 @@ class Game:
             self.deactivate_player()
             self.shift_cpi()
             if self.n_players < 2:
-                self.finished = True
                 await self.record('won')
                 self.deactivate_player()
+                self.finished = True
 
     async def invalid_move(self, move):
         log('invalid move by player ' + self.cp().nickname + ' (' + move + ')')
@@ -281,6 +286,9 @@ class Game:
         summary += '_' * 25 + '<br>'
         for p in self.players:
             if p.n_dice <= 0: continue
-            summary += f'{p.nickname.ljust(12)}| {" ".join(DICE_DICT[x] for x in p.revealed_dice + p.hidden_dice)}<br>'
+            summary += f'{self.get_nickname(p).ljust(12)}| {" ".join(DICE_DICT[x] for x in p.revealed_dice + p.hidden_dice)}<br>'
         summary += '</pre><br>'
         return summary
+
+    def get_nickname(self, player):
+        return f'player_{player.index+1}' if (self.incognito and not self.finished) else player.nickname
