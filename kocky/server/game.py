@@ -100,6 +100,7 @@ class Game:
         for (i, player) in enumerate(self.players):
             player.n_dice = len(player.nickname) if self.snodenl else self.starting_number_of_dice
             player.revealed_dice = []
+            player.move = asyncio.Future()
             player.luck = 0
             player.luck_diff = 0
             player.time = self.time
