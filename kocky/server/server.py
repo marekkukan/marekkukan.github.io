@@ -79,6 +79,7 @@ async def join_game(player, message):
         if game.started or len(game.players) > 6:
             game.spectators.append(player)
             log(f'{player.nickname} joined {creator_nickname}\'s game as spectator')
+            await player.socket.send(f'INDEX {player.index}')
             await player.socket.send('GAME_STATE ' + game.state())
         else:
             game.players.append(player)

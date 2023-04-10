@@ -109,6 +109,7 @@ class Game:
         while not self.finished:
             await self.play_round()
         for player in self.players:
+            player.index = -1
             player.wp = '0%'
         self.cp().wp = '100%'
         await self.broadcast_state()
