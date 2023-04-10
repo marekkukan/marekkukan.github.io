@@ -140,7 +140,7 @@ div.playerDiv .playerActionDiv {
 }
 div.playerDiv .playerWPDiv, div.playerDiv .playerLuckDiv {
   font: 1.8vmin monospace;
-  justify-content: right;
+  justify-content: flex-end;
   padding-right: 3px;
 }
 .playerHeader {
