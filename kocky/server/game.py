@@ -172,6 +172,7 @@ class Game:
                 for die in dice:
                     hidden_dice.remove(die)
             except:
+                self.cp().revealing.set_result(None)
                 await self.eval_move(await self.invalid_move(move), challenge_possible, reveal_possible)
                 return
             for die in dice:
@@ -181,6 +182,7 @@ class Game:
             await self.broadcast_state()
             await self.broadcast('PLAYER_REVEALS')
             await self.record('reveals ' + ' '.join(DICE_DICT[x] for x in dice))
+            self.cp().revealing.set_result(None)
             await self.eval_move(await self.cp().play(), False, False)
         elif parts[0] == 'CHALLENGE':
             if not challenge_possible:

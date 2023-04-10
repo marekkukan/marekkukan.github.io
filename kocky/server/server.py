@@ -180,6 +180,7 @@ async def handler(socket, path):
                     bots.append((bot, player.game))
                     asyncio.create_task(bot.run())
                 elif message == 'ROLL':
+                    await player.revealing
                     await socket.send('ROLL ' + ' '.join(map(str, player.hidden_dice)))
                 elif message == 'GAME_STATE' and player.game is not None:
                     await socket.send(f'INDEX {player.index}')
@@ -188,6 +189,8 @@ async def handler(socket, path):
                     await socket.send('GAME_LOG ' + player.game.log)
                 elif message.startswith('BID ') or message.startswith('REVEAL ') or message.startswith('CHALLENGE'):
                     player.move.set_result(message)
+                    if message.startswith('REVEAL '):
+                        player.revealing = asyncio.Future()
     except websockets.ConnectionClosed:
         pass
     finally:

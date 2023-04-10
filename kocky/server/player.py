@@ -27,6 +27,8 @@ class Player:
         self.luck = 0
         self.luck_diff = 0
         self.index = -1
+        self.revealing = asyncio.Future()
+        self.revealing.set_result(None)
 
     def __str__(self):
         return self.nickname

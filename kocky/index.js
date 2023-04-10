@@ -507,7 +507,7 @@ function processGameState(state) {
   if (state.currentBid.quantity == 0 && !gRolled && gAutoRoll) {
     gRolled = true;
     document.getElementById('rollButton').disabled = true;
-    setTimeout(() => {socket.send(`ROLL`);}, 100);
+    socket.send(`ROLL`);
   }
 }
 
@@ -813,7 +813,7 @@ document.getElementById('bidButton').addEventListener('click', (e) => {
     disableButtons()
     processReveal();
     gRevealed = false;
-    setTimeout(() => {socket.send(`BID ${q} ${n}`);}, 100);
+    socket.send(`BID ${q} ${n}`);
   });
 })
 document.getElementById('challengeButton').addEventListener('click', (e) => {
@@ -835,7 +835,7 @@ document.getElementById('rollButton').addEventListener('click', (e) => {
     processReveal();
     gRolled = true;
     document.getElementById('rollButton').disabled = true;
-    setTimeout(() => {socket.send(`ROLL`);}, 100);
+    socket.send(`ROLL`);
   });
 })
 
