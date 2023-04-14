@@ -54,7 +54,7 @@ class Bot(ABC):
                     await self.socket.send('GAME_STATE')
                 elif message.startswith('GAME_STATE '):
                     state = json.loads(message[11:])
-                    if state['started']:
+                    if state['started'] and self.my_index != -1:
                         if state['players'][self.my_index]['nickname'].startswith('player_'):
                             self.incognito = True
                         self.time_left = state['players'][self.my_index]['time'] + state['players'][self.my_index]['delay']
