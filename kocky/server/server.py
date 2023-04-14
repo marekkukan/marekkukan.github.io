@@ -189,6 +189,7 @@ async def handler(socket, path):
                 elif message == 'GAME_LOG' and player.game is not None and player.game.started:
                     await socket.send('GAME_LOG ' + player.game.log)
                 elif message.startswith('BID ') or message.startswith('REVEAL ') or message.startswith('CHALLENGE'):
+                    await player.revealing
                     player.move.set_result(message)
                     if message.startswith('REVEAL '):
                         player.revealing = asyncio.Future()
