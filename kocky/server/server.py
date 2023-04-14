@@ -74,7 +74,7 @@ async def join_game(player, message):
         if player.game is not None: raise MyException('player already in a game')
         filtered_games = [game for game in games if game.creator.nickname == creator_nickname]
         if len(filtered_games) == 0: raise MyException('game not found')
-        game = filtered_games[0]
+        game = filtered_games[-1]
         if game.password != password: raise MyException('incorrect password')
         if game.started or len(game.players) > 6:
             game.spectators.append(player)
