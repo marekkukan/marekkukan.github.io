@@ -5,7 +5,7 @@ import functools
 
 
 def get_time():
-    return datetime.datetime.now(tz=pytz.timezone('Europe/Bratislava')).strftime('[%H:%M:%S]')
+    return datetime.datetime.now(tz=pytz.timezone('Europe/Bratislava')).strftime('%H:%M:%S')
 
 def log(s):
     t = datetime.datetime.now(tz=pytz.timezone('Europe/Bratislava')).strftime('%Y-%m-%d %H:%M:%S')

@@ -84,7 +84,7 @@ class Game:
         await self.broadcast('GAME_STATE ' + self.state())
 
     async def record(self, message, summary = ''):
-        record = summary + get_time() + ' ' + self.get_nickname(self.cp()) + ' ' + message + '<br>'
+        record = summary + '<span class="gamelogTimeSpan">' + get_time() + '</span> ' + self.get_nickname(self.cp()) + ' ' + message + '<br>'
         self.log = record + self.log
         await self.broadcast('GAME_LOG_RECORD ' + record)
 
