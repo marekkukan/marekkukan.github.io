@@ -143,6 +143,7 @@ async def handler(socket, path):
                     player = None
                     break
                 if message.startswith('CREATE_GAME'):
+                    if player.game is not None: continue
                     log(f'new game (created by {player.nickname})')
                     password = message[12:]
                     game = Game(player, password)
