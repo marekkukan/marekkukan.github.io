@@ -616,6 +616,7 @@ function connectToServer() {
       displayGame();
       playSound(SOUND_GAME_STARTED);
       document.getElementById('rollButton').disabled = false;
+      gMyHiddenDice = [];
     }
     else if (message.startsWith("INDEX ")) {
       gMyIndex = parseInt(message.slice(6));
