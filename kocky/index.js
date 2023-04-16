@@ -936,6 +936,13 @@ window.addEventListener('load', (e) => {
     if (storedValue !== null) element.checked = storedValue === 'true';
     element.oninput();
   }
+  // Vibration API not supported in Safari, need to disable
+  if (!('vibrate' in navigator)) {
+    var element = document.getElementById(`setting10`);
+    element.disabled = true;
+    element.checked = false;
+    element.oninput();
+  }
   gConnectionAttempts = 0;
   var nickname = localStorage.getItem('nickname');
   if (nickname) {
