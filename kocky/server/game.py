@@ -272,12 +272,12 @@ class Game:
             Replace current player (who just lost) with a fake player, so that one can see
             that this player was in the game, but the player no longer receives game states.
         """
-        self.cp().index = -1
         self.spectators.append(self.cp())
         fake_player = copy.copy(self.cp())
         fake_player.hidden_dice = []
         fake_player.revealed_dice = []
         fake_player.is_fake = True
+        self.cp().index = -1
         self.players[self.cpi] = fake_player
 
     def create_summary(self):
