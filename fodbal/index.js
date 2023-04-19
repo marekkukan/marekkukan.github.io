@@ -12,6 +12,13 @@ function setPriority(priority) {
   gPriority = priority;
 }
 
+function setWeights(weights) {
+  debug(`weights: ${weights}`);
+  localStorage.setItem('weights', weights);
+  gWeights = weights;
+  renderPlot();
+}
+
 function setFilter(filter) {
   debug(`filter: ${filter}`);
   localStorage.setItem('filter', filter);
@@ -30,7 +37,7 @@ function filterPlayers() {
     } else if (gFilter == 'filterRegulars') {
       player.checked = i < 10;
     } else if (gFilter == 'filterSubstitutes') {
-      player.checked = i >= 10;
+      player.checked = i >= 10 && player.games > 0;
     }
   }
 }
@@ -66,17 +73,19 @@ function processData(data) {
   gPlayers = [];
   for (const row of data.values) {
     if (row[1] === '0' || row[1] > 0) {
-      gPlayers.push({
+      var games = Number(row[1]);
+      var player = {
         'name': row[0],
-        'games': Number(row[1]),
-        'p1': row[1] == 0 ? 1 : Number(row[6].replace(',', '.')), // priemerne zapasove body
-        'p2': row[1] == 0 ? 1 : Number(row[9].replace(',', '.')), // priemerne kanadske body
+        'games': games,
+        'p1': games == 0 ? 1 : Number(row[6].replace(',', '.')), // priemerne zapasove body
+        'p2': games == 0 ? 1 : Number(row[9].replace(',', '.')), // priemerne kanadske body
         'checked': true,
-        'textColor': row[1] > 0 ? 'black' : 'grey',
+        'textColor': games > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
-        'markerSize': Number(row[1]) / 2 + 5,
-      })
+        'markerSize': games / 2 + 5,
+      };
+      gPlayers.push(player);
     }
   }
   filterPlayers();
@@ -89,24 +98,36 @@ function resetTeams() {
   }
 }
 
-var p1sum = players => players.reduce((p, n) => p + n.p1, 0);
-var p2sum = players => players.reduce((p, n) => p + n.p2, 0);
+function psum(players, p) {
+  if (gWeights == 'weights1') {
+    return players.reduce((acc, next) => acc + next[p] / players.length, 0);
+  }
+  if (gWeights == 'weights2') {
+    var N = players.reduce((acc, next) => acc + next.games, 0);
+    return players.reduce((acc, next) => acc + next[p] * next.games / N, 0);
+  }
+  if (gWeights == 'weights3') {
+    var N = players.reduce((acc, next) => acc + Math.log(1 + next.games), 0);
+    return players.reduce((acc, next) => acc + next[p] * Math.log(1 + next.games) / N, 0);
+  }
+}
+var p1sum = players => psum(players, 'p1');
+var p2sum = players => psum(players, 'p2');
 var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
 
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
   var players = checkedPlayers();
   if (players.length != 10) return;
-  var p1total = p1sum(players);
-  var p2total = p2sum(players);
   var subsTotal = numberOfSubs(players);
   var p1best = 1000;
   var p2best = 1000;
   var p3best = 1000;
   var team1;
   for (const team of combinationN(players, 5)) {
-    var p1diff = p1total - 2*p1sum(team);
-    var p2diff = p2total - 2*p2sum(team);
+    var team2 = players.filter(x => !team.includes(x));
+    var p1diff = p1sum(team2) - p1sum(team);
+    var p2diff = p2sum(team2) - p2sum(team);
     var p1 = Math.abs(p1diff);
     var p2 = Math.abs(p2diff);
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
@@ -142,11 +163,8 @@ async function createOptimalTeams() {
     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
     ${[...Array(5).keys()].map(i => `<tr><td>${team1[i].name}</td><td>${team2[i].name}</td></tr>`).join('')}
     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-    <tr><td colspan="2">zapasove body</td></tr>
-    <tr><td>${p1sum(team1).toFixed(2)}</td><td>${p1sum(team2).toFixed(2)}</td></tr>
-    <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-    <tr><td colspan="2">kanadske body</td></tr>
-    <tr><td>${p2sum(team1).toFixed(2)}</td><td>${p2sum(team2).toFixed(2)}</td></tr>
+    <tr><td colspan="2">priemer timu (zapasove, kanadske body)</td></tr>
+    <tr><td>(${p1sum(team1).toFixed(2)}, ${p2sum(team1).toFixed(2)})</td><td>(${p1sum(team2).toFixed(2)}, ${p2sum(team2).toFixed(2)})</td></tr>
   `
   document.getElementById('teamsDiv').style.display = 'block';
 }
@@ -168,8 +186,8 @@ function renderPlot() {
   var players = checkedPlayers();
   var showTeams = (players.length == 10 && players[0].markerColor != players[0].markerLineColor);
   var data = [{
-    x: players.map(x => x.games == 0 && !showTeams ? NaN : x.p1),
-    y: players.map(x => x.games == 0 && !showTeams ? NaN : x.p2),
+    x: players.map(x => x.p1),
+    y: players.map(x => x.p2),
     text: players.map(x => x.name),
     textfont: {
       color: players.map(x => x.textColor),
@@ -188,8 +206,8 @@ function renderPlot() {
     mode: "markers+text",
   }];
   if (showTeams) {
-    data.unshift(generateWeb(players, 'black'));
-    data.unshift(generateWeb(players, 'white'));
+    data.unshift(generateWeb(players.filter(x => x.markerColor == 'black'), 'black'));
+    data.unshift(generateWeb(players.filter(x => x.markerColor == 'white'), 'white'));
   }
   Plotly.react("myPlot", data, generateLayout(gAutoRange));
 }
@@ -205,17 +223,27 @@ function generateLayout(autorange) {
   };
 }
 
-function generateWeb(players, color) {
-  var team = players.filter(x => x.markerColor == color);
-  // asserting team.length == 5
-  var x = p1sum(team) / 5;
-  var y = p2sum(team) / 5;
+function generateWeb(team, color) {
+  if (team.length == 0) return {};
+  var p1 = p1sum(team);
+  var p2 = p2sum(team);
+  var x = [p1];
+  var y = [p2];
+  var markerSizes = [10];
+  for (const player of team) {
+    x.push(player.p1);
+    x.push(p1);
+    y.push(player.p2);
+    y.push(p2);
+    markerSizes.push(0);
+    markerSizes.push(10);
+  }
   return {
     mode: 'lines+markers',
     line: {color: color, width: 2},
-    marker: {size: [10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10], symbol: 'square', line: {width: 0}},
-    x: [x, team[0].p1, x, team[1].p1, x, team[2].p1, x, team[3].p1, x, team[4].p1, x],
-    y: [y, team[0].p2, y, team[1].p2, y, team[2].p2, y, team[3].p2, y, team[4].p2, y],
+    marker: {size: markerSizes, symbol: 'square', line: {width: 0}},
+    x: x,
+    y: y,
     opacity: 0.7,
   };
 }
@@ -290,6 +318,12 @@ window.addEventListener('load', (e) => {
   if (storedValue !== null) {
     gPriority = storedValue;
     document.getElementById(gPriority).checked = true;
+  }
+  gWeights = 'weights3';
+  var storedValue = localStorage.getItem(`weights`);
+  if (storedValue !== null) {
+    gWeights = storedValue;
+    document.getElementById(gWeights).checked = true;
   }
   gFilter = 'filterRegulars';
   var storedValue = localStorage.getItem(`filter`);
