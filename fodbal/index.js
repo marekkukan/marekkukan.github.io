@@ -1,5 +1,12 @@
 const NUMBER_OF_GAMES_TO_QUALIFY = 6;
 
+function setAutoRange(checked) {
+  debug(`autoRange: ${checked}`);
+  localStorage.setItem('autoRange', checked);
+  gAutoRange = checked;
+  renderPlot();
+}
+
 function setEvenSubstitutes(checked) {
   debug(`evenSubstitutes: ${checked}`);
   localStorage.setItem('evenSubstitutes', checked);
@@ -209,7 +216,7 @@ function renderPlot() {
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'black'), 'black'));
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'white'), 'white'));
   }
-  Plotly.react("myPlot", data, generateLayout(gAutoRange));
+  Plotly.react("myPlot2", data, generateLayout(gAutoRange));
 }
 
 function generateLayout(autorange) {
@@ -220,6 +227,7 @@ function generateLayout(autorange) {
     paper_bgcolor: "lightgrey",
     plot_bgcolor: "lightgrey",
     showlegend: false,
+    margin: {t: 10},
   };
 }
 
@@ -335,11 +343,13 @@ window.addEventListener('load', (e) => {
   var storedValue = localStorage.getItem(`autoRange`);
   if (storedValue !== null) {
     gAutoRange = storedValue === 'true';
+    document.getElementById('autoRange').checked = gAutoRange;
   }
-  Plotly.newPlot("myPlot", [], generateLayout(false));
-  document.getElementById('myPlot').on('plotly_doubleclick', (e) => {
+  Plotly.newPlot("myPlot2", [], generateLayout(false));
+  document.getElementById('myPlot2').on('plotly_doubleclick', (e) => {
     gAutoRange = !gAutoRange;
     localStorage.setItem('autoRange', gAutoRange);
+    document.getElementById('autoRange').checked = gAutoRange;
   });
   displayGraph('2023');
 });
