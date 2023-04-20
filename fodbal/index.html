@@ -35,7 +35,7 @@
 <div id="myWrapper">
   <div id="myPlot">
     <div id="myPlotOptions">
-      <label><input id="autoRange" type="checkbox" oninput="setAutoRange(this.checked)">zoom</label>
+      <label><input id="autoRange" type="checkbox" oninput="setInput(this.id, this.checked); renderPlot();">zoom</label>
     </div>
     <div id="myPlot2"></div>
   </div>
@@ -56,21 +56,21 @@
     <div id="myAppMid">
       <div id="priorityDiv">
         <h4>kriterium:</h4>
-        <label><input id="priority1" type="radio" name="radioPriority" oninput="setPriority(this.id)">zapasove body</label><br>
-        <label><input id="priority2" type="radio" name="radioPriority" oninput="setPriority(this.id)">kanadske body</label><br>
-        <label><input id="priority3" type="radio" name="radioPriority" oninput="setPriority(this.id)" checked>oboje</label><br>
+        <label><input id="priority1" type="radio" name="radioPriority" oninput="setInput('priority', this.id)">zapasove body</label><br>
+        <label><input id="priority2" type="radio" name="radioPriority" oninput="setInput('priority', this.id)">kanadske body</label><br>
+        <label><input id="priority3" type="radio" name="radioPriority" oninput="setInput('priority', this.id)" checked>oboje</label><br>
       </div>
     </div>
     <div id="myAppRight">
       <div id="weightsDiv">
         <h4>vahy:</h4>
-        <label><input id="weights2" type="radio" name="radioWeights" oninput="setWeights(this.id)">linearne</label><br>
-        <label><input id="weights3" type="radio" name="radioWeights" oninput="setWeights(this.id)" checked>logaritmicke</label><br>
-        <label><input id="weights1" type="radio" name="radioWeights" oninput="setWeights(this.id)">ziadne</label><br>
+        <label><input id="weights2" type="radio" name="radioWeights" oninput="setInput('weights', this.id); renderPlot();">linearne</label><br>
+        <label><input id="weights3" type="radio" name="radioWeights" oninput="setInput('weights', this.id); renderPlot();" checked>logaritmicke</label><br>
+        <label><input id="weights1" type="radio" name="radioWeights" oninput="setInput('weights', this.id); renderPlot();">ziadne</label><br>
       </div>
     </div>
     <div id="myAppBottom">
-      <label><input id="evenSubstitutes" type="checkbox" oninput="setEvenSubstitutes(this.checked)" checked>podel rovnomerne nahradnikov</label><br><br>
+      <label><input id="evenSubstitutes" type="checkbox" oninput="setInput(this.id, this.checked)" checked>podel rovnomerne nahradnikov</label><br><br>
       <button id="createOptimalTeamsButton" disabled onclick="createOptimalTeams()">vytvor optimalne timy</button>
       <div id="teamsDiv" style="display: none;">
         <table id="teamsTable"></table>

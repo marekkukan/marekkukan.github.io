@@ -1,35 +1,32 @@
 const NUMBER_OF_GAMES_TO_QUALIFY = 6;
+g = {}
 
-function setAutoRange(checked) {
-  debug(`autoRange: ${checked}`);
-  localStorage.setItem('autoRange', checked);
-  gAutoRange = checked;
-  renderPlot();
+function initCheckbox(name, defaultValue) {
+  g[name] = defaultValue;
+  var storedValue = localStorage.getItem(name);
+  if (storedValue !== null) {
+    g[name] = storedValue === 'true';
+    document.getElementById(name).checked = g[name];
+  }
 }
 
-function setEvenSubstitutes(checked) {
-  debug(`evenSubstitutes: ${checked}`);
-  localStorage.setItem('evenSubstitutes', checked);
-  gEvenSubstitutes = checked;
+function initRadio(name, defaultValue) {
+  g[name] = defaultValue;
+  var storedValue = localStorage.getItem(name);
+  if (storedValue !== null) {
+    g[name] = storedValue;
+    document.getElementById(g[name]).checked = true;
+  }
 }
 
-function setPriority(priority) {
-  debug(`priority: ${priority}`);
-  localStorage.setItem('priority', priority);
-  gPriority = priority;
-}
-
-function setWeights(weights) {
-  debug(`weights: ${weights}`);
-  localStorage.setItem('weights', weights);
-  gWeights = weights;
-  renderPlot();
+function setInput(name, value) {
+  debug(`${name}: ${value}`);
+  localStorage.setItem(name, value);
+  g[name] = value;
 }
 
 function setFilter(filter) {
-  debug(`filter: ${filter}`);
-  localStorage.setItem('filter', filter);
-  gFilter = filter;
+  setInput('filter', filter);
   filterPlayers();
   resetTeams();
   render();
@@ -37,13 +34,13 @@ function setFilter(filter) {
 
 function filterPlayers() {
   for (const [i, player] of gPlayers.entries()) {
-    if (gFilter == 'filterAll') {
+    if (g.filter == 'filterAll') {
       player.checked = true;
-    } else if (gFilter == 'filterQualified') {
+    } else if (g.filter == 'filterQualified') {
       player.checked = player.games >= NUMBER_OF_GAMES_TO_QUALIFY;
-    } else if (gFilter == 'filterRegulars') {
+    } else if (g.filter == 'filterRegulars') {
       player.checked = i < 10;
-    } else if (gFilter == 'filterSubstitutes') {
+    } else if (g.filter == 'filterSubstitutes') {
       player.checked = i >= 10 && player.games > 0;
     }
   }
@@ -106,14 +103,14 @@ function resetTeams() {
 }
 
 function psum(players, p) {
-  if (gWeights == 'weights1') {
+  if (g.weights == 'weights1') {
     return players.reduce((acc, next) => acc + next[p] / players.length, 0);
   }
-  if (gWeights == 'weights2') {
+  if (g.weights == 'weights2') {
     var N = players.reduce((acc, next) => acc + next.games, 0);
     return players.reduce((acc, next) => acc + next[p] * next.games / N, 0);
   }
-  if (gWeights == 'weights3') {
+  if (g.weights == 'weights3') {
     var N = players.reduce((acc, next) => acc + Math.log(1 + next.games), 0);
     return players.reduce((acc, next) => acc + next[p] * Math.log(1 + next.games) / N, 0);
   }
@@ -140,10 +137,10 @@ async function createOptimalTeams() {
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
     var isBetter;
-    if (gPriority == 'priority1') isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
-    if (gPriority == 'priority2') isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
-    if (gPriority == 'priority3') isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
-    if (gEvenSubstitutes) isBetter &&= subsDiff <= 1;
+    if (g.priority == 'priority1') isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
+    if (g.priority == 'priority2') isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
+    if (g.priority == 'priority3') isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
+    if (g.evenSubstitutes) isBetter &&= subsDiff <= 1;
     if (isBetter) {
       team1 = team;
       p1best = p1;
@@ -216,7 +213,7 @@ function renderPlot() {
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'black'), 'black'));
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'white'), 'white'));
   }
-  Plotly.react("myPlot2", data, generateLayout(gAutoRange));
+  Plotly.react("myPlot2", data, generateLayout(g.autoRange));
 }
 
 function generateLayout(autorange) {
@@ -315,41 +312,16 @@ window.addEventListener('load', (e) => {
   debug(`window: ${window.innerWidth}x${window.innerHeight}`);
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
-  gEvenSubstitutes = true;
-  var storedValue = localStorage.getItem(`evenSubstitutes`);
-  if (storedValue !== null) {
-    gEvenSubstitutes = storedValue === 'true';
-    document.getElementById('evenSubstitutes').checked = gEvenSubstitutes;
-  }
-  gPriority = 'priority3';
-  var storedValue = localStorage.getItem(`priority`);
-  if (storedValue !== null) {
-    gPriority = storedValue;
-    document.getElementById(gPriority).checked = true;
-  }
-  gWeights = 'weights3';
-  var storedValue = localStorage.getItem(`weights`);
-  if (storedValue !== null) {
-    gWeights = storedValue;
-    document.getElementById(gWeights).checked = true;
-  }
-  gFilter = 'filterRegulars';
-  var storedValue = localStorage.getItem(`filter`);
-  if (storedValue !== null) {
-    gFilter = storedValue;
-    document.getElementById(gFilter).checked = true;
-  }
-  gAutoRange = false;
-  var storedValue = localStorage.getItem(`autoRange`);
-  if (storedValue !== null) {
-    gAutoRange = storedValue === 'true';
-    document.getElementById('autoRange').checked = gAutoRange;
-  }
+  initCheckbox('evenSubstitutes', true);
+  initRadio('priority', 'priority3');
+  initRadio('weights', 'weights3');
+  initRadio('filter', 'filterRegulars');
+  initCheckbox('autoRange', false);
   Plotly.newPlot("myPlot2", [], generateLayout(false));
   document.getElementById('myPlot2').on('plotly_doubleclick', (e) => {
-    gAutoRange = !gAutoRange;
-    localStorage.setItem('autoRange', gAutoRange);
-    document.getElementById('autoRange').checked = gAutoRange;
+    g.autoRange = !g.autoRange;
+    localStorage.setItem('autoRange', g.autoRange);
+    document.getElementById('autoRange').checked = g.autoRange;
   });
   displayGraph('2023');
 });
