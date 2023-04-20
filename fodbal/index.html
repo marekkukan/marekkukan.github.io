@@ -15,7 +15,7 @@
 
 <!-- <script src="../snow.js"></script> -->
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.3.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.4.0</div>
 
 <div id="menuDiv">
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2014')">2013/<wbr>14</button>
@@ -86,6 +86,12 @@
 <div id="popupContainer" style="display: none;">
   <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.4.0 [2023-04-20]</h4>
+    <ul>
+      <li>added weighted averages, logarithmic weights set as default</li>
+      <li>added option to plot shifts</li>
+      <li>added zoom checkbox (does the same as double-click on the plot)</li>
+    </ul>
     <h4>v1.3.0 [2022-12-23]</h4>
     <ul>
       <li>improved default criterion for creating optimal teams</li>
