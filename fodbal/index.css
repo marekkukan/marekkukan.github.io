@@ -73,6 +73,7 @@ div#menuDiv button.active {
   height: 90%;
 }
 #myPlot {
+  display: flex;
   width: 100%;
   height: 100%;
   background-color: lightgrey;
@@ -155,15 +156,25 @@ input[type=radio] {
   margin-top: 10px;
 }
 #myPlotOptions input[type=checkbox] {
-  margin-left: 30px;
-  margin-top: 30px;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 #myPlotOptions {
-  height: 10%;
-  font-size: 2.5vmin;
-  font-family: monospace;
-  text-align: center;
+  width: 16.6%;
+  font-size: 6vmin;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 2fr 2fr 2fr 3fr;
+  user-select: none;
 }
 #myPlot2 {
-  height: 90%;
+  width: 83.3%;
+}
+#myPlotOptions > label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid grey;
+  margin: 20px;
 }

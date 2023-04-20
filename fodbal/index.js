@@ -25,6 +25,16 @@ function setInput(name, value) {
   g[name] = value;
 }
 
+function setPlotOptionStyle(input) {
+  input.parentElement.style['background-color'] = input.checked ? '#ffff99' : 'white';
+}
+
+function setPlotOption(input) {
+  setPlotOptionStyle(input);
+  setInput(input.id, input.checked);
+  renderPlot();
+}
+
 function setFilter(filter) {
   setInput('filter', filter);
   filterPlayers();
@@ -243,7 +253,7 @@ function generateLayout(autorange) {
     paper_bgcolor: "lightgrey",
     plot_bgcolor: "lightgrey",
     showlegend: false,
-    margin: {t: 10},
+    margin: {t: 20},
   };
 }
 
@@ -338,11 +348,15 @@ window.addEventListener('load', (e) => {
   initCheckbox('plotAverage', false);
   initCheckbox('plotShifts', false);
   initCheckbox('autoRange', false);
+  setPlotOptionStyle(document.getElementById('plotAverage'));
+  setPlotOptionStyle(document.getElementById('plotShifts'));
+  setPlotOptionStyle(document.getElementById('autoRange'));
   Plotly.newPlot("myPlot2", [], generateLayout(false));
   document.getElementById('myPlot2').on('plotly_doubleclick', (e) => {
     g.autoRange = !g.autoRange;
     localStorage.setItem('autoRange', g.autoRange);
     document.getElementById('autoRange').checked = g.autoRange;
+    setPlotOptionStyle(document.getElementById('autoRange'));
   });
   displayGraph('2023');
 });
