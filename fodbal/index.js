@@ -212,6 +212,8 @@ function renderPlot() {
   if (showTeams) {
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'black'), 'black'));
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'white'), 'white'));
+  } else if (g.plotAverage) {
+    data.unshift(generateWeb(players, 'grey'));
   }
   Plotly.react("myPlot2", data, generateLayout(g.autoRange));
 }
@@ -316,6 +318,7 @@ window.addEventListener('load', (e) => {
   initRadio('priority', 'priority3');
   initRadio('weights', 'weights3');
   initRadio('filter', 'filterRegulars');
+  initCheckbox('plotAverage', false);
   initCheckbox('autoRange', false);
   Plotly.newPlot("myPlot2", [], generateLayout(false));
   document.getElementById('myPlot2').on('plotly_doubleclick', (e) => {
