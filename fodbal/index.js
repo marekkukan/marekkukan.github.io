@@ -69,7 +69,7 @@ function displayGraph(season) {
   if (season == "2021") sheetName = "TABULKY_20%2F21";
   if (season == "2022") sheetName = "TABULKY_21%2F22";
   if (season == "2023") sheetName = "TABULKY_22%2F23";
-  var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:J100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
+  var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:GG100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(url, processData);
 }
 
@@ -83,12 +83,18 @@ function processData(data) {
         'games': games,
         'p1': games == 0 ? 1 : Number(row[6].replace(',', '.')), // priemerne zapasove body
         'p2': games == 0 ? 1 : Number(row[9].replace(',', '.')), // priemerne kanadske body
+        'pp1': NaN,
+        'pp2': NaN,
         'checked': true,
         'textColor': games > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerSize': games / 2 + 5,
       };
+      if (games > 2 && row.length > 12) {
+        player.pp1 = (player.p1 * games - row[row.length-3]) / (games - 2);
+        player.pp2 = (player.p2 * games - row[row.length-2] - row[row.length-1]) / (games - 2);
+      }
       gPlayers.push(player);
     }
   }
@@ -209,6 +215,17 @@ function renderPlot() {
     },
     mode: "markers+text",
   }];
+  if (g.plotShifts) {
+    for (player of players) {
+      data.unshift({
+        mode: 'lines+markers',
+        x: [player.p1, player.pp1],
+        y: [player.p2, player.pp2],
+        line: {color: 'grey', width: 1, dash: 'dot'},
+        marker: {size: [0, player.markerSize], opacity: [0, 0.8], line: {width: 0}},
+      });
+    }
+  }
   if (showTeams) {
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'black'), 'black'));
     data.unshift(generateWeb(players.filter(x => x.markerColor == 'white'), 'white'));
@@ -319,6 +336,7 @@ window.addEventListener('load', (e) => {
   initRadio('weights', 'weights3');
   initRadio('filter', 'filterRegulars');
   initCheckbox('plotAverage', false);
+  initCheckbox('plotShifts', false);
   initCheckbox('autoRange', false);
   Plotly.newPlot("myPlot2", [], generateLayout(false));
   document.getElementById('myPlot2').on('plotly_doubleclick', (e) => {
