@@ -7,6 +7,7 @@ import ssl
 import sys
 import json
 import pickle
+import signal
 from player import Player
 from game import Game
 from bot import spawn_bot
@@ -218,12 +219,43 @@ async def main():
         ssl_context.load_cert_chain(cert_file)
     async with websockets.serve(handler, ip, port, ssl=ssl_context):
         log(f'listening on {ip} on port {port}')
-        log(f'loading win probabilities ..')
-        with open('wp.pkl', 'rb') as f:
-            set_wp_dict(pickle.load(f))
-        log(f'wp loaded successfully')
         await asyncio.Future()
+
+def load_wp():
+    log(f'loading win probabilities ..')
+    with open('wp.pkl', 'rb') as f:
+        set_wp_dict(pickle.load(f))
+    log(f'wp loaded successfully')
+
+def load_state():
+    log(f'loading state')
+    with open('state.json', 'r') as f:
+        state = json.load(f)
+    for p in state['players']:
+        player = Player(None, p['nickname'], p['token'])
+        players.append(player)
+
+def save_state():
+    log(f'saving state')
+    state = {'players': [{
+        'nickname': p.nickname,
+        'token': p.token,
+    } for p in players]}
+    with open('state.json', 'w') as f:
+        json.dump(state, f)
+
+def signal_handler(signum, frame):
+    log(f'received signal {signum}')
+    save_state()
+    log(f'server shutting down')
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 
 if __name__ == "__main__":
+    log(f'server starting')
+    load_state()
+    load_wp()
     asyncio.run(main())
