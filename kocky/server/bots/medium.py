@@ -22,6 +22,10 @@ class Hand:
         self.size = len(self.dice)
         self.n_minddr = sorted([(dd(self.dice,n),n) for n in range(1,7)], key=lambda x: (x[0], random.random()))[0][1]
         self.n_maxddr = sorted([(dd(self.dice,n),n) for n in range(1,7)], key=lambda x: (x[0], random.random()), reverse=True)[0][1]
+        self.q_mindd = min(dd(self.dice,n) for n in range(1,7))
+        self.q_maxdd = max(dd(self.dice,n) for n in range(1,7))
+        self.q_mindde = [0,0.17,0.33,0.5,0.67,0.85,1.06,1.28,1.52,1.77,2.03,2.28,2.54,2.8,3.07,3.34,3.61,3.89,4.16,4.44,4.71,4.99,5.27,5.56,5.84][self.size]
+        self.q_maxdde = [0,1,1.44,1.89,2.36,2.83,3.27,3.69,4.11,4.52,4.94,5.35,5.75,6.15,6.55,6.94,7.34,7.73,8.12,8.51,8.9,9.29,9.67,10.05,10.44][self.size]
 
 
 class MediumBot(Bot):
@@ -41,7 +45,7 @@ class MediumBot(Bot):
     async def play_b2(self, p2, p4, bid, n_dice):
         r = random.random()
         i = p2.index(max(p2)) if (min(p2[1:]) < 1e-06 or r < 0.7) else p2.index(min(p2[1:])) if r < 0.8 else random.randint(1, 6)
-        if p4[i] < 0.5:
+        if p4[i] < 0.5 or self.my_hand.q_maxdd > round(self.my_hand.q_maxdde):
             i = p2.index(max(p2))
         q = nextq(bid, i)
         if q > n_dice + 1:
@@ -71,10 +75,10 @@ class MediumBot(Bot):
             self.i_revealed = False
             self.i_challenged = False
         if me['isCurrentPlayer']:
-            my_hand = Hand(my_hidden_dice)
+            self.my_hand = Hand(my_hidden_dice)
             if new_round or (bid < Bid(max(1, round(n_dice / 6)), 1) and bid < Bid(max(1, round(n_dice / 3)), 2)):
                 r = random.random()
-                n = my_hand.n_maxddr if r < 0.7 else my_hand.n_minddr if r < 0.8 else random.randint(1, 6)
+                n = self.my_hand.n_maxddr if r < 0.7 else self.my_hand.n_minddr if r < 0.8 else random.randint(1, 6)
                 await self.play_b(max(1, round(n_dice / (6 if n == 1 else 3))), n)
             else:
                 my_sums = [0] * 7
