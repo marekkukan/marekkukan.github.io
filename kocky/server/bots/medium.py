@@ -110,6 +110,14 @@ class MediumBot(Bot):
                     await self.play_b2(p2, p4, bid, n_dice)
                 elif p1 < 0.1:
                     await self.play_c()
+                elif max(p2) > 0.8:
+                    await self.play_b2(p2, p4, bid, n_dice)
+                elif p1 < 0.15:
+                    await self.play_c()
+                elif max(p2) > 0.7:
+                    await self.play_b2(p2, p4, bid, n_dice)
+                elif p1 < 0.2:
+                    await self.play_c()
                 elif max(p2) > 0.5:
                     await self.play_b2(p2, p4, bid, n_dice)
                 elif max(p3) > 0.5:
@@ -118,6 +126,8 @@ class MediumBot(Bot):
                     await self.play_c()
                 elif max(p3) > 0.4:
                     await self.play_r2(p3, my_hidden_dice)
+                elif max(p2) > 0.4:
+                    await self.play_b2(p2, p4, bid, n_dice)
                 elif p1 > 0.99: # avoid feeding dice
                     await self.play_b(bid.quantity + 1, bid.number)
                 else:
