@@ -15,10 +15,18 @@ body {
 div#menuDiv {
   height: 10%;
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  background-color: #efefef;
+}
+div#menuDiv select {
+  width: 100%;
+  border: none;
+  outline: none;
+  font: bold 3.5vmin sans-serif;
+  color: #333;
 }
 div#menuDiv button {
-  width: 99%;
+  width: 100%;
   border: none;
   font: bold 3vmin sans-serif;
   color: #333;

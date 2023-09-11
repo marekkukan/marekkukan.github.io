@@ -57,7 +57,7 @@ function filterPlayers() {
 }
 
 function togglePlayer(i, checked) {
-  debug(`name: ${name}, checked: ${checked}`);
+  debug(`name: ${gPlayers[i].name}, checked: ${checked}`);
   gPlayers[i].checked = checked;
   resetTeams();
   render();
