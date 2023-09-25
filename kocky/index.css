@@ -30,21 +30,24 @@ body {
 div#menuDiv {
   height: 10%;
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 }
-div#menuDiv button {
-  width: 99%;
+div#menuDiv > * {
+  width: 100%;
   border: none;
+  outline: none;
+  -webkit-border-radius: 0;
+  white-space: pre-wrap;
   font: bold 3vmin sans-serif;
   color: #333;
 }
-div#menuDiv button:hover {
+div#menuDiv > *:hover {
   box-shadow: inset 0 0 1vw rgba(0, 0, 0, 0.3);
 }
-div#menuDiv button:active {
+div#menuDiv > *:active {
   background-color: lightgrey;
 }
-div#menuDiv button.active {
+div#menuDiv > *.active {
   background-color: #bbbbbb;
 }
 #myApp {

@@ -16,21 +16,24 @@
 
 <!-- <script src="../snow.js"></script> -->
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.13.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.13.0</div>
 <div id="networkStatusDiv" style="position: fixed; top: 7%; right: 1vmin; width: 2vmin; height: 2vmin; background: green; border-radius: 50%;"></div>
 <div id="connectionStatusDiv" style="position: fixed; top: 7%; right: 4vmin; width: 2vmin; height: 2vmin; background: grey; border-radius: 50%;"></div>
-<div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font-family: monospace;"></div>
+<div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font: 2vmin monospace;"></div>
 
 <div id="menuDiv">
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')">Season 2021</button>
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2022')">Season 2022</button>
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2023', '2023_')">Season 2023</button>
-  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021', 'KC_')">Kocker Cup</button>
+  <button onclick="location.reload()">⟳</button>
+  <select onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph(this.value)"
+          onchange="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph(this.value)">
+    <option value="2023 2023_" selected>Season 2023</option>
+    <option value="2022 ">Season 2022</option>
+    <option value="2021 ">Season 2021</option>
+    <option value="2020 ">Season 2020</option>
+    <option value="2021 KC_">Kocker Cup 2021</option>
+  </select>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp()">Dice Roller</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp2()" class="active">Play Online</button>
-  <button onclick="location.reload()">⟳</button>
-  <div onclick="popup('changelogDiv')"></div>
+  <button onclick="popup('changelogDiv')"></button>
 </div>
 
 <canvas id="myCanvas" style="display: none;">
