@@ -10,6 +10,7 @@
 <!-- <link rel="stylesheet" href="../snow.css" /> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script src="shake.js"></script>
 </head>
 <body>
@@ -272,11 +273,18 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div id="aboutLuckDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1>about luck detector</h1>
-    <p>Numbers with 🍀 symbol represent player's <span style="font-style: italic;">luck score</span>.</p>
-    <p>Luck score is defined as</p>
-    <p style="font-style: italic;"><math display="block">&lt;luck score&gt; = &lt;number of dice a player has&gt; - &lt;number of dice a player should have (with neutral luck)&gt;</math></p>
-    <p>Therefore lucky players have positive luck score, and vice versa.</p>
-    <p>Players with 0🍀 are neither lucky, nor unlucky.</p>
+    <br>
+    <p>
+      Numbers with 🍀 symbol represent player's <i>luck score</i>, which is defined as
+      \[ \text{luck score} = d_a - d_e \]
+      where
+      \[ \begin{array}{l}
+        d_a = \text{number of dice a player has} \\
+        d_e = \text{number of dice a player should have (with neutral luck)}
+      \end{array} \]
+      Therefore lucky players have positive luck score, and vice versa.
+      Players with 0🍀 are neither lucky, nor unlucky.
+    </p>
   </div>
   <div id="confirmDiv" style="display: none;">
     <p id="confirmP" style="font: 3vh monospace;"></p>
