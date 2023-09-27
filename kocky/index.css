@@ -18,6 +18,12 @@
   user-select: none;
   touch-action: none;
 }
+.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  transform: scale(1.5);
+  transform-origin: 0% 0% 0px;
+}
 html {
   height: 100%;
 }
@@ -354,10 +360,10 @@ input[type=text] {
 }
 #popupContainer > div {
   position: fixed;
-  top: 14%;
-  left: 14%;
-  width: 72%;
-  height: 72%;
+  top: 16.6666%;
+  left: 16.6666%;
+  width: 66.6666%;
+  height: 66.6666%;
   z-index: 10;
   background: rgba(200, 200, 200, 0.9);
   padding: 5vmin;

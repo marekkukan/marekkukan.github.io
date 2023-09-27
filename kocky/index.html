@@ -143,12 +143,12 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 </div>
 
 <div id="popupContainer" style="display: none;">
-  <div class="settingsDiv" id="settingsDiv" style="display: none;" onclick="event.stopPropagation()">
+  <div class="settingsDiv" id="settingsDiv" style="display: none;" onclick="toggleMaximized(this, event);">
     <h1>settings</h1>
     <label><input id="setting1" type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br>
     <label><input id="setting2" type="checkbox" oninput="toggleMoveSetting(this.checked)">move revealed dice up</label><br>
   </div>
-  <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="event.stopPropagation()">
+  <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="toggleMaximized(this, event);">
     <h1>settings</h1>
     <label><input id="setting3" type="checkbox" oninput="toggleSetting3(this.checked)">show dice counter</label><br>
     <br>
@@ -164,17 +164,17 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     <label><input id="setting11" type="checkbox" checked oninput="toggleSetting11(this.checked)">dice roll animation</label><br>
     <label><input id="setting12" type="checkbox" oninput="toggleSetting12(this.checked)">auto-roll</label><br>
   </div>
-  <div id="createGameDiv" style="display: none;" onclick="event.stopPropagation()">
+  <div id="createGameDiv" style="display: none;" onclick="toggleMaximized(this, event);">
     <h3>creating a game</h3><br><br>
     <input id="createGamePassword" type="text" placeholder="choose password" size="15">
     <button id="createGameButton" onclick="createGame(this)">create</button>
   </div>
-  <div id="joinGameDiv" style="display: none;" onclick="event.stopPropagation()">
+  <div id="joinGameDiv" style="display: none;" onclick="toggleMaximized(this, event);">
     <h3>joining <span id="joinGameCreator"></span>'s game</h3><br><br>
     <input id="joinGamePassword" type="text" placeholder="enter password" size="15">
     <button id="joinGameButton" onclick="joinGame(this)">join</button>
   </div>
-  <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
     <h4>v1.13.0 [2023-05-08]</h4>
     <ul>
@@ -264,14 +264,14 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <li>fixed bug with background in updated Chrome</li>
     </ul>
   </div>
-  <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="debuglogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
   </div>
-  <div id="gamelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="gamelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1>gamelog</h1>
     <p id="gamelogP" style="font-size: 1.6vmax;"></p>
   </div>
-  <div id="aboutLuckDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="aboutLuckDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1>about luck detector</h1>
     <br>
     <p>
@@ -289,7 +289,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   <div id="confirmDiv" style="display: none;">
     <p id="confirmP" style="font: 3vh monospace;"></p>
   </div>
-  <div id="errorDiv" style="display: none;" onclick="event.stopPropagation()">
+  <div id="errorDiv" style="display: none;" onclick="document.getElementById('popupContainer').click();">
     <span style="color: red; font-size: 4vh">⚠ </span>
     <span id="errorSpan" style="font: 2vh monospace;"></span>
   </div>

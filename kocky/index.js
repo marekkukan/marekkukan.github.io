@@ -963,3 +963,13 @@ window.addEventListener('online', (e) => {
   debug(`online`);
   document.getElementById('networkStatusDiv').style.background = 'green';
 });
+
+
+function toggleMaximized(element, event) {
+  event.stopPropagation();
+  if (!['h1', 'input', 'label', 'button', 'span'].includes(event.target.tagName.toLowerCase())) {
+    element.classList.toggle('maximized');
+    if (element.id == 'changelogDiv') document.getElementById('debuglogDiv').classList.toggle('maximized');
+    if (element.id == 'debuglogDiv') document.getElementById('changelogDiv').classList.toggle('maximized');
+  }
+}
