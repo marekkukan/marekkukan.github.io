@@ -5,7 +5,7 @@ import random
 from abc import ABC, abstractmethod
 from utils import log, generate_token
 
-class Bot(ABC):
+class AbstractBot(ABC):
 
     def __init__(self, socket, nickname, token):
         self.socket = socket
@@ -73,21 +73,13 @@ class Bot(ABC):
 
 
 
-import bots.dummy
-import bots.easy
-import bots.rand
-import bots.medium
+import bots
+from bots import *
 
 def spawn_bot(socket, level, game):
     game.n_bots += 1
     nickname = f'{level}bot_{game.n_bots}'
     token = generate_token()
-    if level == 'dummy':
-        return bots.dummy.DummyBot(socket, nickname, token)
-    if level == 'easy':
-        return bots.easy.EasyBot(socket, nickname, token)
-    if level == 'rand':
-        return bots.rand.RandBot(socket, nickname, token)
-    if level == 'medium':
-        return bots.medium.MediumBot(socket, nickname, token)
-    return bots.dummy.DummyBot(socket, nickname, token)
+    if level in bots.__all__:
+        return eval(f'bots.{level}.Bot(socket, nickname, token)')
+    return bots.dummy.Bot(socket, nickname, token)

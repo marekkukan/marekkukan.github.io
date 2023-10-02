@@ -1,6 +1,6 @@
 import asyncio
 import random
-from bot import Bot
+from bot import AbstractBot
 from bid import Bid
 from utils import prob
 
@@ -28,7 +28,7 @@ class Hand:
         self.q_maxdde = [0,1,1.44,1.89,2.36,2.83,3.27,3.69,4.11,4.52,4.94,5.35,5.75,6.15,6.55,6.94,7.34,7.73,8.12,8.51,8.9,9.29,9.67,10.05,10.44][self.size]
 
 
-class MediumBot(Bot):
+class Bot(AbstractBot):
 
     async def play_b(self, q, v):
         self.i_revealed = False
