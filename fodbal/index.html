@@ -89,7 +89,7 @@
 </div>
 
 <div id="popupContainer" style="display: none;">
-  <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
     <h4>v1.5.0 [2023-09-11]</h4>
     <ul>
@@ -130,7 +130,7 @@
       <li>first version</li>
     </ul>
   </div>
-  <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
+  <div id="debuglogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
   </div>
 </div>
