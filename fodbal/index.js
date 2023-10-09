@@ -359,7 +359,7 @@ window.addEventListener('load', (e) => {
     document.getElementById('autoRange').checked = g.autoRange;
     setPlotOptionStyle(document.getElementById('autoRange'));
   });
-  displayGraph('2023');
+  displayGraph('2024');
 });
 
 
