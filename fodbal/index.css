@@ -22,6 +22,7 @@ div#menuDiv select {
   width: 100%;
   border: none;
   outline: none;
+  -webkit-border-radius: 0;
   font: bold 3.5vmin sans-serif;
   color: #333;
 }
