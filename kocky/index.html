@@ -135,7 +135,8 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <button id="bidButton" disabled style="grid-area: c;">✓</button>
       <button id="challengeButton" disabled style="grid-area: d;">✖</button>
       <button id="rollButton" disabled style="grid-area: e;">🎲</button>
-      <div id="leaveGameDiv" onclick="leaveGame()" style="grid-area: h; display: none;">❌</div>
+      <div id="leaveGameDiv" onclick="leaveGame()" style="grid-area: 3 / 1 / 5 / 2; display: none;">❌</div>
+      <div id="rematchDiv" onclick="confirmMove(true, 'REMATCH', requestRematch)" style="grid-area: 3 / 2 / 5 / 2; display: none;">🔄</div>
       <div onclick="popup('gamelogDiv')" style="grid-area: i;">📖</div>
       <div class="settingsButton" onclick="popup('settingsDiv2')" style="grid-area: j;">⚙</div>
     </div>

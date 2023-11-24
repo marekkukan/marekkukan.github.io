@@ -93,6 +93,7 @@ class Game:
         self.n_players = len(self.players)
         log(f'{self.creator}\'s game has started with {self.n_players} players')
         await self.broadcast('GAME_STARTED')
+        self.players_copy = self.players.copy()
         if self.random_order:
             random.shuffle(self.players)
         self.time = 60 * self.minutes_per_game
@@ -113,8 +114,21 @@ class Game:
             player.wp = '0%'
         self.cp().wp = '100%'
         await self.broadcast_state()
-        await self.broadcast('GAME_ENDED')
         log(f'{self.creator}\'s game has ended')
+
+    async def restart(self):
+        self.players = self.players_copy
+        for p in self.players:
+            p.move = asyncio.Future()
+            if not p.revealing.done():
+                p.revealing.set_result(None)
+            if p in self.spectators:
+                self.spectators.remove(p)
+        self.started = False
+        self.finished = False
+        self.finished_round = False
+        self.cpi = 0
+        await self.record('requests REMATCH', '<br>' + '=' * 25 + '<br><br>')
 
     def cp(self):
         return self.players[self.cpi]

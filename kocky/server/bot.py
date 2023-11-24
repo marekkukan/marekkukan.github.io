@@ -45,8 +45,10 @@ class AbstractBot(ABC):
             await self.socket.send(f'_BOT {self.token}')
             log(f'bot {self} sent connection request')
             async for message in self.socket:
-                if message == 'GAME_ENDED' or message == 'GAME_ABANDONED':
+                if message == 'GAME_ABANDONED':
                     break
+                elif message == 'GAME_STARTED':
+                    self.my_hidden_dice = None
                 elif message.startswith('INDEX '):
                     self.my_index = int(message[6:])
                 elif message.startswith('ROLL '):

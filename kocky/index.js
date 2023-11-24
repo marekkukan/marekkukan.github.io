@@ -466,19 +466,18 @@ function processGameState(state) {
   displayGame();
   if (gInterval !== null) clearInterval(gInterval);
   if (!gRolled) document.getElementById('rollButton').disabled = false;
-  if (state.finishedRound) {
+  if (state.finishedRound || state.finished) {
     gMyHiddenDice = [];
     gRolled = false;
     document.getElementById('rollButton').disabled = true;
   }
-  var myIndex = gMyIndex;
   // render game state
   var playersDiv = document.getElementById('playersDiv');
   playersDiv.replaceChildren(...state.players.map((x, i) => generatePlayerDiv(x, i)));
   // enable / disable buttons
-  setSpectatorMode(myIndex == -1 || state.players[myIndex].numberOfDice == 0 || state.finished);
+  setSpectatorMode(state);
   gCurrentBid = state.currentBid;
-  gMyTurn = myIndex > -1 && state.players[myIndex].isCurrentPlayer;
+  gMyTurn = gMyIndex > -1 && state.players[gMyIndex].isCurrentPlayer;
   if (gMyTurn) {
     playSound(SOUND_MY_TURN);
     if (gVibrate) navigator.vibrate([100,50,100]);
@@ -512,12 +511,15 @@ function processGameState(state) {
   }
 }
 
-function setSpectatorMode(b) {
+function setSpectatorMode(state) {
+  var b = gMyIndex == -1 || state.players[gMyIndex].numberOfDice == 0 || state.finished;
   document.getElementById('leaveGameDiv').style.display = b ? 'block' : 'none';
   document.getElementById('bidControllerDiv').style.display = b ? 'none' : 'grid';
   document.getElementById('bidButton').style.display = b ? 'none' : 'block';
   document.getElementById('challengeButton').style.display = b ? 'none' : 'block';
   document.getElementById('rollButton').style.display = b ? 'none' : 'block';
+  var isMyBotGame = state.players.every(x => x.nickname == myNickname || x.nickname.includes('_'));
+  document.getElementById('rematchDiv').style.display = b && isMyBotGame ? 'block' : 'none';
 }
 
 
@@ -708,6 +710,11 @@ function leaveGame() {
   debug("leaving game ..");
   socket.send(`LEAVE_GAME`);
   displayLobby();
+}
+
+function requestRematch() {
+  debug("requesting rematch ..");
+  socket.send(`REMATCH`);
 }
 
 function toggleReady() {
