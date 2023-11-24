@@ -101,8 +101,8 @@ async def leave_game(player):
         game.players.remove(player)
         player.is_ready = False
         if player == game.creator:
-            websockets.broadcast((x.socket for x in game.players), 'GAME_ABANDONED')
-            for player in game.players:
+            await game.broadcast('GAME_ABANDONED')
+            for player in game.players + game.spectators:
                 player.game = None
                 player.is_ready = False
             games.remove(game)
