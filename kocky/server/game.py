@@ -98,7 +98,7 @@ class Game:
         self.time = 60 * self.minutes_per_game
         self.delay = self.seconds_per_turn
         for (i, player) in enumerate(self.players):
-            player.n_dice = len(player.nickname) if self.snodenl else self.starting_number_of_dice
+            player.n_dice = len(player.nickname) if self.snodenl and '_' not in player.nickname else self.starting_number_of_dice
             player.revealed_dice = []
             player.move = asyncio.Future()
             player.luck = 0
