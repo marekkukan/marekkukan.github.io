@@ -422,6 +422,7 @@ input[type=checkbox] {
   padding: 2vmin;
   perspective: 600px;
   transform: scale(0.7);
+  z-index: 1;
 }
 #myApp2 .die-div {
   padding: 0;
