@@ -1,8 +1,8 @@
 import asyncio
-from bot import Bot
+from bot import AbstractBot
 
 
-class EasyBot(Bot):
+class Bot(AbstractBot):
 
     async def process_game_state(self, state):
         me = state['players'][self.my_index]

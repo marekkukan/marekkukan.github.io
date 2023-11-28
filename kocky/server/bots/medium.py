@@ -1,6 +1,6 @@
 import asyncio
 import random
-from bot import Bot
+from bot import AbstractBot
 from bid import Bid
 from utils import prob
 
@@ -28,7 +28,7 @@ class Hand:
         self.q_maxdde = [0,1,1.44,1.89,2.36,2.83,3.27,3.69,4.11,4.52,4.94,5.35,5.75,6.15,6.55,6.94,7.34,7.73,8.12,8.51,8.9,9.29,9.67,10.05,10.44][self.size]
 
 
-class MediumBot(Bot):
+class Bot(AbstractBot):
 
     async def play_b(self, q, v):
         self.i_revealed = False
@@ -95,6 +95,8 @@ class MediumBot(Bot):
                     my_sums4[i] = sum(1 for x in revealed_dice if x == i or x == 1) + round(0.88 * len(my_hidden_dice))
                 n = n_dice - len(my_hidden_dice) - len(revealed_dice)
                 p1 = prob(n, bid.quantity - my_sums[bid.number], bid.number==1)
+                p0 = prob(self.my_hand.size, my_sums2[bid.number], bid.number==1)
+                p1x = p1 + 1 - p0
                 for i in range(1,7):
                     p2[i] = prob(n, nextq(bid, i) - my_sums[i], i==1) + random.random() * 1e-06
                     p4[i] = prob(n, nextq(bid, i) - my_sums4[i], i==1) + random.random() * 1e-06
@@ -112,21 +114,21 @@ class MediumBot(Bot):
                     await self.play_c()
                 elif max(p2) > 0.9:
                     await self.play_b2(p2, p4, bid, n_dice)
-                elif p1 < 0.1:
+                elif p1x < 0.1:
                     await self.play_c()
                 elif max(p2) > 0.8:
                     await self.play_b2(p2, p4, bid, n_dice)
-                elif p1 < 0.15:
+                elif p1x < 0.15:
                     await self.play_c()
                 elif max(p2) > 0.7:
                     await self.play_b2(p2, p4, bid, n_dice)
-                elif p1 < 0.2:
+                elif p1x < 0.2:
                     await self.play_c()
                 elif max(p2) > 0.5:
                     await self.play_b2(p2, p4, bid, n_dice)
                 elif max(p3) > 0.5:
                     await self.play_r2(p3, my_hidden_dice)
-                elif p1 < 0.33:
+                elif p1x < 0.33:
                     await self.play_c()
                 elif max(p3) > 0.4:
                     await self.play_r2(p3, my_hidden_dice)
