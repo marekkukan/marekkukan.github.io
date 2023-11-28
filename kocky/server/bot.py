@@ -5,7 +5,7 @@ import random
 from abc import ABC, abstractmethod
 from utils import log, generate_token
 
-class AbstractBot(ABC):
+class Bot(ABC):
 
     def __init__(self, socket, nickname, token):
         self.socket = socket
@@ -45,10 +45,8 @@ class AbstractBot(ABC):
             await self.socket.send(f'_BOT {self.token}')
             log(f'bot {self} sent connection request')
             async for message in self.socket:
-                if message == 'GAME_ABANDONED':
+                if message == 'GAME_ENDED' or message == 'GAME_ABANDONED':
                     break
-                elif message == 'GAME_STARTED':
-                    self.my_hidden_dice = None
                 elif message.startswith('INDEX '):
                     self.my_index = int(message[6:])
                 elif message.startswith('ROLL '):
@@ -75,13 +73,21 @@ class AbstractBot(ABC):
 
 
 
-import bots
-from bots import *
+import bots.dummy
+import bots.easy
+import bots.rand
+import bots.medium
 
 def spawn_bot(socket, level, game):
     game.n_bots += 1
     nickname = f'{level}bot_{game.n_bots}'
     token = generate_token()
-    if level in bots.__all__:
-        return eval(f'bots.{level}.Bot(socket, nickname, token)')
-    return bots.dummy.Bot(socket, nickname, token)
+    if level == 'dummy':
+        return bots.dummy.DummyBot(socket, nickname, token)
+    if level == 'easy':
+        return bots.easy.EasyBot(socket, nickname, token)
+    if level == 'rand':
+        return bots.rand.RandBot(socket, nickname, token)
+    if level == 'medium':
+        return bots.medium.MediumBot(socket, nickname, token)
+    return bots.dummy.DummyBot(socket, nickname, token)

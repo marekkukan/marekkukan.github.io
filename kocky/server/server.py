@@ -101,8 +101,8 @@ async def leave_game(player):
         game.players.remove(player)
         player.is_ready = False
         if player == game.creator:
-            await game.broadcast('GAME_ABANDONED')
-            for player in game.players + game.spectators:
+            websockets.broadcast((x.socket for x in game.players), 'GAME_ABANDONED')
+            for player in game.players:
                 player.game = None
                 player.is_ready = False
             games.remove(game)
@@ -111,13 +111,11 @@ async def leave_game(player):
             await game.broadcast_state()
     else:
         log(f'{player.nickname} not in players nor spectators')
-    if game in games and all(x.is_fake or x.is_bot() for x in game.players + game.spectators):
-        await game.broadcast('GAME_ABANDONED')
-        games.remove(game)
-        websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
 
-def start_game(game):
-    game.task = asyncio.create_task(game.start())
+async def start_game(game):
+    await game.start()
+    games.remove(game)
+    websockets.broadcast(sockets, 'GAMES ' + ' '.join(game.creator.nickname for game in games))
 
 
 async def handler(socket, path):
@@ -163,19 +161,7 @@ async def handler(socket, path):
                     player.is_ready = not player.is_ready
                     await player.game.broadcast_state()
                     if len(player.game.players) > 1 and all(x.is_ready for x in player.game.players):
-                        start_game(player.game)
-                elif message.startswith('REMATCH'):
-                    if player.game is None: continue
-                    if player != player.game.creator: continue
-                    if not player.game.started: continue
-                    if all(x.is_fake or x.is_bot() for x in player.game.players):
-                        if not player.game.task.done():
-                            player.game.task.cancel()
-                            player.game.finished = True
-                            await player.game.broadcast_state()
-                            await asyncio.sleep(1.1) # give time to process moves
-                        await player.game.restart()
-                        start_game(player.game)
+                        asyncio.create_task(start_game(player.game))
                 elif message.startswith('GAME_OPTIONS '):
                     if player.game is None: continue
                     if player != player.game.creator: continue

@@ -17,7 +17,6 @@
  | `GAME_LOG` | request for `GAME_LOG` |
  | `READY` | I am (not) ready (for the game to start) |
  | `GAME_OPTIONS <json>` | set game options |
- | `REMATCH` | request rematch |
 
 ## server -> client
 

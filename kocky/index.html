@@ -10,31 +10,27 @@
 <!-- <link rel="stylesheet" href="../snow.css" /> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script src="shake.js"></script>
 </head>
 <body>
 
 <!-- <script src="../snow.js"></script> -->
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.14.2</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font-family: monospace;">v1.13.0</div>
 <div id="networkStatusDiv" style="position: fixed; top: 7%; right: 1vmin; width: 2vmin; height: 2vmin; background: green; border-radius: 50%;"></div>
 <div id="connectionStatusDiv" style="position: fixed; top: 7%; right: 4vmin; width: 2vmin; height: 2vmin; background: grey; border-radius: 50%;"></div>
-<div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font: 2vmin monospace;"></div>
+<div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font-family: monospace;"></div>
 
 <div id="menuDiv">
-  <button onclick="location.reload()">⟳</button>
-  <select onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph(this.value)"
-          onchange="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph(this.value)">
-    <option value="2023 2023_" selected>Season 2023</option>
-    <option value="2022 ">Season 2022</option>
-    <option value="2021 ">Season 2021</option>
-    <option value="2020 ">Season 2020</option>
-    <option value="2021 KC_">Kocker Cup 2021</option>
-  </select>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2020')">Season 2020</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021')">Season 2021</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2022')">Season 2022</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2023', '2023_')">Season 2023</button>
+  <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayGraph('2021', 'KC_')">Kocker Cup</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp()">Dice Roller</button>
   <button onclick="this.parentElement.querySelector('.active').classList.remove('active'); this.classList.add('active'); displayApp2()" class="active">Play Online</button>
-  <button onclick="popup('changelogDiv')"></button>
+  <button onclick="location.reload()">⟳</button>
+  <div onclick="popup('changelogDiv')"></div>
 </div>
 
 <canvas id="myCanvas" style="display: none;">
@@ -135,8 +131,7 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <button id="bidButton" disabled style="grid-area: c;">✓</button>
       <button id="challengeButton" disabled style="grid-area: d;">✖</button>
       <button id="rollButton" disabled style="grid-area: e;">🎲</button>
-      <div id="leaveGameDiv" onclick="leaveGame()" style="grid-area: 3 / 1 / 5 / 2; display: none;">❌</div>
-      <div id="rematchDiv" onclick="confirmMove(true, 'REMATCH', requestRematch)" style="grid-area: 3 / 2 / 5 / 2; display: none;">🔄</div>
+      <div id="leaveGameDiv" onclick="leaveGame()" style="grid-area: h; display: none;">❌</div>
       <div onclick="popup('gamelogDiv')" style="grid-area: i;">📖</div>
       <div class="settingsButton" onclick="popup('settingsDiv2')" style="grid-area: j;">⚙</div>
     </div>
@@ -144,12 +139,12 @@ Your browser does not support the HTML5 canvas tag.</canvas>
 </div>
 
 <div id="popupContainer" style="display: none;">
-  <div class="settingsDiv" id="settingsDiv" style="display: none;" onclick="toggleMaximized(this, event);">
+  <div class="settingsDiv" id="settingsDiv" style="display: none;" onclick="event.stopPropagation()">
     <h1>settings</h1>
     <label><input id="setting1" type="checkbox" oninput="toggleShakeSetting(this.checked)">roll by shaking</label><br>
     <label><input id="setting2" type="checkbox" oninput="toggleMoveSetting(this.checked)">move revealed dice up</label><br>
   </div>
-  <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="toggleMaximized(this, event);">
+  <div class="settingsDiv" id="settingsDiv2" style="display: none;" onclick="event.stopPropagation()">
     <h1>settings</h1>
     <label><input id="setting3" type="checkbox" oninput="toggleSetting3(this.checked)">show dice counter</label><br>
     <br>
@@ -165,26 +160,18 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     <label><input id="setting11" type="checkbox" checked oninput="toggleSetting11(this.checked)">dice roll animation</label><br>
     <label><input id="setting12" type="checkbox" oninput="toggleSetting12(this.checked)">auto-roll</label><br>
   </div>
-  <div id="createGameDiv" style="display: none;" onclick="toggleMaximized(this, event);">
+  <div id="createGameDiv" style="display: none;" onclick="event.stopPropagation()">
     <h3>creating a game</h3><br><br>
     <input id="createGamePassword" type="text" placeholder="choose password" size="15">
     <button id="createGameButton" onclick="createGame(this)">create</button>
   </div>
-  <div id="joinGameDiv" style="display: none;" onclick="toggleMaximized(this, event);">
+  <div id="joinGameDiv" style="display: none;" onclick="event.stopPropagation()">
     <h3>joining <span id="joinGameCreator"></span>'s game</h3><br><br>
     <input id="joinGamePassword" type="text" placeholder="enter password" size="15">
     <button id="joinGameButton" onclick="joinGame(this)">join</button>
   </div>
-  <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
+  <div id="changelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
-    <h4>v1.14.0 [2023-11-24]</h4>
-    <ul>
-      <li>added rematch button</li>
-      <li>improved medium bot</li>
-      <li>redesigned top menu bar</li>
-      <li>popup windows can be maximized</li>
-      <li>fixed text about <span onclick="document.getElementById('popupContainer').click(); popup('aboutLuckDiv');" style="text-decoration: underline;">luck detector</span></li>
-    </ul>
     <h4>v1.13.0 [2023-05-08]</h4>
     <ul>
       <li>improved medium bot</li>
@@ -273,32 +260,25 @@ Your browser does not support the HTML5 canvas tag.</canvas>
       <li>fixed bug with background in updated Chrome</li>
     </ul>
   </div>
-  <div id="debuglogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
+  <div id="debuglogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('changelogDiv').style.display='block';">debuglog</h1>
   </div>
-  <div id="gamelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
+  <div id="gamelogDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1>gamelog</h1>
     <p id="gamelogP" style="font-size: 1.6vmax;"></p>
   </div>
-  <div id="aboutLuckDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
+  <div id="aboutLuckDiv" style="display: none;" onclick="event.stopPropagation()" class="log">
     <h1>about luck detector</h1>
-    <br>
-    <p>
-      Numbers with 🍀 symbol represent player's <i>luck score</i>, which is defined as
-      \[ \text{luck score} = d_a - d_e \]
-      where
-      \[ \begin{array}{l}
-        d_a = \text{number of dice a player has} \\
-        d_e = \text{number of dice a player should have (with neutral luck)}
-      \end{array} \]
-      Therefore lucky players have positive luck score, and vice versa.
-      Players with 0🍀 are neither lucky, nor unlucky.
-    </p>
+    <p>Numbers with 🍀 symbol represent player's <span style="font-style: italic;">luck score</span>.</p>
+    <p>Luck score is defined as</p>
+    <p style="font-style: italic;"><math display="block">&lt;luck score&gt; = &lt;number of dice a player has&gt; - &lt;number of dice a player should have (with neutral luck)&gt;</math></p>
+    <p>Therefore lucky players have positive luck score, and vice versa.</p>
+    <p>Players with 0🍀 are neither lucky, nor unlucky.</p>
   </div>
   <div id="confirmDiv" style="display: none;">
     <p id="confirmP" style="font: 3vh monospace;"></p>
   </div>
-  <div id="errorDiv" style="display: none;" onclick="document.getElementById('popupContainer').click();">
+  <div id="errorDiv" style="display: none;" onclick="event.stopPropagation()">
     <span style="color: red; font-size: 4vh">⚠ </span>
     <span id="errorSpan" style="font: 2vh monospace;"></span>
   </div>

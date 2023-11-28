@@ -1,8 +1,8 @@
 import asyncio
 import random
-from bot import AbstractBot
+from bot import Bot
 
-class Bot(AbstractBot):
+class RandBot(Bot):
 
     async def process_game_state(self, state):
         me = state['players'][self.my_index]

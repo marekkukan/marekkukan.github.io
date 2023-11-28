@@ -48,8 +48,7 @@ class Player:
             move = await asyncio.wait_for(self.move, timeout=self.time + self.delay)
         except asyncio.TimeoutError:
             move = '_BID+1'
-        finally:
-            self.move = asyncio.Future()
+        self.move = asyncio.Future()
         t = time.time() - self.turn_start_time
         self.delay -= t
         if self.delay < 0:
@@ -74,6 +73,3 @@ class Player:
         else:
             t = time.time() - self.turn_start_time
             return int(max(0, self.delay - t))
-
-    def is_bot(self):
-        return '_' in self.nickname

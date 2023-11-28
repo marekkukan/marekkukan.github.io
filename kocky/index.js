@@ -53,8 +53,7 @@ function displayApp2() {
   canvas.style.display = "none";
 }
 
-function displayGraph(s) {
-  var [season, prefix] = s.split(" ");
+function displayGraph(season, prefix = "") {
   app.style.display = "none";
   app2.style.display = "none";
   canvas.style.display = "initial";
@@ -67,7 +66,7 @@ function displayGraph(s) {
   if (season == "2022") spreadsheetId = "1mVjQi_iY3BpdJO58tXPjmBONose6rMCHtmw3NLvGysY";
   if (season == "2023") spreadsheetId = "1mVjQi_iY3BpdJO58tXPjmBONose6rMCHtmw3NLvGysY";
   var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:Z1000&ranges=${prefix}kumulativne%20body!B2:Z1000&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
-  gNumberOfGamesToQualify = prefix != "KC_" ? 6 : 0;
+  gNumberOfGamesToQualify = prefix == "" ? 6 : 0;
   $.get(url, (data) => {gData = data; drawGraph(data);});
 }
 
@@ -466,18 +465,19 @@ function processGameState(state) {
   displayGame();
   if (gInterval !== null) clearInterval(gInterval);
   if (!gRolled) document.getElementById('rollButton').disabled = false;
-  if (state.finishedRound || state.finished) {
+  if (state.finishedRound) {
     gMyHiddenDice = [];
     gRolled = false;
     document.getElementById('rollButton').disabled = true;
   }
+  var myIndex = gMyIndex;
   // render game state
   var playersDiv = document.getElementById('playersDiv');
   playersDiv.replaceChildren(...state.players.map((x, i) => generatePlayerDiv(x, i)));
   // enable / disable buttons
-  setSpectatorMode(state);
+  setSpectatorMode(myIndex == -1 || state.players[myIndex].numberOfDice == 0 || state.finished);
   gCurrentBid = state.currentBid;
-  gMyTurn = gMyIndex > -1 && state.players[gMyIndex].isCurrentPlayer;
+  gMyTurn = myIndex > -1 && state.players[myIndex].isCurrentPlayer;
   if (gMyTurn) {
     playSound(SOUND_MY_TURN);
     if (gVibrate) navigator.vibrate([100,50,100]);
@@ -511,15 +511,12 @@ function processGameState(state) {
   }
 }
 
-function setSpectatorMode(state) {
-  var b = gMyIndex == -1 || state.players[gMyIndex].numberOfDice == 0 || state.finished;
+function setSpectatorMode(b) {
   document.getElementById('leaveGameDiv').style.display = b ? 'block' : 'none';
   document.getElementById('bidControllerDiv').style.display = b ? 'none' : 'grid';
   document.getElementById('bidButton').style.display = b ? 'none' : 'block';
   document.getElementById('challengeButton').style.display = b ? 'none' : 'block';
   document.getElementById('rollButton').style.display = b ? 'none' : 'block';
-  var isMyBotGame = state.players.every(x => x.nickname == myNickname || x.nickname.includes('_'));
-  document.getElementById('rematchDiv').style.display = b && isMyBotGame ? 'block' : 'none';
 }
 
 
@@ -710,11 +707,6 @@ function leaveGame() {
   debug("leaving game ..");
   socket.send(`LEAVE_GAME`);
   displayLobby();
-}
-
-function requestRematch() {
-  debug("requesting rematch ..");
-  socket.send(`REMATCH`);
 }
 
 function toggleReady() {
@@ -970,13 +962,3 @@ window.addEventListener('online', (e) => {
   debug(`online`);
   document.getElementById('networkStatusDiv').style.background = 'green';
 });
-
-
-function toggleMaximized(element, event) {
-  event.stopPropagation();
-  if (!['h1', 'input', 'label', 'button', 'span'].includes(event.target.tagName.toLowerCase())) {
-    element.classList.toggle('maximized');
-    if (element.id == 'changelogDiv') document.getElementById('debuglogDiv').classList.toggle('maximized');
-    if (element.id == 'debuglogDiv') document.getElementById('changelogDiv').classList.toggle('maximized');
-  }
-}
