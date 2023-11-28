@@ -423,6 +423,7 @@ input[type=checkbox] {
   perspective: 600px;
   transform: scale(0.7);
   z-index: 1;
+  backface-visibility: hidden;
 }
 #myApp2 .die-div {
   padding: 0;
@@ -435,6 +436,7 @@ input[type=checkbox] {
   height: 6vmin;
   list-style-type: none;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 .even-roll {
   transition: transform 3s ease-out;
@@ -461,6 +463,7 @@ input[type=checkbox] {
   width:  100%;
   height: 100%;
   padding: 1vmin;
+  backface-visibility: hidden;
 }
 .revealed .die-item {
   background-color: yellow;
