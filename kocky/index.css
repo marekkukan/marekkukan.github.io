@@ -437,6 +437,7 @@ input[type=checkbox] {
   list-style-type: none;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  pointer-events: none;
 }
 .even-roll {
   transition: transform 3s ease-out;
