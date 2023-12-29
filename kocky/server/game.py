@@ -290,7 +290,8 @@ class Game:
         points = self.points.pop()
         self.cp().stats['games'] += 1
         self.cp().stats['points'] += points
-        if all(x.nickname == self.cp().nickname or 'hardbot_' in x.nickname for x in self.players):
+        if (all(x.nickname == self.cp().nickname or 'hardbot_' in x.nickname for x in self.players) and
+            self.starting_number_of_dice == 6 and not self.snodenl and self.random_order):
             self.cp().stats['games_vs_hard_bot'] += 1
             self.cp().stats['points_vs_hard_bot'] += points
         self.spectators.append(self.cp())
