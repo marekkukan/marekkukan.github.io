@@ -17,7 +17,7 @@
 
 <script src="../snow.js"></script>
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.14.2</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.15.0</div>
 <div id="networkStatusDiv" style="position: fixed; top: 7%; right: 1vmin; width: 2vmin; height: 2vmin; background: green; border-radius: 50%;"></div>
 <div id="connectionStatusDiv" style="position: fixed; top: 7%; right: 4vmin; width: 2vmin; height: 2vmin; background: grey; border-radius: 50%;"></div>
 <div id="myNicknameDiv" style="position: fixed; top: 7%; right: 7vmin; font: 2vmin monospace;"></div>
@@ -186,6 +186,13 @@ Your browser does not support the HTML5 canvas tag.</canvas>
   </div>
   <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.15.0 [2023-12-29]</h4>
+    <ul>
+      <li>added hard bot</li>
+      <li>added player stats</li>
+      <li>improved UI: clicking a die selects all dice with the same face value</li>
+      <li>fixed bug: clicking a die occasionally selected another die</li>
+    </ul>
     <h4>v1.14.0 [2023-11-24]</h4>
     <ul>
       <li>added rematch button</li>
