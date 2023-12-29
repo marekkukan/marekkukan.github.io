@@ -18,6 +18,7 @@
  | `READY` | I am (not) ready (for the game to start) |
  | `GAME_OPTIONS <json>` | set game options |
  | `REMATCH` | request rematch |
+ | `PLAYER_STATS nickname` | request player stats |
 
 ## server -> client
 
@@ -39,6 +40,7 @@
 | `ROLL 5 2 1 2` | specific player | you rolled `5 2 1 2` |
 | `INDEX 0` | specific player | your index is `0` |
 | `INVALID_MOVE` | specific player | you played an invalid move |
+| `PLAYER_STATS <json>` | specific player | player stats |
 
 ### game state yaml examples
 

@@ -209,6 +209,10 @@ async def handler(socket, path):
                     player.move.set_result(message)
                     if message.startswith('REVEAL '):
                         player.revealing = asyncio.Future()
+                elif message.startswith('PLAYER_STATS '):
+                    p = next((x for x in players if x.nickname == message[13:]), None)
+                    if p is not None:
+                        await socket.send(f'PLAYER_STATS {json.dumps(p.stats)}')
     except websockets.ConnectionClosed:
         pass
     finally:
@@ -247,6 +251,7 @@ def load_state():
         state = json.load(f)
     for p in state['players']:
         player = Player(None, p['nickname'], p['token'])
+        player.stats = p['stats']
         players.append(player)
 
 def save_state():
@@ -254,6 +259,7 @@ def save_state():
     state = {'players': [{
         'nickname': p.nickname,
         'token': p.token,
+        'stats': p.stats,
     } for p in players]}
     with open('state.json', 'w') as f:
         json.dump(state, f)

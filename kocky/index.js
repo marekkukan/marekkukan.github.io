@@ -609,7 +609,7 @@ function connectToServer() {
       leaveLobby();
     }
     else if (message.startsWith("PLAYERS ")) {
-      document.getElementById("playersInLobbyList").innerHTML = msg2array(message).map(x => `<li>${x}</li>`).join('');
+      document.getElementById("playersInLobbyList").innerHTML = msg2array(message).map(x => `<li onclick="requestPlayerStats('${x}')">${x}</li>`).join('');
     }
     else if (message.startsWith("GAMES ")) {
       document.getElementById("gamesList").innerHTML = msg2array(message).map(x => `<li onclick="popupJoinGame('${x}')">${x}</li>`).join('');
@@ -661,6 +661,14 @@ function connectToServer() {
     }
     else if (message == 'PLAYER_CHALLENGES') {
       playSound(SOUND_PLAYER_CHALLENGES);
+    }
+    else if (message.startsWith('PLAYER_STATS ')) {
+      var stats = JSON.parse(message.slice(13));
+      document.getElementById('playerStatsGames').innerHTML = stats['games'];
+      document.getElementById('playerStatsPoints').innerHTML = stats['points'];
+      document.getElementById('playerStatsGamesVsHardBot').innerHTML = stats['games_vs_hard_bot'];
+      document.getElementById('playerStatsPointsVsHardBot').innerHTML = stats['points_vs_hard_bot'];
+      popup('playerStatsDiv');
     }
   }
 }
@@ -718,6 +726,12 @@ function leaveGame() {
   debug("leaving game ..");
   socket.send(`LEAVE_GAME`);
   displayLobby();
+}
+
+function requestPlayerStats(nickname) {
+  debug(`requesting ${nickname}'s player stats ..`);
+  socket.send(`PLAYER_STATS ${nickname}`);
+  document.getElementById('playerStatsNickname').innerHTML = nickname;
 }
 
 function requestRematch() {

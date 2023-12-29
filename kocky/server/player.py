@@ -29,6 +29,7 @@ class Player:
         self.index = -1
         self.revealing = asyncio.Future()
         self.revealing.set_result(None)
+        self.stats = {'games': 0, 'points': 0, 'games_vs_hard_bot': 0, 'points_vs_hard_bot': 0}
 
     def __str__(self):
         return self.nickname

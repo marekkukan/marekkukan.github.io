@@ -175,6 +175,15 @@ Your browser does not support the HTML5 canvas tag.</canvas>
     <input id="joinGamePassword" type="text" placeholder="enter password" size="15">
     <button id="joinGameButton" onclick="joinGame(this)">join</button>
   </div>
+  <div id="playerStatsDiv" style="display: none;" onclick="toggleMaximized(this, event);">
+    <h3><span id="playerStatsNickname"></span>'s stats</h3><br><br>
+    <ul>
+      <li>games: <span id="playerStatsGames"></span></li>
+      <li>points: <span id="playerStatsPoints"></span></li>
+      <li>games vs. hard bot(s): <span id="playerStatsGamesVsHardBot"></span></li>
+      <li>points vs. hard bot(s): <span id="playerStatsPointsVsHardBot"></span></li>
+    </ul>
+  </div>
   <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
     <h4>v1.14.0 [2023-11-24]</h4>

@@ -94,6 +94,7 @@ class Game:
         log(f'{self.creator}\'s game has started with {self.n_players} players')
         await self.broadcast('GAME_STARTED')
         self.players_copy = self.players.copy()
+        self.points = list(range(self.n_players - 1, -self.n_players, -2))
         if self.random_order:
             random.shuffle(self.players)
         self.time = 60 * self.minutes_per_game
@@ -286,6 +287,12 @@ class Game:
             Replace current player (who just lost) with a fake player, so that one can see
             that this player was in the game, but the player no longer receives game states.
         """
+        points = self.points.pop()
+        self.cp().stats['games'] += 1
+        self.cp().stats['points'] += points
+        if all(x.nickname == self.cp().nickname or 'hardbot_' in x.nickname for x in self.players):
+            self.cp().stats['games_vs_hard_bot'] += 1
+            self.cp().stats['points_vs_hard_bot'] += points
         self.spectators.append(self.cp())
         fake_player = copy.copy(self.cp())
         fake_player.hidden_dice = []
