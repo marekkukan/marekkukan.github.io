@@ -304,7 +304,15 @@ function generateDieDiv(roll, ...classes) {
   } else if (div.classList.contains('my-die')) {
     div.onclick = () => {
       if (gMyTurn && !gRevealed && !div.classList.contains('revealed') && !div.classList.contains('blank')) {
-        div.classList.toggle('pre-revealed');
+        if (document.querySelectorAll('.pre-revealed').length == 0) {
+          var dice = [...document.querySelectorAll('div.my-die:not(.revealed):not(.unrevealed):not(.blank)')];
+          var n = div.firstElementChild.dataset.roll;
+          for (const die of dice.filter(x => ['1', n].includes(x.firstElementChild.dataset.roll))) {
+            die.classList.add('pre-revealed');
+          }
+        } else {
+          div.classList.toggle('pre-revealed');
+        }
         var d = document.querySelectorAll('.pre-revealed');
         document.getElementById('rollButton').disabled = gRolled && d.length == 0;
       }
