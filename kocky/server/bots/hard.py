@@ -176,8 +176,8 @@ class Bot(AbstractBot):
             if self.n_bids > 0 and self.n_bluffed > 0 and rb(0.5):
                 n = self.n_bluffed
                 if nextq(bid, n) <= ev[n] - self.my_players[1]['ev'][n] + self.my_hand.size:
-                    mb1[n - 1] = 0.9
-                    mb2[n - 1] = 0.1
+                    mb1[n - 1] = 0.2
+                    mb2[n - 1] = 0.02
                     self.n_bluffed = n
             elif self.n_bids == 0 and min(my_sums2[1:]) == 0 and rb(0.1 if self.i_revealed else 0.5):
                 n = random.choice([x for x in range(1,7) if my_sums2[x] == 0])
