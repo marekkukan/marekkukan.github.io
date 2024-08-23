@@ -65,7 +65,8 @@ function displayGraph(s) {
   if (season == "2020") spreadsheetId = "1SMSHgI_VwedJJFKElNIdlErG83lAum5I2SvgElYS6eU";
   if (season == "2021") spreadsheetId = "1ffUJY2jo2mX_1tJ1OmZ_Dxp41sEBthG6KEEjwTsXS0M";
   if (season == "2022") spreadsheetId = "1mVjQi_iY3BpdJO58tXPjmBONose6rMCHtmw3NLvGysY";
-  var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:Z1000&ranges=${prefix}kumulativne%20body!B2:Z1000&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
+  if (season == "sims") spreadsheetId = "17VEuH7pT6ic4dNadNWKN2FrAKr0cYBU-khphaD0Qft8";
+  var url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=${prefix}body!B1:AZ1000&ranges=${prefix}kumulativne%20body!B2:AZ1000&majorDimension=COLUMNS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   gNumberOfGamesToQualify = prefix != "KC_" ? 6 : 0;
   $.get(url, (data) => {gData = data; drawGraph(data);});
 }
