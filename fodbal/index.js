@@ -361,7 +361,7 @@ window.addEventListener('load', (e) => {
     document.getElementById('autoRange').checked = g.autoRange;
     setPlotOptionStyle(document.getElementById('autoRange'));
   });
-  displayGraph('2024');
+  displayGraph('2021+');
 });
 
 
