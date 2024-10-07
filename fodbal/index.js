@@ -81,6 +81,7 @@ function displayGraph(season) {
   if (season == "2023") sheetName = "TABULKY_22%2F23";
   if (season == "2024") sheetName = "TABULKY_23%2F24";
   if (season == "2025") sheetName = "TABULKY_24%2F25";
+  if (season == "2021+") sheetName = "TABULKY_21%2B";
   var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:GG100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(url, processData);
 }
@@ -88,8 +89,8 @@ function displayGraph(season) {
 function processData(data) {
   gPlayers = [];
   for (const row of data.values) {
-    if (row[1] === '0' || row[1] > 0) {
-      var games = Number(row[1]);
+    if (row.length > 1 && row[1] != '' && isFinite(row[1].replace(',', '.'))) {
+      var games = Number(row[1].replace(',', '.'));
       var player = {
         'name': row[0],
         'games': games,
@@ -101,7 +102,7 @@ function processData(data) {
         'textColor': games > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
-        'markerSize': games / 2 + 5,
+        'markerSize': Math.min(40, games / 2 + 5),
       };
       if (games > 2 && row.length > 12) {
         player.pp1 = (player.p1 * games - row[row.length-3]) / (games - 2);
