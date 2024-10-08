@@ -82,7 +82,7 @@ function displayGraph(season) {
   if (season == "2024") sheetName = "TABULKY_23%2F24";
   if (season == "2025") sheetName = "TABULKY_24%2F25";
   if (season == "2021+") sheetName = "TABULKY_21%2B";
-  var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:GG100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
+  var url = `https://sheets.googleapis.com/v4/spreadsheets/1ttG0bK-tLzMPgohBYvAR7Xx9sTXLpSmnagyNxzOcvjQ/values/${sheetName}!A1:ZZ100?majorDimension=ROWS&key=AIzaSyCLvFHhl5l1iNKv2PaJM7n8eSftTCX8OTE`;
   $.get(url, processData);
 }
 
