@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100vw;
+}
+</style>
+<title>MHD</title>
+<link rel="icon" href="icon256.png">
+<meta name="theme-color" content="#665646">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon192.png">
+</head>
+<body>
+
+<div id="versionDiv" style="position: fixed; z-index: 1000; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.0.0</div>
+<img id="gps" src="gps.png" width="20%" style="position: fixed; z-index: 1000; bottom: 20vh; right: 5vw;"></img>
+<div id="map"></div>
+<iframe id="iframeId" name="iframeName" width="70%" height="100%" style="position: fixed; z-index: 1000; top: 0; left: 0; border: none; display: none;"></iframe>
+
+<script src="data.js"></script>
+
+<script>
+
+	const map = L.map('map').setView([48.148598, 17.107748], 13);
+	const iframe = document.getElementById('iframeId');
+	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		minZoom: 11,
+		maxZoom: 18,
+		detectRetina: true,
+	}).addTo(map);
+
+	const icon = L.icon({
+    iconUrl: 'icon192.png',
+    iconSize:     [40, 40],
+    iconAnchor:   [20, 40],
+	});
+
+	function onMapClick(e) {
+		iframe.style.display = 'none';
+	}
+
+	map.on('click', onMapClick);
+	map.locate({setView: true, maxZoom: 15});
+
+	document.getElementById('gps').addEventListener('click', (e) => {
+		if (iframe.style.display == 'none') {
+			map.locate({setView: true, maxZoom: 16});
+		} else {
+			iframe.style.display = 'none';
+		}
+	});
+
+	const onClick = st => {
+		return e => {
+  		iframe.src = `https://imhd.sk/ba/online-zastavkova-tabula?st=${st}`;
+			iframe.style.display = 'block';
+	  };
+	};
+
+	for (var i = 0; i < data.length; i++) {
+	  L.marker([data[i][0], data[i][1]], {icon: icon}).on('click', onClick(data[i][2])).addTo(map);
+	}
+
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then(() => { console.log('SW Registered'); });
+}
+</script>
+</body>
+</html>
