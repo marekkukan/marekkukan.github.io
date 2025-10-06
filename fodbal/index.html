@@ -56,10 +56,11 @@
       <div id="filterDiv">
         <h4>vyber hracov:</h4>
         <label><input id="filterAll"         type="radio" name="radioFilter" oninput="setFilter(this.id)">vsetkych</label><br>
-        <label><input id="filterQualified"   type="radio" name="radioFilter" oninput="setFilter(this.id)">vsetkych co maju aspon 6 zapasov</label><br>
+        <label><input id="filterQualified"   type="radio" name="radioFilter" oninput="setFilter(this.id)">co maju 6+ zapasov</label><br>
         <label><input id="filterRegulars"    type="radio" name="radioFilter" oninput="setFilter(this.id)" checked>stalych</label><br>
         <label><input id="filterSubstitutes" type="radio" name="radioFilter" oninput="setFilter(this.id)">nahradnikov</label><br>
         <label><input id="filterSprinters"   type="radio" name="radioFilter" oninput="setFilter(this.id)">behacov</label><br>
+        <label><input id="filterThisWeek"    type="radio" name="radioFilter" oninput="setFilter(this.id)">co pridu tento tyzden</label><br>
       </div>
       <div id="playersDiv">
         <h4>zoznam hracov: (vybratych: <span id="checkedPlayersNumber"></span>)</h4>

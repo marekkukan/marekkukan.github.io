@@ -54,6 +54,8 @@ function filterPlayers() {
       player.checked = i >= 10 && player.games > 0;
     } else if (g.filter == 'filterSprinters') {
       player.checked = player.isSprinter;
+    } else if (g.filter == 'filterThisWeek') {
+      player.checked = player.willPlayThisWeek;
     }
   }
 }
@@ -103,6 +105,7 @@ function processData(data) {
         'pp2': NaN,
         'checked': true,
         'isSprinter': row.length >= 10 && row[10] == 'x',
+        'willPlayThisWeek': row.length >= 11 && row[11] == 'x',
         'textColor': games > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',

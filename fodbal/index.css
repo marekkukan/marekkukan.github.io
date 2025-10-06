@@ -101,7 +101,7 @@ div#menuDiv button.active {
   grid-template-areas:
     "a b c"
     "a d d";
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1.2fr 1fr 1fr;
   grid-template-rows: 1fr 4fr;
   font-size: 2.5vmin;
   font-family: monospace;
@@ -135,10 +135,10 @@ div#menuDiv button.active {
   font: bold 3vmin sans-serif;
 }
 #myAppLeft #filterDiv {
-  height: 30%;
+  height: 35%;
 }
 #myAppLeft #playersDiv {
-  height: 70%;
+  height: 65%;
 }
 #myAppLeft #playersDiv h4 {
   height: 16%;
