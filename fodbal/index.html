@@ -59,6 +59,7 @@
         <label><input id="filterQualified"   type="radio" name="radioFilter" oninput="setFilter(this.id)">vsetkych co maju aspon 6 zapasov</label><br>
         <label><input id="filterRegulars"    type="radio" name="radioFilter" oninput="setFilter(this.id)" checked>stalych</label><br>
         <label><input id="filterSubstitutes" type="radio" name="radioFilter" oninput="setFilter(this.id)">nahradnikov</label><br>
+        <label><input id="filterSprinters"   type="radio" name="radioFilter" oninput="setFilter(this.id)">behacov</label><br>
       </div>
       <div id="playersDiv">
         <h4>zoznam hracov: (vybratych: <span id="checkedPlayersNumber"></span>)</h4>
@@ -83,6 +84,7 @@
     </div>
     <div id="myAppBottom">
       <label><input id="evenSubstitutes" type="checkbox" oninput="setInput(this.id, this.checked)" checked>podel rovnomerne nahradnikov</label><br><br>
+      <label><input id="evenSprinters" type="checkbox" oninput="setInput(this.id, this.checked)" checked>podel rovnomerne behacov</label><br><br>
       <button id="createOptimalTeamsButton" disabled onclick="createOptimalTeams()">vytvor optimalne timy</button>
       <div id="teamsDiv" style="display: none;">
         <table id="teamsTable"></table>

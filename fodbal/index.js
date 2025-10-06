@@ -52,6 +52,8 @@ function filterPlayers() {
       player.checked = i < 10;
     } else if (g.filter == 'filterSubstitutes') {
       player.checked = i >= 10 && player.games > 0;
+    } else if (g.filter == 'filterSprinters') {
+      player.checked = player.isSprinter;
     }
   }
 }
@@ -100,6 +102,7 @@ function processData(data) {
         'pp1': NaN,
         'pp2': NaN,
         'checked': true,
+        'isSprinter': row.length >= 10 && row[10] == 'x',
         'textColor': games > 0 ? 'black' : 'grey',
         'markerColor': gPlayers.length < 10 ? 'red' : 'blue',
         'markerLineColor': gPlayers.length < 10 ? 'red' : 'blue',
@@ -138,12 +141,14 @@ function psum(players, p) {
 var p1sum = players => psum(players, 'p1');
 var p2sum = players => psum(players, 'p2');
 var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
+var numberOfSprinters = players => players.filter(x => x.isSprinter).length;
 
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
   var players = checkedPlayers();
   if (players.length != 10) return;
   var subsTotal = numberOfSubs(players);
+  var sprintersTotal = numberOfSprinters(players);
   var p1best = 1000;
   var p2best = 1000;
   var p3best = 1000;
@@ -156,11 +161,13 @@ async function createOptimalTeams() {
     var p2 = Math.abs(p2diff);
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
+    var sprintersDiff = Math.abs(sprintersTotal - 2*numberOfSprinters(team));
     var isBetter;
     if (g.priority == 'priority1') isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
     if (g.priority == 'priority2') isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
     if (g.priority == 'priority3') isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
     if (g.evenSubstitutes) isBetter &&= subsDiff <= 1;
+    if (g.evenSprinters) isBetter &&= sprintersDiff <= 1;
     if (isBetter) {
       team1 = team;
       p1best = p1;
@@ -346,6 +353,7 @@ window.addEventListener('load', (e) => {
   debug(`localStorage available: ${storageAvailable('localStorage')}`);
   debug(`sessionStorage available: ${storageAvailable('sessionStorage')}`);
   initCheckbox('evenSubstitutes', true);
+  initCheckbox('evenSprinters', true);
   initRadio('priority', 'priority3');
   initRadio('weights', 'weights3');
   initRadio('filter', 'filterRegulars');
