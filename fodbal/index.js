@@ -141,10 +141,12 @@ function psum(players, p) {
     return players.reduce((acc, next) => acc + next[p] * Math.log(1 + next.games) / N, 0);
   }
 }
+
 var p1sum = players => psum(players, 'p1');
 var p2sum = players => psum(players, 'p2');
 var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor == 'red' ? 0 : 1), 0);
 var numberOfSprinters = players => players.filter(x => x.isSprinter).length;
+var teamId = players => players.sort((a, b) => a.name < b.name ? -1 : 1).reduce((p, n) => p + n.name, '');
 
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
@@ -156,8 +158,11 @@ async function createOptimalTeams() {
   var p2best = 1000;
   var p3best = 1000;
   var team1;
+  var teamIds = new Set();
   for (const team of combinationN(players, 5)) {
+    teamIds.add(teamId(team));
     var team2 = players.filter(x => !team.includes(x));
+    if (teamIds.has(teamId(team2))) continue;
     var p1diff = p1sum(team2) - p1sum(team);
     var p2diff = p2sum(team2) - p2sum(team);
     var p1 = Math.abs(p1diff);
