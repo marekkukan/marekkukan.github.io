@@ -148,6 +148,12 @@ var numberOfSubs = players => players.reduce((p, n) => p + (n.markerLineColor ==
 var numberOfSprinters = players => players.filter(x => x.isSprinter).length;
 var teamId = players => players.sort((a, b) => a.name < b.name ? -1 : 1).reduce((p, n) => p + n.name, '');
 
+function plotOptimalTeams(team1, team2) {
+  for (const p of team1) p.markerColor = 'white';
+  for (const p of team2) p.markerColor = 'black';
+  renderPlot();
+}
+
 async function createOptimalTeams() {
   document.getElementById('teamsDiv').style.display = 'none';
   var players = checkedPlayers();
@@ -181,9 +187,7 @@ async function createOptimalTeams() {
       p1best = p1;
       p2best = p2;
       p3best = p3;
-      for (const p of players) p.markerColor = 'black';
-      for (const p of team) p.markerColor = 'white';
-      renderPlot();
+      plotOptimalTeams(team1, team2);
       await new Promise(r => setTimeout(r, 100));
     }
   }
@@ -191,10 +195,8 @@ async function createOptimalTeams() {
   // swap teams if necessary, so that team1 is the stronger team
   if (p1sum(team1) < p1sum(team2)) {
     [team1, team2] = [team2, team1];
-    for (const p of team1) p.markerColor = 'white';
-    for (const p of team2) p.markerColor = 'black';
-    renderPlot();
   }
+  plotOptimalTeams(team1, team2);
   team1.sort((a, b) => b.p2 - a.p2);
   team2.sort((a, b) => b.p2 - a.p2);
   document.getElementById("teamsTable").innerHTML = `
