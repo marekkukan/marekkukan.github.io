@@ -87,7 +87,7 @@
       <label><input id="evenSubstitutes" type="checkbox" oninput="setInput(this.id, this.checked)" checked>podel rovnomerne nahradnikov</label><br><br>
       <label><input id="evenSprinters" type="checkbox" oninput="setInput(this.id, this.checked)" checked>podel rovnomerne behacov</label><br><br>
       <button id="createOptimalTeamsButton" disabled onclick="createOptimalTeams()">vytvor optimalne timy</button>
-      <div id="teamsDiv" style="display: none;">
+      <div id="teamsDiv" style="display: none;" onclick="showNextResult()">
         <table id="teamsTable"></table>
       </div>
     </div>

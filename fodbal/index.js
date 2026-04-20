@@ -164,6 +164,7 @@ async function createOptimalTeams() {
   var p2best = 1000;
   var p3best = 1000;
   var team1;
+  var results = [];
   var teamIds = new Set();
   for (const team of combinationN(players, 5)) {
     teamIds.add(teamId(team));
@@ -174,6 +175,8 @@ async function createOptimalTeams() {
     var p1 = Math.abs(p1diff);
     var p2 = Math.abs(p2diff);
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
+    var score = 10 / (p3 + 1);
+    results.push([team, team2, score]);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
     var sprintersDiff = Math.abs(sprintersTotal - 2*numberOfSprinters(team));
     var isBetter;
@@ -191,7 +194,15 @@ async function createOptimalTeams() {
       await new Promise(r => setTimeout(r, 100));
     }
   }
-  var team2 = players.filter(x => !team1.includes(x));
+  results.sort((a, b) => b[2] - a[2]);
+  bestScore = results[0][2];
+  g['results'] = results.filter(x => x[2] > bestScore - 0.3);
+  g['resultsIndex'] = Math.floor(Math.random() * g['results'].length);
+  showOptimalTeams();
+}
+
+function showOptimalTeams() {
+  let [team1, team2, score] = g['results'][g['resultsIndex']];
   // swap teams if necessary, so that team1 is the stronger team
   if (p1sum(team1) < p1sum(team2)) {
     [team1, team2] = [team2, team1];
@@ -206,8 +217,15 @@ async function createOptimalTeams() {
     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
     <tr><td colspan="2">priemer timu (zapasove, kanadske body)</td></tr>
     <tr><td>(${p1sum(team1).toFixed(2)}, ${p2sum(team1).toFixed(2)})</td><td>(${p1sum(team2).toFixed(2)}, ${p2sum(team2).toFixed(2)})</td></tr>
+    <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <tr><td>${score.toFixed(1)}</td><td style="text-align: right;">${g['resultsIndex'] + 1}/${g['results'].length}</td></tr>
   `
   document.getElementById('teamsDiv').style.display = 'block';
+}
+
+function showNextResult() {
+  g['resultsIndex'] = (g['resultsIndex'] + 1) % g['results'].length;
+  showOptimalTeams();
 }
 
 function render() {
