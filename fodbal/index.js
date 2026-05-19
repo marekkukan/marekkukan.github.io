@@ -176,15 +176,15 @@ async function createOptimalTeams() {
     var p2 = Math.abs(p2diff);
     var p3 = p1 + p2 + Math.abs(p1diff + p2diff);
     var score = 10 / (p3 + 1);
-    results.push([team, team2, score]);
     var subsDiff = Math.abs(subsTotal - 2*numberOfSubs(team));
     var sprintersDiff = Math.abs(sprintersTotal - 2*numberOfSprinters(team));
+    if (g.evenSubstitutes && subsDiff > 1) continue;
+    if (g.evenSprinters && sprintersDiff > 1) continue;
+    results.push([team, team2, score]);
     var isBetter;
     if (g.priority == 'priority1') isBetter = (p1 < p1best || (p1 == p1best && p2 < p2best));
     if (g.priority == 'priority2') isBetter = (p2 < p2best || (p2 == p2best && p1 < p1best));
     if (g.priority == 'priority3') isBetter = (p3 < p3best || (p3 == p3best && p1 < p1best));
-    if (g.evenSubstitutes) isBetter &&= subsDiff <= 1;
-    if (g.evenSprinters) isBetter &&= sprintersDiff <= 1;
     if (isBetter) {
       team1 = team;
       p1best = p1;
