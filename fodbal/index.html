@@ -15,7 +15,7 @@
 
 <!-- <script src="../snow.js"></script> -->
 
-<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.9.0</div>
+<div id="versionDiv" style="position: fixed; top: 1vmin; right: 1vmin; font: 2vmin monospace;">v1.9.1</div>
 
 <div id="menuDiv">
   <button onclick="location.reload()">⟳</button>
@@ -97,6 +97,10 @@
 <div id="popupContainer" style="display: none;">
   <div id="changelogDiv" style="display: none;" onclick="toggleMaximized(this, event);" class="log">
     <h1 onclick="this.parentElement.style.display='none'; document.getElementById('debuglogDiv').style.display='block';">changelog</h1>
+    <h4>v1.9.1 [2026-05-20]</h4>
+    <ul>
+      <li>fixed even substitutes/sprinters constraints in optimal team generation</li>
+    </ul>
     <h4>v1.9.0 [2026-04-20]</h4>
     <ul>
       <li>when creating optimal teams, show a few top results, not just top 1</li>
